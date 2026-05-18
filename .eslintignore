@@ -1,0 +1,8 @@
+node_modules/
+vendor/
+dist/
+build/
+public/
+webpack.config.js
+vite.config.js
+.eslintrc.js
