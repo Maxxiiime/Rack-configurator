@@ -6,13 +6,11 @@ const isDevMode = import.meta.env.MODE === "development";
 
 export interface AppState {
 	isDevMode: boolean;
-	text3d: string;
 	update: (options: Partial<NonFunctionProperties<AppState>>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
 	isDevMode,
-	text3d: "FLUX Starter!",
 
 	// function to update the different fields inside the store
 	update: (options) => set((state) => ({ ...state, ...options })),
