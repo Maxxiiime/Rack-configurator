@@ -1,0 +1,154 @@
+[
+    {
+        "shelving_system_id": "arm_350",
+        "name": "Arm 350",
+        "path": "/model/arms/Armen_350.glb"
+    },
+    {
+        "shelving_system_id": "arm_600",
+        "name": "Arm 600",
+        "path": "/model/arms/Armen_600.glb"
+    },
+    {
+        "shelving_system_id": "arm_900",
+        "name": "Arm 900",
+        "path": "/model/arms/Armen_900.glb"
+    },
+    {
+        "shelving_system_id": "arm_1250",
+        "name": "Arm 1250",
+        "path": "/model/arms/Armen_1250.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_750",
+        "name": "H-Brace 750",
+        "path": "/model/braces/H_schoringen_750.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_1000",
+        "name": "H-Brace 1000",
+        "path": "/model/braces/H_schoringen_1000.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_1250",
+        "name": "H-Brace 1250",
+        "path": "/model/braces/H_schoringen_1250.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_1500",
+        "name": "H-Brace 1500",
+        "path": "/model/braces/H_schoringen_1500.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_1750",
+        "name": "H-Brace 1750",
+        "path": "/model/braces/H_schoringen_1750.glb"
+    },
+    {
+        "shelving_system_id": "h_braces_2000",
+        "name": "H-Brace 2000",
+        "path": "/model/braces/H_schoringen_2000.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_750",
+        "name": "X-Brace 750",
+        "path": "/model/braces/X_schoringen_750.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_1000",
+        "name": "X-Brace 1000",
+        "path": "/model/braces/X_schoringen_1000.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_1250",
+        "name": "X-Brace 1250",
+        "path": "/model/braces/X_schoringen_1250.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_1500",
+        "name": "X-Brace 1500",
+        "path": "/model/braces/X_schoringen_1500.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_1750",
+        "name": "X-Brace 1750",
+        "path": "/model/braces/X_schoringen_1750.glb"
+    },
+    {
+        "shelving_system_id": "x_braces_2000",
+        "name": "X-Brace 2000",
+        "path": "/model/braces/X_schoringen_2000.glb"
+    },
+    {
+        "shelving_system_id": "column_2000",
+        "name": "Column 2000",
+        "path": "/model/columns/Kolommen_2M.glb"
+    },
+    {
+        "shelving_system_id": "column_2500",
+        "name": "Column 2500",
+        "path": "/model/columns/Kolommen_2M50.glb"
+    },
+    {
+        "shelving_system_id": "column_3000",
+        "name": "Column 3000",
+        "path": "/model/columns/Kolommen_3M.glb"
+    },
+    {
+        "shelving_system_id": "column_3500",
+        "name": "Column 3500",
+        "path": "/model/columns/Kolommen_3M50.glb"
+    },
+    {
+        "shelving_system_id": "column_4000",
+        "name": "Column 4000",
+        "path": "/model/columns/Kolommen_4M.glb"
+    },
+    {
+        "shelving_system_id": "column_4500",
+        "name": "Column 4500",
+        "path": "/model/columns/Kolommen_4M50.glb"
+    },
+    {
+        "shelving_system_id": "double_leg_350",
+        "name": "Double Leg 350",
+        "path": "/model/legs/Dubblezijdige_350.glb"
+    },
+    {
+        "shelving_system_id": "double_leg_600",
+        "name": "Double Leg 600",
+        "path": "/model/legs/Dubblezijdige_600.glb"
+    },
+    {
+        "shelving_system_id": "double_leg_900",
+        "name": "Double Leg 900",
+        "path": "/model/legs/Dubblezijdige_900.glb"
+    },
+    {
+        "shelving_system_id": "double_leg_1250",
+        "name": "Double Leg 1250",
+        "path": "/model/legs/Dubblezijdige_1250.glb"
+    },
+    {
+        "shelving_system_id": "single_leg_350",
+        "name": "Single Leg 350",
+        "path": "/model/legs/Enkelzijdige_350.glb"
+    },
+    {
+        "shelving_system_id": "single_leg_600",
+        "name": "Single Leg 600",
+        "path": "/model/legs/Enkelzijdige_600.glb"
+    },
+    {
+        "shelving_system_id": "single_leg_900",
+        "name": "Single Leg 900",
+        "path": "/model/legs/Enkelzijdige_900.glb"
+    },
+    {
+        "shelving_system_id": "single_leg_1250",
+        "name": "Single Leg 1250",
+        "path": "/model/legs/Enkelzijdige_1250.glb"
+    }   
+]
+    
+
