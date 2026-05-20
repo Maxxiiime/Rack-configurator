@@ -1,6 +1,6 @@
 import create from 'zustand';
 import partsData from '@/data/shelving_parts.json';
-import type { ShelvingPart } from '@/types/shelving';
+import type { ShelvingPart, RackConfig } from '@/types/shelving';
 
 export type RackType = 'single' | 'double';
 
@@ -13,11 +13,15 @@ interface RackState {
   activeArmId: string;
   activeBraceId: string;
   activeLegId: string;
+  racks: RackConfig[];
   setRackType: (type: RackType) => void;
   setNumLevels: (levels: number) => void;
   setActiveColumn: (id: string) => void;
   setActiveArm: (id: string) => void;
   setActiveBrace: (id: string) => void;
+  addRackLeft: () => void;
+  addRackRight: () => void;
+  removeRack: (id: string) => void;
 }
 
 /** Find the matching leg part for a given arm size and rack type */
@@ -42,6 +46,7 @@ export const useRackStore = create<RackState>((set) => ({
   activeArmId: defaultArm,
   activeBraceId: defaultBrace,
   activeLegId: defaultLeg,
+  racks: [{ id: 'initial-rack', braceId: defaultBrace }],
 
   setRackType: (type) => set((state) => ({
     rackType: type,
@@ -56,5 +61,29 @@ export const useRackStore = create<RackState>((set) => ({
     activeLegId: findMatchingLegId(id, state.rackType),
   })),
 
-  setActiveBrace: (id) => set({ activeBraceId: id }),
+  setActiveBrace: (id) => set((state) => ({
+    activeBraceId: id,
+    racks: state.racks.map((rack) => ({ ...rack, braceId: id })),
+  })),
+
+  addRackLeft: () => set((state) => {
+    const newRack: RackConfig = {
+      id: crypto.randomUUID(),
+      braceId: state.activeBraceId,
+    };
+    return { racks: [newRack, ...state.racks] };
+  }),
+
+  addRackRight: () => set((state) => {
+    const newRack: RackConfig = {
+      id: crypto.randomUUID(),
+      braceId: state.activeBraceId,
+    };
+    return { racks: [...state.racks, newRack] };
+  }),
+
+  removeRack: (id) => set((state) => {
+    if (state.racks.length <= 1 || id === 'initial-rack') return {};
+    return { racks: state.racks.filter((rack) => rack.id !== id) };
+  }),
 }));

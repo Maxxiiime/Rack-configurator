@@ -4,42 +4,71 @@ import { ColumnAssembly } from "./ColumnAssembly";
 import { BraceAssembly } from "./BraceAssembly";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { useRackControls } from "@/hooks/useRackControls";
+import { useRackPositions } from "@/hooks/useRackPositions";
+import { Button } from "./Button";
 
 export const RackSystem: React.FC = () => {
-	// Initialize Leva controls for rack parameters
+
 	useRackControls();
 
-	const { rackType, numLevels, activeColumnId, activeArmId, activeBraceId, activeLegId } = useRackStore();
+	const {
+		rackType,
+		numLevels,
+		activeColumnId,
+		activeArmId,
+		activeLegId,
+		racks,
+		addRackLeft,
+		addRackRight,
+		removeRack,
+	} = useRackStore();
 
 	const { getPartSize } = useShelfParts();
-
-	// Derived values for placement
-	const braceSize = getPartSize(activeBraceId);
-	const columnSpacing = braceSize / 100;
+	const { columnPositionsX, rackWidths } = useRackPositions(racks);
 
 	return (
-		<group>
-			{/* LEFT COLUMN */}
-			<ColumnAssembly
-				columnId={activeColumnId}
-				legId={activeLegId}
-				armId={activeArmId}
-				rackType={rackType}
-				numLevels={numLevels}
+		<group >
+			{columnPositionsX.map((posX, index) => (
+				<ColumnAssembly
+					key={`column-${index}`}
+					columnId={activeColumnId}
+					legId={activeLegId}
+					armId={activeArmId}
+					rackType={rackType}
+					numLevels={numLevels}
+					position={[posX, 0, 0]}
+				/>
+			))}
+
+			{racks.map((rack, index) => {
+				const posX = columnPositionsX[index];
+				const braceSize = getPartSize(rack.braceId);
+
+				return (
+					<group key={rack.id} position={[posX, 0, 0]}>
+						<BraceAssembly braceSize={braceSize} />
+						{racks.length > 1 && rack.id !== "initial-rack" && (
+							<Button
+								type="less"
+								position={[rackWidths[index] / 2, 1.0, 0]}
+								onClick={() => removeRack(rack.id)}
+							/>
+						)}
+					</group>
+				);
+			})}
+			<Button
+				type="plus"
+				position={[columnPositionsX[0] - 5, 10.0, 0]}
+				onClick={addRackLeft}
 			/>
 
-			{/* RIGHT COLUMN ASSEMBLY */}
-			<ColumnAssembly
-				columnId={activeColumnId}
-				legId={activeLegId}
-				armId={activeArmId}
-				rackType={rackType}
-				numLevels={numLevels}
-				position={[columnSpacing, 0, 0]}
+			<Button
+				type="plus"
+				position={[columnPositionsX[columnPositionsX.length - 1] + 5, 10.0, 0]}
+				onClick={addRackRight}
 			/>
-
-			{/* BRACE */}
-			<BraceAssembly braceSize={braceSize} />
 		</group>
 	);
 };
+
