@@ -31,47 +31,31 @@ export const useRackControls = () => {
 			Type: {
 				value: rackType,
 				options: { Single: "single", Double: "double" },
-				onChange: (v) => {
-					if (v !== rackType) {
-						setRackType(v as RackType);
-					}
-				},
+				onChange: (v) => setRackType(v as RackType),
 			},
 			Levels: {
 				value: numLevels,
 				min: 1,
 				max: 10,
 				step: 1,
-				onChange: (v) => {
-					if (v !== numLevels) {
-						setNumLevels(v);
-					}
-				},
+				onChange: (v) => setNumLevels(v),
 			},
 			Column: {
 				value: activeColumnId,
 				options: columnsOpts,
-				onChange: (v) => {
-					if (v !== activeColumnId) {
-						setActiveColumn(v);
-					}
-				},
+				onChange: (v) => setActiveColumn(v),
 			},
 			Arm: {
 				value: activeArmId,
 				options: armsOpts,
-				onChange: (v) => {
-					if (v !== activeArmId) {
-						setActiveArm(v);
-					}
-				},
+				onChange: (v) => setActiveArm(v),
 			},
 			Width: {
 				value: initialWidth,
 				options: widthOpts,
 				onChange: (v) => {
 					const newBraceId = findPartId('x_brace', v);
-					if (newBraceId && newBraceId !== activeBraceId) {
+					if (newBraceId) {
 						setActiveBrace(newBraceId);
 					}
 				},
