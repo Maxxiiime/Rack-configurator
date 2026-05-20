@@ -17,22 +17,26 @@ interface PartProps {
 
 const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] }) => {
   const { getPartData } = useShelfParts();
+
   const partData = getPartData(id);
-  
+  const fallbackPath = '/model/columns/Kolommen_2M.glb';
+
+  const { scene } = useGLTF(partData?.path ?? fallbackPath);
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+
   if (!partData) {
     console.warn(`Part with id ${id} not found.`);
     return null;
   }
 
-  const { scene } = useGLTF(partData.path);
-  const clonedScene = useMemo(() => scene.clone(), [scene]);
+
 
   return (
-    <primitive 
-      object={clonedScene} 
-      position={position} 
-      rotation={rotation} 
-      scale={scale} 
+    <primitive
+      object={clonedScene}
+      position={position}
+      rotation={rotation}
+      scale={scale}
     />
   );
 };
