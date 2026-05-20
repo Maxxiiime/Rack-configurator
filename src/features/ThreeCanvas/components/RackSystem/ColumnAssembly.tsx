@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, Arm, Leg } from './Parts';
+import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { RackType } from '@/stores/rackStore';
 
@@ -21,10 +21,10 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0]
 }) => {
   const { getColumnHeight, getOffsets } = useShelfParts();
-  
+
   const offsets = getOffsets();
   const levels = Array.from({ length: numLevels });
-  
+
   const offsetArmBottom = offsets.arm_start_y;
   const offsetArmTop = offsets.arm_end_y;
   const columnHeightUnits = getColumnHeight(columnId);
@@ -33,27 +33,30 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
 
   return (
     <group position={position}>
-      <Column id={columnId} position={[offsets.column_x, 0, offsets.column_z]} />
-      <Leg 
-        id={legId} 
+      {/*COLUMN*/}
+      <BasePart id={columnId} position={[offsets.column_x, 0, offsets.column_z]} />
+      {/*LEGS*/}
+      <BasePart
+        id={legId}
         position={
-          rackType === 'double' 
+          rackType === 'double'
             ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z]
             : [offsets.leg_x, offsets.leg_y, offsets.leg_z]
-        } 
+        }
       />
       {levels.map((_, i) => {
         const yPos = offsetArmBottom + i * dynamicSpacingY;
         return (
           <group key={`arm-${i}`}>
-            <Arm 
-              id={armId} 
-              position={[offsets.arm_x, yPos, offsets.arm_z]} 
+            {/*ARMS*/}
+            <BasePart
+              id={armId}
+              position={[offsets.arm_x, yPos, offsets.arm_z]}
             />
             {rackType === 'double' && (
-              <Arm 
-                id={armId} 
-                position={[offsets.double_arm_x, yPos, offsets.double_arm_z]} 
+              <BasePart
+                id={armId}
+                position={[offsets.double_arm_x, yPos, offsets.double_arm_z]}
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}

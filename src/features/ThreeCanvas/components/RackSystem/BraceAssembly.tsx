@@ -1,21 +1,20 @@
 import React from 'react';
-import { Brace } from './Parts';
+import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackStore } from '@/stores/rackStore';
 
 interface BraceAssemblyProps {
-  lengthKey: string;
+  braceSize: number;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ lengthKey }) => {
-  const { getOffsets, getColumnHeight, getDimensions } = useShelfParts();
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize }) => {
+  const { getOffsets, getColumnHeight, getDimensions, findPartId } = useShelfParts();
   const activeColumnId = useRackStore((state) => state.activeColumnId);
   const offsets = getOffsets();
 
-  const hBraceId = `h_braces_${lengthKey}`;
-  const xBraceId = `x_braces_${lengthKey}`;
+  const hBraceId = findPartId('h_brace', braceSize) ?? '';
+  const xBraceId = findPartId('x_brace', braceSize) ?? '';
 
-  // Read offsets from sizes
   const hX = offsets.h_brace_x;
   const hZ = offsets.h_brace_z;
 
@@ -27,9 +26,9 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ lengthKey }) => {
 
   return (
     <group>
-      <Brace id={hBraceId} position={[hX, columnHeight - braceHeight, hZ]} />
-      <Brace id={xBraceId} position={[xX, columnHeight - braceHeight, xZ]} />
-      <Brace id={hBraceId} position={[hX, columnHeight, hZ]} />
+      <BasePart id={hBraceId} position={[hX, columnHeight - braceHeight, hZ]} />
+      <BasePart id={xBraceId} position={[xX, columnHeight - braceHeight, xZ]} />
+      <BasePart id={hBraceId} position={[hX, columnHeight, hZ]} />
     </group>
   );
 };

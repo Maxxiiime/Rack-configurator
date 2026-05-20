@@ -1,126 +1,45 @@
-import React, { useEffect, useMemo } from 'react';
-import { useControls } from 'leva';
-import { useRackStore, RackType } from '@/stores/rackStore';
-import { ColumnAssembly } from './ColumnAssembly';
-import { BraceAssembly } from './BraceAssembly';
-import { useShelfParts } from '@/hooks/useShelfParts';
+import React from "react";
+import { useRackStore } from "@/stores/rackStore";
+import { ColumnAssembly } from "./ColumnAssembly";
+import { BraceAssembly } from "./BraceAssembly";
+import { useShelfParts } from "@/hooks/useShelfParts";
+import { useRackControls } from "@/hooks/useRackControls";
 
 export const RackSystem: React.FC = () => {
-  const {
-    rackType,
-    numLevels,
-    activeColumnId,
-    activeArmId,
-    activeBraceId,
-    activeLegId,
-    setRackType,
-    setNumLevels,
-    setActiveColumn,
-    setActiveArm,
-    setActiveBrace
-  } = useRackStore();
+	// Initialize Leva controls for rack parameters
+	useRackControls();
 
-  const { getColumnsOptions, getArmsOptions, getBraceLength } = useShelfParts();
+	const { rackType, numLevels, activeColumnId, activeArmId, activeBraceId, activeLegId } = useRackStore();
 
-  // Setup Leva Controls with memoized options to prevent needless schema recreation
-  const columnsOpts = useMemo(() => getColumnsOptions(), []);
-  const armsOpts = useMemo(() => getArmsOptions(), []);
+	const { getBraceLength, getPartSize } = useShelfParts();
 
-  const widthOpts = [750, 1000, 1250, 1500, 1750, 2000];
-  const initialWidth = useMemo(() => Number(activeBraceId.split('_').pop() || 1000), []);
+	// Derived values for placement
+	const braceSize = getPartSize(activeBraceId);
+	const columnSpacing = getBraceLength(String(braceSize));
 
-  const [, set] = useControls(() => ({
-    Type: {
-      value: rackType,
-      options: { 'Single': 'single', 'Double': 'double' },
-      onChange: (v) => {
-        if (v !== rackType) {
-          setRackType(v as RackType);
-        }
-      }
-    },
-    Levels: {
-      value: numLevels,
-      min: 1,
-      max: 10,
-      step: 1,
-      onChange: (v) => {
-        if (v !== numLevels) {
-          setNumLevels(v);
-        }
-      }
-    },
-    Column: {
-      value: activeColumnId,
-      options: columnsOpts,
-      onChange: (v) => {
-        if (v !== activeColumnId) {
-          setActiveColumn(v);
-        }
-      }
-    },
-    Arm: {
-      value: activeArmId,
-      options: armsOpts,
-      onChange: (v) => {
-        if (v !== activeArmId) {
-          setActiveArm(v);
-        }
-      }
-    },
-    Width: {
-      value: initialWidth,
-      options: widthOpts,
-      onChange: (v) => {
-        const newBraceId = `x_braces_${v}`;
-        if (newBraceId !== activeBraceId) {
-          setActiveBrace(newBraceId);
-        }
-      }
-    },
-  }), [columnsOpts, armsOpts, initialWidth]);
+	return (
+		<group>
+			{/* LEFT COLUMN */}
+			<ColumnAssembly
+				columnId={activeColumnId}
+				legId={activeLegId}
+				armId={activeArmId}
+				rackType={rackType}
+				numLevels={numLevels}
+			/>
 
-  // Sync Zustand -> Leva (if changed externally)
-  useEffect(() => {
-    set({
-      Type: rackType,
-      Levels: numLevels,
-      Column: activeColumnId,
-      Arm: activeArmId,
-      Width: Number(activeBraceId.split('_').pop() || 1000),
-    });
-  }, [rackType, numLevels, activeColumnId, activeArmId, activeBraceId, set]);
+			{/* RIGHT COLUMN ASSEMBLY */}
+			<ColumnAssembly
+				columnId={activeColumnId}
+				legId={activeLegId}
+				armId={activeArmId}
+				rackType={rackType}
+				numLevels={numLevels}
+				position={[columnSpacing, 0, 0]}
+			/>
 
-  // Derived values for placement
-  const braceIdParts = activeBraceId.split('_');
-  const braceLengthKey = braceIdParts[braceIdParts.length - 1];
-
-  const columnSpacing = getBraceLength(braceLengthKey);
-
-  return (
-    <group>
-      {/* LEFT COLUMN */}
-      <ColumnAssembly
-        columnId={activeColumnId}
-        legId={activeLegId}
-        armId={activeArmId}
-        rackType={rackType}
-        numLevels={numLevels}
-      />
-
-      {/* RIGHT COLUMN ASSEMBLY */}
-      <ColumnAssembly
-        columnId={activeColumnId}
-        legId={activeLegId}
-        armId={activeArmId}
-        rackType={rackType}
-        numLevels={numLevels}
-        position={[columnSpacing, 0, 0]}
-      />
-
-      {/* BRACE */}
-      <BraceAssembly lengthKey={braceLengthKey} />
-    </group>
-  );
+			{/* BRACE */}
+			<BraceAssembly braceSize={braceSize} />
+		</group>
+	);
 };
-

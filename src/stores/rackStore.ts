@@ -1,7 +1,10 @@
 import create from 'zustand';
 import partsData from '@/data/shelving_parts.json';
+import type { ShelvingPart } from '@/types/shelving';
 
 export type RackType = 'single' | 'double';
+
+const typedParts = partsData as ShelvingPart[];
 
 interface RackState {
   rackType: RackType;
@@ -9,20 +12,28 @@ interface RackState {
   activeColumnId: string;
   activeArmId: string;
   activeBraceId: string;
-  activeLegId: string; // Changes based on rackType and length
+  activeLegId: string;
   setRackType: (type: RackType) => void;
   setNumLevels: (levels: number) => void;
   setActiveColumn: (id: string) => void;
   setActiveArm: (id: string) => void;
   setActiveBrace: (id: string) => void;
-  updateLegSizing: (armId: string) => void;
 }
 
+/** Find the matching leg part for a given arm size and rack type */
+const findMatchingLegId = (armId: string, rackType: RackType): string => {
+  const armPart = typedParts.find((p) => p.shelving_system_id === armId);
+  const armSize = armPart?.size_mm ?? 350;
+  const legCategory = rackType === 'single' ? 'single_leg' : 'double_leg';
+  const leg = typedParts.find((p) => p.category === legCategory && p.size_mm === armSize);
+  return leg?.shelving_system_id ?? `${legCategory}_${armSize}`;
+};
+
 // Initial defaults
-const defaultColumn = partsData.find(p => p.shelving_system_id.startsWith('column_'))?.shelving_system_id || '';
-const defaultArm = partsData.find(p => p.shelving_system_id.startsWith('arm_'))?.shelving_system_id || '';
-const defaultBrace = partsData.find(p => p.shelving_system_id.startsWith('x_braces_'))?.shelving_system_id || '';
-const defaultLeg = partsData.find(p => p.shelving_system_id.startsWith('single_leg_'))?.shelving_system_id || '';
+const defaultColumn = typedParts.find(p => p.category === 'column')?.shelving_system_id || '';
+const defaultArm = typedParts.find(p => p.category === 'arm')?.shelving_system_id || '';
+const defaultBrace = typedParts.find(p => p.category === 'x_brace')?.shelving_system_id || '';
+const defaultLeg = typedParts.find(p => p.category === 'single_leg')?.shelving_system_id || '';
 
 export const useRackStore = create<RackState>((set) => ({
   rackType: 'single',
@@ -32,33 +43,18 @@ export const useRackStore = create<RackState>((set) => ({
   activeBraceId: defaultBrace,
   activeLegId: defaultLeg,
 
-  setRackType: (type) => set((state) => {
-    // Automatically match leg type with arm size when changing rack type
-    // In a real scenario, we'd extract the size from the arm ID and find the matching single/double leg
-    const sizeMatch = state.activeArmId.match(/_(\d+)$/);
-    const size = sizeMatch ? sizeMatch[1] : '350';
-    const prefix = type === 'single' ? 'single_leg_' : 'double_leg_';
-    const newLegId = `${prefix}${size}`;
-    
-    return { rackType: type, activeLegId: newLegId };
-  }),
-  
+  setRackType: (type) => set((state) => ({
+    rackType: type,
+    activeLegId: findMatchingLegId(state.activeArmId, type),
+  })),
+
   setNumLevels: (levels) => set({ numLevels: levels }),
   setActiveColumn: (id) => set({ activeColumnId: id }),
-  
-  setActiveArm: (id) => set((state) => {
-    const sizeMatch = id.match(/_(\d+)$/);
-    const size = sizeMatch ? sizeMatch[1] : '350';
-    const prefix = state.rackType === 'single' ? 'single_leg_' : 'double_leg_';
-    
-    return { 
-      activeArmId: id,
-      activeLegId: `${prefix}${size}`
-    };
-  }),
-  
+
+  setActiveArm: (id) => set((state) => ({
+    activeArmId: id,
+    activeLegId: findMatchingLegId(id, state.rackType),
+  })),
+
   setActiveBrace: (id) => set({ activeBraceId: id }),
-  updateLegSizing: (armId) => set((state) => {
-     return {};
-  })
 }));

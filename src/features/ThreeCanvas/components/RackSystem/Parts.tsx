@@ -15,7 +15,7 @@ interface PartProps {
   scale?: [number, number, number];
 }
 
-const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] }) => {
+export const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] }) => {
   const { getPartData } = useShelfParts();
 
   const partData = getPartData(id);
@@ -40,8 +40,3 @@ const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotation = [0
     />
   );
 };
-
-export const Column: React.FC<PartProps> = (props) => <BasePart {...props} />;
-export const Arm: React.FC<PartProps> = (props) => <BasePart {...props} />;
-export const Brace: React.FC<PartProps> = (props) => <BasePart {...props} />;
-export const Leg: React.FC<PartProps> = (props) => <BasePart {...props} />;
