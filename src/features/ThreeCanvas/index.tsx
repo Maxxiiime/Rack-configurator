@@ -6,7 +6,7 @@ import { Perf } from "r3f-perf";
 const ThreeCanvas = () => {
 	return (
 		<Box w="100%" h="100vh" zIndex={0}>
-			<Canvas camera={{ fov: 45 }}>
+			<Canvas camera={{ fov: 45, position: [0, 2, -5] }}>
 				<Scene />
 				{import.meta.env.MODE === "development" && <Perf position="top-left" overClock />}
 			</Canvas>
