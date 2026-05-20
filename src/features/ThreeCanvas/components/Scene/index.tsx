@@ -4,7 +4,10 @@ import { RackSystem } from "../RackSystem";
 const Scene = () => {
     return (
         <>
-            <Stage environment={{ files: "/hdri/potsdamer_platz_1k.hdr" }}>
+            <Stage 
+                environment={{ files: "/hdri/potsdamer_platz_1k.hdr" }}				
+                adjustCamera={false}
+            >
                 <RackSystem />
             </Stage>
             <OrbitControls makeDefault />
