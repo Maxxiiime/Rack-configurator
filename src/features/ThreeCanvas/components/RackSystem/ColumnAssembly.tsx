@@ -38,7 +38,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
         id={legId} 
         position={
           rackType === 'double' 
-            ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z_offset]
+            ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z]
             : [offsets.leg_x, offsets.leg_y, offsets.leg_z]
         } 
       />
@@ -48,12 +48,12 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
           <group key={`arm-${i}`}>
             <Arm 
               id={armId} 
-              position={[offsets.arm_x_offset, yPos, offsets.arm_z_offset]} 
+              position={[offsets.arm_x, yPos, offsets.arm_z]} 
             />
             {rackType === 'double' && (
               <Arm 
                 id={armId} 
-                position={[offsets.double_arm_x_offset, yPos, offsets.double_arm_z_offset]} 
+                position={[offsets.double_arm_x, yPos, offsets.double_arm_z]} 
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}

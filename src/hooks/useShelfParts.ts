@@ -37,6 +37,10 @@ export const useShelfParts = () => {
     return partsData.find((p) => p.shelving_system_id === id);
   };
 
+  const getDimensions = () => {
+    return sizes.dimensions;
+  };
+
   return {
     getColumnsOptions,
     getArmsOptions,
@@ -44,6 +48,7 @@ export const useShelfParts = () => {
     getColumnHeight,
     getOffsets,
     getPartData,
+    getDimensions,
     sizes,
     partsData
   };
