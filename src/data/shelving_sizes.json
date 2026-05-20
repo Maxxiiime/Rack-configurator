@@ -7,11 +7,16 @@
         "leg_y": 0,
         "leg_z": 0,
 
-        "arm_start_y": 10,
+        "double_leg_z_offset": -1.02,
+
+        "arm_start_y": 5,
         "arm_end_y": 5,
         "arm_spacing_y": 10,
-        "arm_z_offset": -1.5,
+        "arm_z_offset": -1.45,
         "arm_x_offset": 0.25,
+
+        "double_arm_x_offset": 0.95,
+        "double_arm_z_offset": -0.55,
 
         "h_brace_x_offset": 0.9,
         "h_brace_y_offset": 1,

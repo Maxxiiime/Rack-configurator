@@ -78,7 +78,14 @@ export const RackSystem: React.FC = () => {
       {/* LEFT COLUMN */}
       <group>
         <Column id={activeColumnId} position={[offsets.column_x, 0, offsets.column_z]} />
-        <Leg id={activeLegId} position={[offsets.leg_x, offsets.leg_y, offsets.leg_z]} />
+        <Leg 
+          id={activeLegId} 
+          position={
+            rackType === 'double' 
+              ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z_offset]
+              : [offsets.leg_x, offsets.leg_y, offsets.leg_z]
+          } 
+        />
         {levels.map((_, i) => {
           const yPos = offsetArmBottom + i * dynamicSpacingY;
           return (
@@ -90,7 +97,7 @@ export const RackSystem: React.FC = () => {
             {rackType === 'double' && (
               <Arm 
                 id={activeArmId} 
-                position={[offsets.arm_x_offset, yPos, offsets.arm_z_offset]} 
+                position={[offsets.double_arm_x_offset, yPos, offsets.double_arm_z_offset]} 
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}
@@ -101,7 +108,14 @@ export const RackSystem: React.FC = () => {
       {/* RIGHT COLUMN ASSEMBLY */}
       <group position={[columnSpacing, 0, 0]}>
         <Column id={activeColumnId} position={[offsets.column_x, 0, offsets.column_z]} />
-        <Leg id={activeLegId} position={[offsets.leg_x, offsets.leg_y, offsets.leg_z]} />
+        <Leg 
+          id={activeLegId} 
+          position={
+            rackType === 'double' 
+              ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z_offset]
+              : [offsets.leg_x, offsets.leg_y, offsets.leg_z]
+          } 
+        />
         {levels.map((_, i) => {
           const yPos = offsetArmBottom + i * dynamicSpacingY;
           return (
@@ -113,7 +127,7 @@ export const RackSystem: React.FC = () => {
             {rackType === 'double' && (
               <Arm 
                 id={activeArmId} 
-                position={[offsets.arm_x_offset, yPos, offsets.arm_z_offset]} 
+                position={[offsets.double_arm_x_offset, yPos, offsets.double_arm_z_offset]} 
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}
