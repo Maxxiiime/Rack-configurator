@@ -20,43 +20,40 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   numLevels,
   position = [0, 0, 0]
 }) => {
-  const { getColumnHeight, getOffsets } = useShelfParts();
+  const { getColumnHeight, sizes } = useShelfParts();
 
-  const offsets = getOffsets();
   const levels = Array.from({ length: numLevels });
 
-  const offsetArmBottom = offsets.arm_start_y;
-  const offsetArmTop = offsets.arm_end_y;
   const columnHeightUnits = getColumnHeight(columnId);
-  const availableHeight = columnHeightUnits - offsetArmBottom - offsetArmTop;
+  const availableHeight = columnHeightUnits - sizes.arm.start_y - sizes.arm.end_y;
   const dynamicSpacingY = numLevels > 1 ? availableHeight / (numLevels - 1) : 0;
 
   return (
     <group position={position}>
       {/*COLUMN*/}
-      <BasePart id={columnId} position={[offsets.column_x, 0, offsets.column_z]} />
+      <BasePart id={columnId} position={[sizes.column.x, 0, sizes.column.z]} />
       {/*LEGS*/}
       <BasePart
         id={legId}
         position={
           rackType === 'double'
-            ? [offsets.leg_x, offsets.leg_y, offsets.double_leg_z]
-            : [offsets.leg_x, offsets.leg_y, offsets.leg_z]
+            ? [sizes.leg.x, sizes.leg.y, sizes.leg.double_z]
+            : [sizes.leg.x, sizes.leg.y, sizes.leg.z]
         }
       />
       {levels.map((_, i) => {
-        const yPos = offsetArmBottom + i * dynamicSpacingY;
+        const yPos = sizes.arm.start_y + i * dynamicSpacingY;
         return (
           <group key={`arm-${i}`}>
             {/*ARMS*/}
             <BasePart
               id={armId}
-              position={[offsets.arm_x, yPos, offsets.arm_z]}
+              position={[sizes.arm.x, yPos, sizes.arm.z]}
             />
             {rackType === 'double' && (
               <BasePart
                 id={armId}
-                position={[offsets.double_arm_x, yPos, offsets.double_arm_z]}
+                position={[sizes.arm.double_x, yPos, sizes.arm.double_z]}
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}

@@ -11,11 +11,11 @@ export const RackSystem: React.FC = () => {
 
 	const { rackType, numLevels, activeColumnId, activeArmId, activeBraceId, activeLegId } = useRackStore();
 
-	const { getBraceLength, getPartSize } = useShelfParts();
+	const { getPartSize } = useShelfParts();
 
 	// Derived values for placement
 	const braceSize = getPartSize(activeBraceId);
-	const columnSpacing = getBraceLength(String(braceSize));
+	const columnSpacing = braceSize / 100;
 
 	return (
 		<group>

@@ -9,11 +9,30 @@ export interface ShelvingPart {
 }
 
 export interface ShelvingSizes {
-	offsets: Record<string, number>;
-	dimensions: {
-		column_width: number;
-		column_depth: number;
-		brace_height: number;
+	column: {
+		x: number;
+		z: number;
 	};
-	brace_lengths: Record<string, number>;
+	leg: {
+		x: number;
+		y: number;
+		z: number;
+		double_z: number;
+	};
+	arm: {
+		x: number;
+		z: number;
+		start_y: number;
+		end_y: number;
+		double_x: number;
+		double_z: number;
+	};
+	brace: {
+		h_x: number;
+		h_z: number;
+		x_x: number;
+		x_z: number;
+		top_offset: number;
+		height: number;
+	};
 }

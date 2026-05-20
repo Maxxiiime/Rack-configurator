@@ -24,10 +24,6 @@ export const useShelfParts = () => {
       );
   };
 
-  const getBraceLength = (braceLengthKey: string): number => {
-    return typedSizes.brace_lengths[braceLengthKey];
-  };
-
   const getColumnHeight = (columnId: string): number => {
     const part = typedParts.find((p) => p.shelving_system_id === columnId);
     return (part?.size_mm ?? 2000) / 100;
@@ -43,28 +39,17 @@ export const useShelfParts = () => {
       ?.shelving_system_id;
   };
 
-  const getOffsets = () => {
-    return typedSizes.offsets;
-  };
-
   const getPartData = (id: string) => {
     return typedParts.find((p) => p.shelving_system_id === id);
-  };
-
-  const getDimensions = () => {
-    return typedSizes.dimensions;
   };
 
   return {
     getColumnsOptions,
     getArmsOptions,
-    getBraceLength,
     getColumnHeight,
     getPartSize,
     findPartId,
-    getOffsets,
     getPartData,
-    getDimensions,
     sizes: typedSizes,
     partsData: typedParts,
   };

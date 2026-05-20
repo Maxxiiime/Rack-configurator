@@ -1,37 +1,28 @@
 {
-    "offsets": {
-        "column_x": 0.3,
-        "column_z": 0,
-        "leg_x": 0,
-        "leg_y": 0,
-        "leg_z": 0,
-        "double_leg_z": -1.02,
-        "arm_start_y": 5,
-        "arm_end_y": 5,
-        "arm_spacing_y": 10,
-        "arm_z": -1.45,
-        "arm_x": 0.25,
-        "double_arm_x": 0.95,
-        "double_arm_z": -0.55,
-        "h_brace_x": 0.9,
-        "h_brace_y": 1,
-        "h_brace_z": -0.1,
-        "x_brace_x": 1.3,
-        "x_brace_y": 10,
-        "x_brace_z": -0.15,
-        "top_brace": 2
+    "column": {
+        "x": 0.3,
+        "z": 0
     },
-    "dimensions": {
-        "column_width": 10,
-        "column_depth": 10,
-        "brace_height": 12
+    "leg": {
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "double_z": -1.02
     },
-    "brace_lengths": {
-        "750": 7.5,
-        "1000": 10,
-        "1250": 12.5,
-        "1500": 15,
-        "1750": 17.5,
-        "2000": 20
+    "arm": {
+        "x": 0.25,
+        "z": -1.45,
+        "start_y": 5,
+        "end_y": 5,
+        "double_x": 0.95,
+        "double_z": -0.55
+    },
+    "brace": {
+        "h_x": 0.9,
+        "h_z": -0.1,
+        "x_x": 1.3,
+        "x_z": -0.15,
+        "top_offset": 2,
+        "height": 12
     }
 }
