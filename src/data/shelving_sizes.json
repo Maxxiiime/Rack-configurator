@@ -12,8 +12,8 @@
     "arm": {
         "x": 0.25,
         "z": -1.45,
-        "start_y": 5,
-        "end_y": 5,
+        "start_y": 4.45,
+        "end_y": 3.55,
         "double_x": 0.95,
         "double_z": -0.55
     },
