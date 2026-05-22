@@ -8,14 +8,12 @@ const typedParts = partsData as ShelvingPart[];
 
 interface RackState {
   rackType: RackType;
-  numLevels: number;
   activeColumnId: string;
   activeArmId: string;
   activeBraceId: string;
   activeLegId: string;
   racks: RackConfig[];
   setRackType: (type: RackType) => void;
-  setNumLevels: (levels: number) => void;
   setActiveColumn: (id: string) => void;
   setActiveArm: (id: string) => void;
   setActiveBrace: (id: string) => void;
@@ -41,7 +39,6 @@ const defaultLeg = typedParts.find(p => p.category === 'single_leg')?.shelving_s
 
 export const useRackStore = create<RackState>((set) => ({
   rackType: 'single',
-  numLevels: 3,
   activeColumnId: defaultColumn,
   activeArmId: defaultArm,
   activeBraceId: defaultBrace,
@@ -53,7 +50,6 @@ export const useRackStore = create<RackState>((set) => ({
     activeLegId: findMatchingLegId(state.activeArmId, type),
   })),
 
-  setNumLevels: (levels) => set({ numLevels: levels }),
   setActiveColumn: (id) => set({ activeColumnId: id }),
 
   setActiveArm: (id) => set((state) => ({

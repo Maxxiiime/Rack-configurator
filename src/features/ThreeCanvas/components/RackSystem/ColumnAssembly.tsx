@@ -8,7 +8,6 @@ interface ColumnAssemblyProps {
   legId: string;
   armId: string;
   rackType: RackType;
-  numLevels: number;
   position?: [number, number, number];
 }
 
@@ -17,16 +16,17 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   legId,
   armId,
   rackType,
-  numLevels,
   position = [0, 0, 0]
 }) => {
   const { getColumnHeight, sizes } = useShelfParts();
 
-  const levels = Array.from({ length: numLevels });
-
   const columnHeightUnits = getColumnHeight(columnId);
-  const availableHeight = columnHeightUnits - sizes.arm.start_y - sizes.arm.end_y;
-  const dynamicSpacingY = numLevels > 1 ? availableHeight / (numLevels - 1) : 0;
+  const maxArmY = columnHeightUnits - sizes.arm.end_y;
+  
+  const armPositions: number[] = [];
+  for (let y = sizes.arm.start_y; y <= maxArmY; y += 3) {
+    armPositions.push(y);
+  }
 
   return (
     <group position={position}>
@@ -41,8 +41,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             : [sizes.leg.x, sizes.leg.y, sizes.leg.z]
         }
       />
-      {levels.map((_, i) => {
-        const yPos = sizes.arm.start_y + i * dynamicSpacingY;
+      {armPositions.map((yPos, i) => {
         return (
           <group key={`arm-${i}`}>
             {/*ARMS*/}

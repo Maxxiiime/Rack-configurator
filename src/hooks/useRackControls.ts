@@ -6,12 +6,10 @@ import { useShelfParts } from "@/hooks/useShelfParts";
 export const useRackControls = () => {
 	const {
 		rackType,
-		numLevels,
 		activeColumnId,
 		activeArmId,
 		activeBraceId,
 		setRackType,
-		setNumLevels,
 		setActiveColumn,
 		setActiveArm,
 		setActiveBrace,
@@ -32,13 +30,6 @@ export const useRackControls = () => {
 				value: rackType,
 				options: { Single: "single", Double: "double" },
 				onChange: (v) => setRackType(v as RackType),
-			},
-			Levels: {
-				value: numLevels,
-				min: 1,
-				max: 10,
-				step: 1,
-				onChange: (v) => setNumLevels(v),
 			},
 			Column: {
 				value: activeColumnId,
@@ -68,10 +59,9 @@ export const useRackControls = () => {
 	useEffect(() => {
 		set({
 			Type: rackType,
-			Levels: numLevels,
 			Column: activeColumnId,
 			Arm: activeArmId,
 			Width: getPartSize(activeBraceId) || 1000,
 		});
-	}, [rackType, numLevels, activeColumnId, activeArmId, activeBraceId, set]);
+	}, [rackType, activeColumnId, activeArmId, activeBraceId, set]);
 };

@@ -13,7 +13,6 @@ export const RackSystem: React.FC = () => {
 
 	const {
 		rackType,
-		numLevels,
 		activeColumnId,
 		activeArmId,
 		activeLegId,
@@ -35,7 +34,6 @@ export const RackSystem: React.FC = () => {
 					legId={activeLegId}
 					armId={activeArmId}
 					rackType={rackType}
-					numLevels={numLevels}
 					position={[posX, 0, 0]}
 				/>
 			))}
