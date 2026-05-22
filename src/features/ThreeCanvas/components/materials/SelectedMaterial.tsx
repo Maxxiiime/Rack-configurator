@@ -3,7 +3,7 @@ import { Group, Mesh, MeshStandardMaterial, Object3DEventMap } from "three";
 const selectedMaterial = new MeshStandardMaterial({
   transparent: true,
   opacity: 0.8,
-  color: '#9BFF61',
+  color: '#71BA47',
 });
 
 export const SelectedMaterial = ({ scene, selected }: { scene: Group<Object3DEventMap> | undefined; selected: boolean | undefined }) => {
