@@ -5,9 +5,10 @@ import { useRackStore } from '@/stores/rackStore';
 
 interface BraceAssemblyProps {
   braceSize: number;
+  isSelected?: boolean;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, isSelected = false }) => {
   const { getColumnHeight, findPartId, sizes } = useShelfParts();
   const activeColumnId = useRackStore((state) => state.activeColumnId);
 
@@ -19,14 +20,14 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize }) => {
 
   return (
     <group>
-      <BasePart id={hBraceId} position={[sizes.brace.h_x, columnHeight, sizes.brace.h_z]} />
+      <BasePart id={hBraceId} position={[sizes.brace.h_x, columnHeight, sizes.brace.h_z]} isSelected={isSelected} />
       {Array.from({ length: numLevels }).map((_, i) => {
         const y = columnHeight - (i + 1) * sizes.brace.height;
         return (
           <group key={i}>
-            <BasePart id={hBraceId} position={[sizes.brace.h_x, y, sizes.brace.h_z]} />
+            <BasePart id={hBraceId} position={[sizes.brace.h_x, y, sizes.brace.h_z]} isSelected={isSelected} />
             {i === 0 && (
-              <BasePart id={xBraceId} position={[sizes.brace.x_x, y, sizes.brace.x_z]} />
+              <BasePart id={xBraceId} position={[sizes.brace.x_x, y, sizes.brace.x_z]} isSelected={isSelected} />
             )}
           </group>
         );

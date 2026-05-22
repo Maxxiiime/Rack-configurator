@@ -17,6 +17,8 @@ export const RackSystem: React.FC = () => {
 		activeArmId,
 		activeLegId,
 		racks,
+		selectedRack,
+		setSelectedRack,
 		addRackLeft,
 		addRackRight,
 		removeRack,
@@ -26,25 +28,40 @@ export const RackSystem: React.FC = () => {
 	const { columnPositionsX, rackWidths } = useRackPositions(racks);
 
 	return (
-		<group >
-			{columnPositionsX.map((posX, index) => (
-				<ColumnAssembly
-					key={`column-${index}`}
-					columnId={activeColumnId}
-					legId={activeLegId}
-					armId={activeArmId}
-					rackType={rackType}
-					position={[posX, 0, 0]}
-				/>
-			))}
+		<group onPointerMissed={() => setSelectedRack(null)}>
+			{columnPositionsX.map((posX, index) => {
+				const isSelected = 
+					(index < racks.length && racks[index].id === selectedRack) || 
+					(index > 0 && racks[index - 1].id === selectedRack);
+				
+				return (
+					<ColumnAssembly
+						key={`column-${index}`}
+						columnId={activeColumnId}
+						legId={activeLegId}
+						armId={activeArmId}
+						rackType={rackType}
+						position={[posX, 0, 0]}
+						isSelected={isSelected}
+					/>
+				);
+			})}
 
 			{racks.map((rack, index) => {
 				const posX = columnPositionsX[index];
 				const braceSize = getPartSize(rack.braceId);
+				const isSelected = rack.id === selectedRack;
 
 				return (
-					<group key={rack.id} position={[posX, 0, 0]}>
-						<BraceAssembly braceSize={braceSize} />
+					<group 
+						key={rack.id} 
+						position={[posX, 0, 0]} 
+						onClick={(e) => {
+							e.stopPropagation();
+							setSelectedRack(rack.id);
+						}}
+					>
+						<BraceAssembly braceSize={braceSize} isSelected={isSelected} />
 						{racks.length > 1 && rack.id !== "initial-rack" && (
 							<Button
 								type="less"

@@ -13,10 +13,13 @@ interface RackState {
   activeBraceId: string;
   activeLegId: string;
   racks: RackConfig[];
+  selectedRack: string | null;
+  metalMaterial: string;
   setRackType: (type: RackType) => void;
   setActiveColumn: (id: string) => void;
   setActiveArm: (id: string) => void;
   setActiveBrace: (id: string) => void;
+  setSelectedRack: (id: string | null) => void;
   addRackLeft: () => void;
   addRackRight: () => void;
   removeRack: (id: string) => void;
@@ -44,6 +47,8 @@ export const useRackStore = create<RackState>((set) => ({
   activeBraceId: defaultBrace,
   activeLegId: defaultLeg,
   racks: [{ id: 'initial-rack', braceId: defaultBrace }],
+  selectedRack: null,
+  metalMaterial: 'Blue',
 
   setRackType: (type) => set((state) => ({
     rackType: type,
@@ -61,6 +66,8 @@ export const useRackStore = create<RackState>((set) => ({
     activeBraceId: id,
     racks: state.racks.map((rack) => ({ ...rack, braceId: id })),
   })),
+
+  setSelectedRack: (id) => set({ selectedRack : id }),
 
   addRackLeft: () => set((state) => {
     const newRack: RackConfig = {

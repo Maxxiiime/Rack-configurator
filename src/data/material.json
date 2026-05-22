@@ -1,0 +1,16 @@
+{
+    "metal": [
+        {
+            "name": "Blue",
+            "settings": {
+                "color": "#3d38ab"
+            }
+        },
+        {
+            "name": "Red",
+            "settings": {
+                "color": "#ff2b36"
+            }
+        }       
+    ]
+}
