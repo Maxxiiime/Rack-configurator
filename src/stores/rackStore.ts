@@ -14,12 +14,14 @@ interface RackState {
   activeLegId: string;
   racks: RackConfig[];
   selectedRack: string | null;
+  editAllRacks: boolean;
   metalMaterial: string;
   setRackType: (type: RackType) => void;
   setActiveColumn: (id: string) => void;
   setActiveArm: (id: string) => void;
   setActiveBrace: (id: string) => void;
   setSelectedRack: (id: string | null) => void;
+  setEditAllRacks: (value: boolean) => void;
   addRackLeft: () => void;
   addRackRight: () => void;
   removeRack: (id: string) => void;
@@ -48,6 +50,7 @@ export const useRackStore = create<RackState>((set) => ({
   activeLegId: defaultLeg,
   racks: [{ id: 'initial-rack', braceId: defaultBrace }],
   selectedRack: null,
+  editAllRacks: true,
   metalMaterial: 'Blue',
 
   setRackType: (type) => set((state) => ({
@@ -55,32 +58,71 @@ export const useRackStore = create<RackState>((set) => ({
     activeLegId: findMatchingLegId(state.activeArmId, type),
   })),
 
-  setActiveColumn: (id) => set({ activeColumnId: id }),
+  setActiveColumn: (id) => set((state) => {
+    if (state.editAllRacks) {
+      // Edit all racks: update global + set override on all racks
+      return {
+        activeColumnId: id,
+        racks: state.racks.map((rack) => ({ ...rack, columnId: id })),
+      };
+    }
+    // Edit selected rack only
+    if (state.selectedRack) {
+      return {
+        racks: state.racks.map((rack) =>
+          rack.id === state.selectedRack ? { ...rack, columnId: id } : rack
+        ),
+      };
+    }
+    // No rack selected, just update global default
+    return { activeColumnId: id };
+  }),
 
   setActiveArm: (id) => set((state) => ({
     activeArmId: id,
     activeLegId: findMatchingLegId(id, state.rackType),
   })),
 
-  setActiveBrace: (id) => set((state) => ({
-    activeBraceId: id,
-    racks: state.racks.map((rack) => ({ ...rack, braceId: id })),
-  })),
+  setActiveBrace: (id) => set((state) => {
+    if (state.editAllRacks) {
+      // Edit all racks: update global + all racks
+      return {
+        activeBraceId: id,
+        racks: state.racks.map((rack) => ({ ...rack, braceId: id })),
+      };
+    }
+    // Edit selected rack only
+    if (state.selectedRack) {
+      return {
+        racks: state.racks.map((rack) =>
+          rack.id === state.selectedRack ? { ...rack, braceId: id } : rack
+        ),
+      };
+    }
+    // No rack selected, just update global default
+    return { activeBraceId: id };
+  }),
 
-  setSelectedRack: (id) => set({ selectedRack : id }),
+  setSelectedRack: (id) => set({ selectedRack: id }),
+
+  setEditAllRacks: (value) => set({ editAllRacks: value }),
 
   addRackLeft: () => set((state) => {
+    const adjacent = state.racks[0];
     const newRack: RackConfig = {
       id: crypto.randomUUID(),
-      braceId: state.activeBraceId,
+      braceId: adjacent?.braceId ?? state.activeBraceId,
+      columnId: adjacent?.columnId,
     };
     return { racks: [newRack, ...state.racks] };
   }),
 
   addRackRight: () => set((state) => {
+    const adjacent = state.racks[state.racks.length - 1];
     const newRack: RackConfig = {
       id: crypto.randomUUID(),
-      braceId: state.activeBraceId,
+      braceId: adjacent?.braceId ?? state.activeBraceId,
+      columnId: adjacent?.columnId,
     };
     return { racks: [...state.racks, newRack] };
   }),

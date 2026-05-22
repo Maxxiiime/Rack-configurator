@@ -40,6 +40,7 @@ export interface ShelvingSizes {
 export interface RackConfig {
 	id: string;
 	braceId: string;
+	columnId?: string;
 }
 
 

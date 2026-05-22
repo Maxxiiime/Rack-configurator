@@ -1,21 +1,20 @@
 import React from 'react';
 import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
-import { useRackStore } from '@/stores/rackStore';
 
 interface BraceAssemblyProps {
   braceSize: number;
   isSelected?: boolean;
+  columnId: string;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, isSelected = false }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, isSelected = false, columnId }) => {
   const { getColumnHeight, findPartId, sizes } = useShelfParts();
-  const activeColumnId = useRackStore((state) => state.activeColumnId);
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
   const xBraceId = findPartId('x_brace', braceSize) ?? '';
 
-  const columnHeight = getColumnHeight(activeColumnId) - sizes.brace.top_offset;
+  const columnHeight = getColumnHeight(columnId) - sizes.brace.top_offset;
   const numLevels = Math.floor(columnHeight / sizes.brace.height);
 
   return (
