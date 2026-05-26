@@ -33,6 +33,13 @@ export const RackSystem: React.FC = () => {
 			const leftRack = colIndex > 0 ? racks[colIndex - 1] : null;
 			const rightRack = colIndex < racks.length ? racks[colIndex] : null;
 
+			// Handle end columns: if there is no rack on one side, 
+			// use the existing adjacent rack's columnId so it correctly resizes 
+			// instead of defaulting to the global activeColumnId.
+			if (!leftRack && rightRack) return rightRack.columnId ?? activeColumnId;
+			if (!rightRack && leftRack) return leftRack.columnId ?? activeColumnId;
+			if (!leftRack && !rightRack) return activeColumnId;
+
 			const leftColumnId = leftRack?.columnId ?? activeColumnId;
 			const rightColumnId = rightRack?.columnId ?? activeColumnId;
 
