@@ -69,8 +69,8 @@ export const Button: React.FC<ButtonProps> = ({ type, position, onClick }) => {
                     viewBox="0 0 256 256"
                     aria-hidden="true"
                     focusable="false"
-                    w={isPlus ? "2.4rem" : "1.9rem"}
-                    h={isPlus ? "2.4rem" : "1.9rem"}
+                    w={isPlus ? "1.8rem" : "1.4rem"}
+                    h={isPlus ? "1.8rem" : "1.4rem"}
                     display="block"
                     transition="transform 140ms ease"
                 >
