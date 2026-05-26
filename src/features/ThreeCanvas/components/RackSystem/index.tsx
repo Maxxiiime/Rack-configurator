@@ -92,7 +92,7 @@ export const RackSystem: React.FC = () => {
 						/>
 						{racks.length > 1 && rack.id !== "initial-rack" && (
 							<Button
-								type="less"
+								type="delete"
 								position={[rackWidths[index] / 2, 1.0, 0]}
 								onClick={() => removeRack(rack.id)}
 							/>
