@@ -18,10 +18,10 @@ const Scene = () => {
                 <RackSystem />
             </Stage>
             <OrbitControls
-                maxPolarAngle={Math.PI / 2}        // Limite de la vue vers le haut
+                maxPolarAngle={Math.PI / 2}       
 
-                minAzimuthAngle={Math.PI / 4}       // Limite gauche vue de l'arrière
-                maxAzimuthAngle={(Math.PI * 7) / 4} // Limite droite vue de l'arrière
+                minAzimuthAngle={4*Math.PI / 9}      
+                maxAzimuthAngle={-4*Math.PI  / 9}
 />
         </>
     );
