@@ -27,6 +27,10 @@ export const useRackPositions = (racks: RackConfig[]) => {
 			columnPositionsX[i] = columnPositionsX[i + 1] - rackWidths[i];
 		}
 
-		return { columnPositionsX, rackWidths };
+		const minX = columnPositionsX[0];
+		const maxX = columnPositionsX[columnPositionsX.length - 1];
+		const centerX = (minX + maxX) / 2;
+
+		return { columnPositionsX, rackWidths, centerX };
 	}, [racks, getPartSize]);
 };

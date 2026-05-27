@@ -25,7 +25,7 @@ export const RackSystem: React.FC = () => {
 	} = useRackStore();
 
 	const { getPartSize, getColumnHeight } = useShelfParts();
-	const { columnPositionsX, rackWidths } = useRackPositions(racks);
+	const { columnPositionsX, rackWidths, centerX } = useRackPositions(racks);
 
 	// For each shared column, pick the tallest columnId between its two adjacent racks
 	const effectiveColumnIds = useMemo(() => {
@@ -59,7 +59,7 @@ export const RackSystem: React.FC = () => {
 	}, [racks, activeColumnId]);
 
 	return (
-		<group onPointerMissed={() => setSelectedRack(null)}>
+		<group position={[-centerX, 0, 0]} onPointerMissed={() => setSelectedRack(null)}>
 			{columnPositionsX.map((posX, index) => {
 				const isSelected =
 					(index < racks.length && racks[index].id === selectedRack) ||

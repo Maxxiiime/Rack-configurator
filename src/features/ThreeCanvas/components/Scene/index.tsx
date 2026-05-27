@@ -1,7 +1,19 @@
 import { OrbitControls, Stage } from "@react-three/drei";
 import { RackSystem } from "../RackSystem";
+import CameraAutoZoom from "./CameraAutoZoom";
+import { useCameraDistance } from "@/hooks/useCameraDistance";
+
+const MIN_MAX_DISTANCE = 50;
+const MAX_DISTANCE_MULTIPLIER = 1.4;
+const MIN_MIN_DISTANCE = 30;
+const MIN_DISTANCE_MULTIPLIER = 0.8;
 
 const Scene = () => {
+    const { autoDistance } = useCameraDistance();
+
+    const maxDistance = Math.max(MIN_MAX_DISTANCE, autoDistance * MAX_DISTANCE_MULTIPLIER);
+    const minDistance = Math.max(MIN_MIN_DISTANCE, autoDistance * MIN_DISTANCE_MULTIPLIER);
+
     return (
         <>
             <Stage
@@ -18,11 +30,11 @@ const Scene = () => {
                 <RackSystem />
             </Stage>
             <OrbitControls
-                maxPolarAngle={Math.PI / 2}       
-
-                minAzimuthAngle={4*Math.PI / 9}      
-                maxAzimuthAngle={-4*Math.PI  / 9}
-/>
+                maxPolarAngle={Math.PI / 2}
+                maxDistance={maxDistance}
+                minDistance={minDistance}
+            />
+            <CameraAutoZoom />
         </>
     );
 };
