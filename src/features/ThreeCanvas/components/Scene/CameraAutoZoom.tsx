@@ -4,7 +4,7 @@ import { useCameraDistance } from "@/hooks/useCameraDistance";
 import * as THREE from "three";
 
 const MIN_DISTANCE = 30;
-const LERP_SPEED = 3;
+const LERP_SPEED = 10;
 const ARRIVAL_THRESHOLD = 0.05;
 
 /**
