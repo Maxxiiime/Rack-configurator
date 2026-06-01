@@ -21,6 +21,7 @@
 			"@/theme/*": ["src/theme/*"],
 			"@/layouts/*": ["src/layouts/*"],
 			"@/types/*": ["src/types/*"],
+			"@/utils/*": ["src/utils/*"],
 			"@/root/*": ["./*"]
 		},
 
