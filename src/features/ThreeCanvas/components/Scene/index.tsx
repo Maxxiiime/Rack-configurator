@@ -29,11 +29,15 @@ const Scene = () => {
             >
                 <RackSystem />
             </Stage>
-            <OrbitControls
-                maxPolarAngle={Math.PI / 2}
-                maxDistance={maxDistance}
-                minDistance={minDistance}
-            />
+            {import.meta.env.DEV ? (
+                <OrbitControls />
+            ) : (
+                <OrbitControls
+                    maxPolarAngle={Math.PI / 2}
+                    maxDistance={maxDistance}
+                    minDistance={minDistance}
+                />
+            )}
             <CameraAutoZoom />
         </>
     );
