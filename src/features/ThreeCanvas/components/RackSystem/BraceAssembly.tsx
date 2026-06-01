@@ -4,11 +4,10 @@ import { useShelfParts } from '@/hooks/useShelfParts';
 
 interface BraceAssemblyProps {
   braceSize: number;
-  isSelected?: boolean;
   columnId: string;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, isSelected = false, columnId }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId }) => {
   const { getColumnHeight, findPartId, sizes } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
@@ -19,14 +18,14 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, isSelec
 
   return (
     <group>
-      <BasePart id={hBraceId} position={[sizes.brace.h_x, columnHeight, sizes.brace.h_z]} isSelected={isSelected} />
+      <BasePart id={hBraceId} position={[sizes.brace.h_x, columnHeight, sizes.brace.h_z]} />
       {Array.from({ length: numLevels }).map((_, i) => {
         const y = columnHeight - (i + 1) * sizes.brace.height;
         return (
           <group key={i}>
-            <BasePart id={hBraceId} position={[sizes.brace.h_x, y, sizes.brace.h_z]} isSelected={isSelected} />
+            <BasePart id={hBraceId} position={[sizes.brace.h_x, y, sizes.brace.h_z]} />
             {i === 0 && (
-              <BasePart id={xBraceId} position={[sizes.brace.x_x, y, sizes.brace.x_z]} isSelected={isSelected} />
+              <BasePart id={xBraceId} position={[sizes.brace.x_x, y, sizes.brace.x_z]} />
             )}
           </group>
         );

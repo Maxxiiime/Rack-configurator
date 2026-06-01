@@ -36,11 +36,3 @@ export interface ShelvingSizes {
 		height: number;
 	};
 }
-
-export interface RackConfig {
-	id: string;
-	braceId: string;
-	columnId?: string;
-}
-
-

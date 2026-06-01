@@ -1,31 +1,10 @@
 import create from 'zustand';
 import partsData from '@/data/shelving_parts.json';
-import type { ShelvingPart, RackConfig } from '@/types/shelving';
+import type { ShelvingPart } from '@/types/shelving';
 
 export type RackType = 'single' | 'double';
 
 const typedParts = partsData as ShelvingPart[];
-
-interface RackState {
-  rackType: RackType;
-  activeColumnId: string;
-  activeArmId: string;
-  activeBraceId: string;
-  activeLegId: string;
-  racks: RackConfig[];
-  selectedRack: string | null;
-  editAllRacks: boolean;
-  metalMaterial: string;
-  setRackType: (type: RackType) => void;
-  setActiveColumn: (id: string) => void;
-  setActiveArm: (id: string) => void;
-  setActiveBrace: (id: string) => void;
-  setSelectedRack: (id: string | null) => void;
-  setEditAllRacks: (value: boolean) => void;
-  addRackLeft: () => void;
-  addRackRight: () => void;
-  removeRack: (id: string) => void;
-}
 
 /** Find the matching leg part for a given arm size and rack type */
 const findMatchingLegId = (armId: string, rackType: RackType): string => {
@@ -40,95 +19,55 @@ const findMatchingLegId = (armId: string, rackType: RackType): string => {
 const defaultColumn = typedParts.find(p => p.category === 'column')?.shelving_system_id || '';
 const defaultArm = typedParts.find(p => p.category === 'arm')?.shelving_system_id || '';
 const defaultBrace = typedParts.find(p => p.category === 'x_brace')?.shelving_system_id || '';
-const defaultLeg = typedParts.find(p => p.category === 'single_leg')?.shelving_system_id || '';
+
+const INITIAL_RACK_ID = 'initial-rack';
+
+interface RackState {
+  rackType: RackType;
+  columnId: string;
+  armId: string;
+  braceId: string;
+  rackIds: string[];
+  metalMaterial: string;
+  setRackType: (type: RackType) => void;
+  setColumnId: (id: string) => void;
+  setArmId: (id: string) => void;
+  setBraceId: (id: string) => void;
+  addRackLeft: () => void;
+  addRackRight: () => void;
+  removeRack: (id: string) => void;
+}
+
+/** Derived selector — leg is always computed from arm + rackType */
+export const selectActiveLegId = (state: RackState) =>
+  findMatchingLegId(state.armId, state.rackType);
 
 export const useRackStore = create<RackState>((set) => ({
   rackType: 'single',
-  activeColumnId: defaultColumn,
-  activeArmId: defaultArm,
-  activeBraceId: defaultBrace,
-  activeLegId: defaultLeg,
-  racks: [{ id: 'initial-rack', braceId: defaultBrace }],
-  selectedRack: null,
-  editAllRacks: true,
+  columnId: defaultColumn,
+  armId: defaultArm,
+  braceId: defaultBrace,
+  rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
 
-  setRackType: (type) => set((state) => ({
-    rackType: type,
-    activeLegId: findMatchingLegId(state.activeArmId, type),
+  setRackType: (type) => set({ rackType: type }),
+
+  setColumnId: (id) => set({ columnId: id }),
+
+  setArmId: (id) => set({ armId: id }),
+
+  setBraceId: (id) => set({ braceId: id }),
+
+  addRackLeft: () => set((state) => ({
+    rackIds: [crypto.randomUUID(), ...state.rackIds],
   })),
 
-  setActiveColumn: (id) => set((state) => {
-    if (state.editAllRacks) {
-      // Edit all racks: update global + set override on all racks
-      return {
-        activeColumnId: id,
-        racks: state.racks.map((rack) => ({ ...rack, columnId: id })),
-      };
-    }
-    // Edit selected rack only
-    if (state.selectedRack) {
-      return {
-        racks: state.racks.map((rack) =>
-          rack.id === state.selectedRack ? { ...rack, columnId: id } : rack
-        ),
-      };
-    }
-    // No rack selected, just update global default
-    return { activeColumnId: id };
-  }),
-
-  setActiveArm: (id) => set((state) => ({
-    activeArmId: id,
-    activeLegId: findMatchingLegId(id, state.rackType),
+  addRackRight: () => set((state) => ({
+    rackIds: [...state.rackIds, crypto.randomUUID()],
   })),
-
-  setActiveBrace: (id) => set((state) => {
-    if (state.editAllRacks) {
-      // Edit all racks: update global + all racks
-      return {
-        activeBraceId: id,
-        racks: state.racks.map((rack) => ({ ...rack, braceId: id })),
-      };
-    }
-    // Edit selected rack only
-    if (state.selectedRack) {
-      return {
-        racks: state.racks.map((rack) =>
-          rack.id === state.selectedRack ? { ...rack, braceId: id } : rack
-        ),
-      };
-    }
-    // No rack selected, just update global default
-    return { activeBraceId: id };
-  }),
-
-  setSelectedRack: (id) => set({ selectedRack: id }),
-
-  setEditAllRacks: (value) => set({ editAllRacks: value }),
-
-  addRackLeft: () => set((state) => {
-    const adjacent = state.racks[0];
-    const newRack: RackConfig = {
-      id: crypto.randomUUID(),
-      braceId: adjacent?.braceId ?? state.activeBraceId,
-      columnId: adjacent?.columnId,
-    };
-    return { racks: [newRack, ...state.racks] };
-  }),
-
-  addRackRight: () => set((state) => {
-    const adjacent = state.racks[state.racks.length - 1];
-    const newRack: RackConfig = {
-      id: crypto.randomUUID(),
-      braceId: adjacent?.braceId ?? state.activeBraceId,
-      columnId: adjacent?.columnId,
-    };
-    return { racks: [...state.racks, newRack] };
-  }),
 
   removeRack: (id) => set((state) => {
-    if (state.racks.length <= 1 || id === 'initial-rack') return {};
-    return { racks: state.racks.filter((rack) => rack.id !== id) };
+    if (state.rackIds.length <= 1 || id === INITIAL_RACK_ID) return {};
+    return { rackIds: state.rackIds.filter((rackId) => rackId !== id) };
   }),
 }));

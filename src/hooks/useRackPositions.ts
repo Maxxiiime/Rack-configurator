@@ -1,24 +1,28 @@
 import { useMemo } from 'react';
 import { useShelfParts } from "./useShelfParts";
-import type { RackConfig } from "@/types/shelving";
+import { useRackStore } from "@/stores/rackStore";
 
-export const useRackPositions = (racks: RackConfig[]) => {
+export const useRackPositions = () => {
+	const rackIds = useRackStore((s) => s.rackIds);
+	const braceId = useRackStore((s) => s.braceId);
 	const { getPartSize } = useShelfParts();
 
 	return useMemo(() => {
-		// Calculate widths and positions for each rack
-		const rackWidths = racks.map((rack) => getPartSize(rack.braceId) / 100);
+		const braceWidth = getPartSize(braceId) / 100;
+
+		// All racks share the same width
+		const rackWidths = rackIds.map(() => braceWidth);
 
 		// Find the initial rack to keep positions stable
-		const anchorIndex = racks.findIndex((rack) => rack.id === "initial-rack");
+		const anchorIndex = rackIds.indexOf("initial-rack");
 		const anchorIdx = anchorIndex !== -1 ? anchorIndex : 0;
 
 		// Calculate column positions relative to the anchor rack starting at 0
-		const columnPositionsX: number[] = new Array(racks.length + 1);
+		const columnPositionsX: number[] = new Array(rackIds.length + 1);
 		columnPositionsX[anchorIdx] = 0;
 
 		// Calculate forward from anchor
-		for (let i = anchorIdx + 1; i <= racks.length; i++) {
+		for (let i = anchorIdx + 1; i <= rackIds.length; i++) {
 			columnPositionsX[i] = columnPositionsX[i - 1] + rackWidths[i - 1];
 		}
 
@@ -32,5 +36,5 @@ export const useRackPositions = (racks: RackConfig[]) => {
 		const centerX = (minX + maxX) / 2;
 
 		return { columnPositionsX, rackWidths, centerX };
-	}, [racks, getPartSize]);
+	}, [rackIds, braceId, getPartSize]);
 };

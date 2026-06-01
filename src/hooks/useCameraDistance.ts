@@ -15,9 +15,8 @@ const PADDING_VERTICAL = 1.8;
  */
 export const useCameraDistance = () => {
 	const { camera } = useThree();
-	const racks = useRackStore((s) => s.racks);
-	const activeColumnId = useRackStore((s) => s.activeColumnId);
-	const { columnPositionsX } = useRackPositions(racks);
+	const columnId = useRackStore((s) => s.columnId);
+	const { columnPositionsX } = useRackPositions();
 	const { getColumnHeight } = useShelfParts();
 
 	const totalWidth = useMemo(() => {
@@ -27,11 +26,8 @@ export const useCameraDistance = () => {
 	}, [columnPositionsX]);
 
 	const maxHeight = useMemo(() => {
-		const heights = racks.map((rack) =>
-			getColumnHeight(rack.columnId ?? activeColumnId)
-		);
-		return Math.max(...heights);
-	}, [racks, activeColumnId, getColumnHeight]);
+		return getColumnHeight(columnId);
+	}, [columnId, getColumnHeight]);
 
 	const autoDistance = useMemo(() => {
 		const perspCamera = camera as PerspectiveCamera;

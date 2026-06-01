@@ -6,89 +6,61 @@ import { useShelfParts } from "@/hooks/useShelfParts";
 export const useRackControls = () => {
 	const {
 		rackType,
-		activeColumnId,
-		activeArmId,
-		activeBraceId,
-		selectedRack,
-		racks,
-		editAllRacks,
+		columnId,
+		armId,
+		braceId,
 		setRackType,
-		setActiveColumn,
-		setActiveArm,
-		setActiveBrace,
-		setEditAllRacks,
+		setColumnId,
+		setArmId,
+		setBraceId,
 	} = useRackStore();
 
 	const { getColumnsOptions, getArmsOptions, getPartSize, findPartId } = useShelfParts();
-
-	const selectedRackConfig = useMemo(
-		() => racks.find((r) => r.id === selectedRack),
-		[racks, selectedRack]
-	);
-
-	const effectiveColumnId = selectedRackConfig?.columnId ?? activeColumnId;
-	const effectiveBraceId = selectedRackConfig?.braceId ?? activeBraceId;
 
 	const columnsOpts = useMemo(() => getColumnsOptions(), [getColumnsOptions]);
 	const armsOpts = useMemo(() => getArmsOptions(), [getArmsOptions]);
 
 	const widthOpts = useMemo(() => [750, 1000, 1250, 1500, 1750, 2000], []);
-	const initialWidth = useMemo(() => getPartSize(activeBraceId) || 1000, []);
+	const initialWidth = useMemo(() => getPartSize(braceId) || 1000, []);
 
-	// Global controls (apply to all racks)
-	const [, setGlobal] = useControls(
-		"Global",
+	const [, setControls] = useControls(
+		"Rack Settings",
 		() => ({
 			Type: {
 				value: rackType,
 				options: { Single: "single", Double: "double" },
 				onChange: (v) => setRackType(v as RackType),
 			},
-			Arm: {
-				value: activeArmId,
-				options: armsOpts,
-				onChange: (v) => setActiveArm(v),
-			},
-		}),
-		[armsOpts]
-	);
-
-	// Per-rack or global controls (depend on "Edit All Racks" toggle)
-	const [, setIndividual] = useControls(
-		"Global or Individual",
-		() => ({
-			"Edit All Racks": {
-				value: editAllRacks,
-				onChange: (v: boolean) => setEditAllRacks(v),
-			},
 			Column: {
-				value: effectiveColumnId,
+				value: columnId,
 				options: columnsOpts,
-				onChange: (v) => setActiveColumn(v),
+				onChange: (v) => setColumnId(v),
+			},
+			Arm: {
+				value: armId,
+				options: armsOpts,
+				onChange: (v) => setArmId(v),
 			},
 			Width: {
-				value: getPartSize(effectiveBraceId) || initialWidth,
+				value: getPartSize(braceId) || initialWidth,
 				options: widthOpts,
 				onChange: (v) => {
 					const newBraceId = findPartId('x_brace', v);
 					if (newBraceId) {
-						setActiveBrace(newBraceId);
+						setBraceId(newBraceId);
 					}
 				},
 			},
 		}),
-		[columnsOpts, initialWidth, editAllRacks]
+		[columnsOpts, armsOpts, initialWidth]
 	);
 
 	useEffect(() => {
-		setGlobal({
+		setControls({
 			Type: rackType,
-			Arm: activeArmId,
+			Column: columnId,
+			Arm: armId,
+			Width: getPartSize(braceId) || 1000,
 		});
-		setIndividual({
-			"Edit All Racks": editAllRacks,
-			Column: effectiveColumnId,
-			Width: getPartSize(effectiveBraceId) || 1000,
-		});
-	}, [rackType, effectiveColumnId, activeArmId, effectiveBraceId, editAllRacks, setGlobal, setIndividual, getPartSize]);
+	}, [rackType, columnId, armId, braceId, setControls, getPartSize]);
 };

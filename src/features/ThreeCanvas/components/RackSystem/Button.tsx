@@ -80,5 +80,3 @@ export const Button: React.FC<ButtonProps> = ({ type, position, onClick }) => {
         </Html>
     );
 };
-
-export default Button;
