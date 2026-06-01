@@ -27,12 +27,16 @@ interface RackState {
   columnId: string;
   armId: string;
   braceId: string;
+  armSpacing: number;
+  armCount: number;
   rackIds: string[];
   metalMaterial: string;
   setRackType: (type: RackType) => void;
   setColumnId: (id: string) => void;
   setArmId: (id: string) => void;
   setBraceId: (id: string) => void;
+  setArmSpacing: (spacing: number) => void;
+  setArmCount: (count: number) => void;
   addRackLeft: () => void;
   addRackRight: () => void;
   removeRack: (id: string) => void;
@@ -47,6 +51,8 @@ export const useRackStore = create<RackState>((set) => ({
   columnId: defaultColumn,
   armId: defaultArm,
   braceId: defaultBrace,
+  armSpacing: 2,
+  armCount: 99,
   rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
 
@@ -57,6 +63,10 @@ export const useRackStore = create<RackState>((set) => ({
   setArmId: (id) => set({ armId: id }),
 
   setBraceId: (id) => set({ braceId: id }),
+
+  setArmSpacing: (spacing) => set({ armSpacing: Math.max(2, spacing) }),
+
+  setArmCount: (count) => set({ armCount: Math.max(1, count) }),
 
   addRackLeft: () => set((state) => ({
     rackIds: [crypto.randomUUID(), ...state.rackIds],

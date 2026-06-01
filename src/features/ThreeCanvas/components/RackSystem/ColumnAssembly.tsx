@@ -1,7 +1,8 @@
 import React from 'react';
 import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
-import { RackType } from '@/stores/rackStore';
+import { useRackStore, RackType } from '@/stores/rackStore';
+import { computeArmPositions } from '@/utils/armPositions';
 
 interface ColumnAssemblyProps {
   columnId: string;
@@ -19,14 +20,16 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
 }) => {
   const { getColumnHeight, sizes } = useShelfParts();
+  const { armSpacing, armCount } = useRackStore();
 
   const columnHeightUnits = getColumnHeight(columnId);
-  const maxArmY = columnHeightUnits - sizes.arm.end_y;
-  
-  const armPositions: number[] = [];
-  for (let y = sizes.arm.start_y; y <= maxArmY; y += 3) {
-    armPositions.push(y);
-  }
+  const armPositions = computeArmPositions(
+    sizes.arm.start_y,
+    sizes.arm.end_y,
+    columnHeightUnits,
+    armSpacing,
+    armCount
+  );
 
   return (
     <group position={position}>
