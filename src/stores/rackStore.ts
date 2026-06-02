@@ -31,6 +31,8 @@ interface RackState {
   armCount: number;
   rackIds: string[];
   metalMaterial: string;
+  showDimensions: boolean;
+
   setRackType: (type: RackType) => void;
   setColumnId: (id: string) => void;
   setArmId: (id: string) => void;
@@ -40,6 +42,7 @@ interface RackState {
   addRackLeft: () => void;
   addRackRight: () => void;
   removeRack: (id: string) => void;
+  setShowDimensions: (showDimensions: boolean) => void;
 }
 
 /** Derived selector — leg is always computed from arm + rackType */
@@ -55,6 +58,7 @@ export const useRackStore = create<RackState>((set) => ({
   armCount: 99,
   rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
+  showDimensions: false,
 
   setRackType: (type) => set({ rackType: type }),
 
@@ -80,4 +84,6 @@ export const useRackStore = create<RackState>((set) => ({
     if (state.rackIds.length <= 1 || id === INITIAL_RACK_ID) return {};
     return { rackIds: state.rackIds.filter((rackId) => rackId !== id) };
   }),
+
+  setShowDimensions: (showDimensions) => set({ showDimensions }),
 }));
