@@ -54,7 +54,7 @@ export const useRackStore = create<RackState>((set) => ({
   columnId: defaultColumn,
   armId: defaultArm,
   braceId: defaultBrace,
-  armSpacing: 2,
+  armSpacing: 3,
   armCount: 99,
   rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
