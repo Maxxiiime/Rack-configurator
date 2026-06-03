@@ -15,7 +15,7 @@ export function getMaxArmCount(
 
 /**
  * Compute the Y positions of arms on a column.
- * All positions follow the pattern n + 0.45 (1.45, 2.45, 3.45, ...)
+ * Arms are centered vertically if the count is less than the max capacity.
  */
 export function computeArmPositions(
   startY: number,
@@ -27,9 +27,21 @@ export function computeArmPositions(
   const maxCount = getMaxArmCount(startY, endY, columnHeight, spacing);
   const clampedCount = Math.max(0, Math.min(count, maxCount));
 
+  if (clampedCount === 0) return [];
+
+  const topLimit = columnHeight - endY;
+  const availableSpan = topLimit - startY;
+
+  const armsTotalSpan = (clampedCount - 1) * spacing;
+
+  const offset = (availableSpan - armsTotalSpan) / 2;
+
+  const centeredStartY = startY + offset;
+
   const positions: number[] = [];
   for (let i = 0; i < clampedCount; i++) {
-    positions.push(startY + i * spacing);
+    positions.push(centeredStartY + i * spacing);
   }
+  
   return positions;
 }
