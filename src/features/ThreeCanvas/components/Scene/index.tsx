@@ -36,6 +36,7 @@ const Scene = () => {
                     maxPolarAngle={Math.PI / 2}
                     maxDistance={maxDistance}
                     minDistance={minDistance}
+                    dampingFactor={0.2}
                 />
             )}
             <CameraAutoZoom />
