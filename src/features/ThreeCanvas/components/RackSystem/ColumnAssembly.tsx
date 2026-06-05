@@ -25,7 +25,6 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const columnHeightUnits = getColumnHeight(columnId);
   const armPositions = computeArmPositions(
     sizes.arm.start_y,
-    sizes.arm.end_y,
     columnHeightUnits,
     armSpacing,
     armCount

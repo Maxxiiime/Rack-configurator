@@ -4,7 +4,6 @@
  */
 export function getMaxArmCount(
   startY: number,
-  endY: number,
   columnHeight: number,
   spacing: number
 ): number {
@@ -19,12 +18,11 @@ export function getMaxArmCount(
  */
 export function computeArmPositions(
   startY: number,
-  endY: number,
   columnHeight: number,
   spacing: number,
   count: number
 ): number[] {
-  const maxCount = getMaxArmCount(startY, endY, columnHeight, spacing);
+  const maxCount = getMaxArmCount(startY, columnHeight, spacing);
   const clampedCount = Math.max(0, Math.min(count, maxCount));
 
   if (clampedCount === 0) return [];

@@ -23,7 +23,6 @@ export interface ShelvingSizes {
 		x: number;
 		z: number;
 		start_y: number;
-		end_y: number;
 		double_x: number;
 		double_z: number;
 	};

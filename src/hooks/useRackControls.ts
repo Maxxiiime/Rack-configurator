@@ -31,8 +31,8 @@ export const useRackControls = () => {
 	// Compute the max arm count based on current column height and spacing
 	const columnHeightUnits = getColumnHeight(columnId);
 	const maxArms = useMemo(
-		() => getMaxArmCount(sizes.arm.start_y, sizes.arm.end_y, columnHeightUnits, armSpacing),
-		[columnHeightUnits, armSpacing, sizes.arm.start_y, sizes.arm.end_y]
+		() => getMaxArmCount(sizes.arm.start_y, columnHeightUnits, armSpacing),
+		[columnHeightUnits, armSpacing, sizes.arm.start_y]
 	);
 
 	const [, setControls] = useControls(
