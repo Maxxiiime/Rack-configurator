@@ -129,7 +129,7 @@ const RackControls: React.FC = () => {
   const columnOpts = useMemo(() => {
     const raw = getColumnsOptions();
     return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Column ", "").replace(/^(\d+)$/, (mm) => `${+mm / 10}`),
+      label: label.replace("Column ", ""),
       value,
     }));
   }, [getColumnsOptions]);
@@ -137,13 +137,13 @@ const RackControls: React.FC = () => {
   const armsOpts = useMemo(() => {
     const raw = getArmsOptions();
     return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Arm ", "").replace(/^(\d+)$/, (mm) => `${+mm / 10}`),
+      label: label.replace("Arm ", ""),
       value,
     }));
   }, [getArmsOptions]);
 
   const widthOpts = useMemo(
-    () => [750, 1000, 1250, 1500, 1750, 2000].map((v) => ({ label: `${v / 10}`, value: v })),
+    () => [750, 1000, 1250, 1500, 1750, 2000].map((v) => ({ label: String(v), value: v })),
     []
   );
 
@@ -179,7 +179,7 @@ const RackControls: React.FC = () => {
         <Box {...sectionBoxStyle}>
           <Text {...sectionLabelStyle}>Dimensions</Text>
           <VStack align="stretch" spacing={2}>
-            <Row label="Height (cm)">
+            <Row label="Height (mm)">
               <Select {...selectStyle} value={columnId} onChange={(e) => setColumnId(e.target.value)}>
                 {columnOpts.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -187,7 +187,7 @@ const RackControls: React.FC = () => {
               </Select>
             </Row>
 
-            <Row label="Width (cm)">
+            <Row label="Width (mm)">
               <Select
                 {...selectStyle}
                 value={currentWidth}
@@ -203,7 +203,7 @@ const RackControls: React.FC = () => {
               </Select>
             </Row>
 
-            <Row label="Depth (cm)">
+            <Row label="Depth (mm)">
               <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
                 {armsOpts.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -242,14 +242,14 @@ const RackControls: React.FC = () => {
 
             {/* Spacing */}
             <Box>
-              <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Spacing (cm)</Text>
+              <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Spacing (mm)</Text>
               <Flex align="center" gap={2}>
                 <Stepper
-                  value={armSpacing * 10}
-                  min={20}
-                  max={100}
-                  step={10}
-                  onChange={(v) => setArmSpacing(v / 10)}
+                  value={armSpacing * 100}
+                  min={200}
+                  max={1000}
+                  step={100}
+                  onChange={(v) => setArmSpacing(v / 100)}
                 />
                 <Slider
                   flex={1}

@@ -104,7 +104,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             <Line points={xTickRight} color={mainColor} lineWidth={2} />
             <Html position={xLabelPos} center zIndexRange={[100, 0]}>
                 <div style={labelStyle}>
-                    {`${(lengthX * 100).toFixed(1)} cm`}
+                    {`${(lengthX * 1000).toFixed(0)} mm`}
                 </div>
             </Html>
 
@@ -116,7 +116,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             <Line points={yTickTop} color={mainColor} lineWidth={2} />
             <Html position={yLabelPos} center zIndexRange={[100, 0]}>
                 <div style={labelStyle}>
-                    {`${(heightY * 100).toFixed(1)} cm`}
+                    {`${(heightY * 1000).toFixed(0)} mm`}
                 </div>
             </Html>
 
@@ -128,7 +128,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             <Line points={zTickBack} color={mainColor} lineWidth={2} />
             <Html position={zLabelPos} center zIndexRange={[100, 0]}>
                 <div style={labelStyle}>
-                    {`${(depthZ * 100).toFixed(1)} cm`}
+                    {`${(depthZ * 1000).toFixed(0)} mm`}
                 </div>
             </Html>
         </group>
