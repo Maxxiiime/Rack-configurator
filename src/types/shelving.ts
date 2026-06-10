@@ -8,6 +8,15 @@ export interface ShelvingPart {
 	path: string;
 }
 
+export type BraceType = 'h_brace' | 'x_brace';
+
+export interface BraceElement {
+	type: BraceType;
+	y_position: number;
+}
+
+export type BraceLayouts = Record<string, BraceElement[]>;
+
 export interface ShelvingSizes {
 	column: {
 		x: number;
@@ -31,7 +40,5 @@ export interface ShelvingSizes {
 		h_z: number;
 		x_x: number;
 		x_z: number;
-		top_offset: number;
-		height: number;
 	};
 }
