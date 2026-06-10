@@ -4,6 +4,7 @@ import Scene from "./components/Scene";
 import { Perf } from "r3f-webgpu-perf";
 import Button from "@/components/Button";
 import { useRackStore } from "@/stores/rackStore";
+import RackControls from "@/features/RackControls";
 
 const ThreeCanvas = () => {
 	const setShowDimensions = useRackStore((s) => s.setShowDimensions);
@@ -19,6 +20,7 @@ const ThreeCanvas = () => {
 				type="dimension"
 				onClick={() => setShowDimensions(!showDimensions)}
 			/>
+			<RackControls />
 		</Box>
 	);
 };

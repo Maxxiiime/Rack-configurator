@@ -4,14 +4,11 @@ import { useRackStore, selectActiveLegId } from "@/stores/rackStore";
 import { ColumnAssembly } from "./ColumnAssembly";
 import { BraceAssembly } from "./BraceAssembly";
 import { useShelfParts } from "@/hooks/useShelfParts";
-import { useRackControls } from "@/hooks/useRackControls";
 import { useRackPositions } from "@/hooks/useRackPositions";
 import { Button3D } from "./Button3D";
 import { DimensionLines } from "./DimensionLines";
 
 export const RackSystem: React.FC = () => {
-	useRackControls();
-
 
 	const rackType = useRackStore((s) => s.rackType);
 	const columnId = useRackStore((s) => s.columnId);
