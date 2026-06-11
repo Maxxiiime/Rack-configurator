@@ -12,7 +12,7 @@ interface BraceAssemblyProps {
 }
 
 export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId }) => {
-  const { findPartId, getPartSize, sizes } = useShelfParts();
+  const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
   const xBraceId = findPartId('x_brace', braceSize) ?? '';
@@ -28,8 +28,8 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
         const isHBrace = element.type === 'h_brace';
         const id = isHBrace ? hBraceId : xBraceId;
         const position: [number, number, number] = isHBrace
-          ? [sizes.brace.h_x, y, sizes.brace.h_z]
-          : [sizes.brace.x_x, y, sizes.brace.x_z];
+          ? [offsets.brace.h_x, y, offsets.brace.h_z]
+          : [offsets.brace.x_x, y, offsets.brace.x_z];
 
         return <BasePart key={`${element.type}-${i}`} id={id} position={position} />;
       })}

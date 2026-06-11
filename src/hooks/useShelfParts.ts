@@ -1,9 +1,9 @@
-import sizes from '@/data/shelving_sizes.json';
+import offsets from '@/data/shelving_offset.json';
 import partsData from '@/data/shelving_parts.json';
-import type { ShelvingPart, ShelvingSizes } from '@/types/shelving';
+import type { ShelvingPart, ShelvingOffsets } from '@/types/shelving';
 
 const typedParts = partsData as ShelvingPart[];
-const typedSizes = sizes as ShelvingSizes;
+const typedOffsets = offsets as ShelvingOffsets;
 
 export const useShelfParts = () => {
   const getColumnsOptions = (): Record<string, string> => {
@@ -50,7 +50,7 @@ export const useShelfParts = () => {
     getPartSize,
     findPartId,
     getPartData,
-    sizes: typedSizes,
+    offsets: typedOffsets,
     partsData: typedParts,
   };
 };

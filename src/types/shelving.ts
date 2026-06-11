@@ -17,7 +17,7 @@ export interface BraceElement {
 
 export type BraceLayouts = Record<string, BraceElement[]>;
 
-export interface ShelvingSizes {
+export interface ShelvingOffsets {
 	column: {
 		x: number;
 		z: number;

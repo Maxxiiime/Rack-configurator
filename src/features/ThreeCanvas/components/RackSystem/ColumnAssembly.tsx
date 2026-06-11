@@ -19,12 +19,12 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   rackType,
   position = [0, 0, 0],
 }) => {
-  const { getColumnHeight, sizes } = useShelfParts();
+  const { getColumnHeight, offsets } = useShelfParts();
   const { armSpacing, armCount } = useRackStore();
 
   const columnHeightUnits = getColumnHeight(columnId);
   const armPositions = computeArmPositions(
-    sizes.arm.start_y,
+    offsets.arm.start_y,
     columnHeightUnits,
     armSpacing,
     armCount
@@ -33,14 +33,14 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   return (
     <group position={position}>
       {/*COLUMN*/}
-      <BasePart id={columnId} position={[sizes.column.x, 0, sizes.column.z]} />
+      <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} />
       {/*LEGS*/}
       <BasePart
         id={legId}
         position={
           rackType === 'double'
-            ? [sizes.leg.x, sizes.leg.y, sizes.leg.double_z]
-            : [sizes.leg.x, sizes.leg.y, sizes.leg.z]
+            ? [offsets.leg.x, offsets.leg.y, offsets.leg.double_z]
+            : [offsets.leg.x, offsets.leg.y, offsets.leg.z]
         }
       />
       {armPositions.map((yPos, i) => {
@@ -49,12 +49,12 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             {/*ARMS*/}
             <BasePart
               id={armId}
-              position={[sizes.arm.x, yPos, sizes.arm.z]}
+              position={[offsets.arm.x, yPos, offsets.arm.z]}
             />
             {rackType === 'double' && (
               <BasePart
                 id={armId}
-                position={[sizes.arm.double_x, yPos, sizes.arm.double_z]}
+                position={[offsets.arm.double_x, yPos, offsets.arm.double_z]}
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
               />
             )}

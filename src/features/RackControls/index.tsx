@@ -122,7 +122,7 @@ const RackControls: React.FC = () => {
     setArmCount,
   } = useRackStore();
 
-  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, sizes } =
+  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
     useShelfParts();
 
   /* options */
@@ -152,8 +152,8 @@ const RackControls: React.FC = () => {
   /* arm count constraints */
   const columnHeightUnits = getColumnHeight(columnId);
   const maxArms = useMemo(
-    () => getMaxArmCount(sizes.arm.start_y, columnHeightUnits, armSpacing),
-    [columnHeightUnits, armSpacing, sizes.arm.start_y]
+    () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, armSpacing),
+    [columnHeightUnits, armSpacing, offsets.arm.start_y]
   );
   const clampedArmCount = Math.min(armCount, maxArms);
 
