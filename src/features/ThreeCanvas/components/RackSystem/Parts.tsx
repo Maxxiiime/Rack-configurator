@@ -22,7 +22,7 @@ export const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotati
   const { getMetalMaterial } = useMaterial();
   
   const partData = getPartData(id);
-  const isArm = partData?.category === 'arm';
+  const isArm = partData?.category === 'arm' || partData?.category === 'arms_bolt';
   const materialName = isArm ? 'Red' : 'Blue';
   const fallbackPath = '/model/columns/Kolommen_2M.glb';
 

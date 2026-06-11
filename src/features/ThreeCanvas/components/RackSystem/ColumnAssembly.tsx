@@ -51,6 +51,12 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               id={armId}
               position={[offsets.arm.x, yPos, offsets.arm.z]}
             />
+             {/* ARMS BOLT */}
+            <BasePart
+              id={"arms_bolt"}
+              position={[offsets.arms_bolt.x, yPos + offsets.arms_bolt.y, offsets.arms_bolt.z]}
+              rotation={[0, Math.PI/2, 0]}
+            />
             {rackType === 'double' && (
               <BasePart
                 id={armId}
@@ -61,6 +67,8 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
           </group>
         );
       })}
+
+     
     </group>
   );
 };

@@ -208,5 +208,11 @@
         "size_mm": 1250,
         "name": "Single Leg 1250",
         "path": "/model/legs/Enkelzijdige_1250.glb"
+    },
+    {
+        "shelving_system_id": "arms_bolt",
+        "category": "arms_bolt",
+        "name": "Arms Bolt",
+        "path": "/model/Arms_bolt.glb"
     }
 ]
