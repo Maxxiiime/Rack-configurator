@@ -4,24 +4,37 @@ import Scene from "./components/Scene";
 import { Perf } from "r3f-webgpu-perf";
 import Button from "@/components/Button";
 import { useRackStore } from "@/stores/rackStore";
+import { useAppStore } from "@/stores/appStore";
 import Sidepanel from "../Sidepanel";
 
+const SIDEPANEL_WIDTH = 300;
 
 const ThreeCanvas = () => {
 	const setShowDimensions = useRackStore((s) => s.setShowDimensions);
 	const showDimensions = useRackStore((s) => s.showDimensions);
+	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (
 		<Box w="100%" h="100vh" zIndex={0} position="relative">
-			<Canvas camera={{ fov: 45, position: [0, 5, -30] }}>
-				<Scene />
-				{import.meta.env.MODE === "development" && <Perf position="top-left" showVRAM />}
-			</Canvas>
+			<Box
+				position="absolute"
+				top={0}
+				left={0}
+				w="100%"
+				h="100%"
+				transition="transform 0.25s ease"
+				transform={sidePanelOpen ? `translateX(-${SIDEPANEL_WIDTH / 2}px)` : "translateX(0)"}
+			>
+				<Canvas camera={{ fov: 45, position: [0, 5, -30] }}>
+					<Scene />
+					{import.meta.env.MODE === "development" && <Perf position="top-left" showVRAM />}
+				</Canvas>
+			</Box>
 			<Button
 				type="dimension"
 				onClick={() => setShowDimensions(!showDimensions)}
 			/>
-			<Sidepanel />
+			<Sidepanel width={SIDEPANEL_WIDTH} />
 		</Box>
 	);
 };

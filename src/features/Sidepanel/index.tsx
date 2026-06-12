@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Flex,
@@ -13,6 +13,7 @@ import {
   SliderThumb,
 } from "@chakra-ui/react";
 import { useRackStore, RackType } from "@/stores/rackStore";
+import { useAppStore } from "@/stores/appStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { getMaxArmCount } from "@/utils/armPositions";
 import { StyledBox } from "./styles";
@@ -108,7 +109,8 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 /* ─── Sidepanel ──────────────────────────────────────────────────── */
 
 const Sidepanel = ({ width = 300 }) => {
-  const [open, setOpen] = useState(true);
+  const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
+  const toggleSidePanel = useAppStore((s) => s.toggleSidePanel);
 
   const {
     rackType,
@@ -161,8 +163,8 @@ const Sidepanel = ({ width = 300 }) => {
   const clampedArmCount = Math.min(armCount, maxArms);
 
   return (
-    <StyledBox open={open} width={width}>
-      <div className="panel-toggle" onClick={() => setOpen((p) => !p)}>
+    <StyledBox open={sidePanelOpen} width={width}>
+      <div className="panel-toggle" onClick={toggleSidePanel}>
         <ChevronLeft />
       </div>
       <div className="panel-inner">

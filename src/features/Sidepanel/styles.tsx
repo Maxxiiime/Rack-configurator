@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 
 /* ─── Sidepanel shell ────────────────────────────────────────────── */
 
-export const StyledBox = styled(Box)<{ open: boolean; width: number }>`
+export const StyledBox = styled(Box) <{ open: boolean; width: number }>`
 	z-index: 10;
 	position: fixed;
 	top: 0;
