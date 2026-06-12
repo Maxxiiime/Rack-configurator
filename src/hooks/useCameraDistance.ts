@@ -5,7 +5,7 @@ import { useRackPositions } from "@/hooks/useRackPositions";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { PerspectiveCamera } from "three";
 
-const PADDING_HORIZONTAL = 1.4;
+const PADDING_HORIZONTAL = 1.6;
 const PADDING_VERTICAL = 1.8;
 
 /**
