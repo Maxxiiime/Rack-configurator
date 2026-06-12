@@ -269,7 +269,11 @@ const Sidepanel = ({ width = 300 }) => {
                     min={200}
                     max={1000}
                     step={100}
-                    onChange={(v) => setArmSpacing(v / 100)}
+                    onChange={(v) => {
+                      const newSpacing = v / 100;
+                      setArmSpacing(newSpacing);
+                      setArmCount(getMaxArmCount(offsets.arm.start_y, columnHeightUnits, newSpacing));
+                    }}
                   />
                   <Slider
                     flex={1}
@@ -277,7 +281,10 @@ const Sidepanel = ({ width = 300 }) => {
                     max={10}
                     step={1}
                     value={armSpacing}
-                    onChange={setArmSpacing}
+                    onChange={(newSpacing) => {
+                      setArmSpacing(newSpacing);
+                      setArmCount(getMaxArmCount(offsets.arm.start_y, columnHeightUnits, newSpacing));
+                    }}
                     focusThumbOnChange={false}
                   >
                     <SliderTrack {...sliderTrackStyle}>
