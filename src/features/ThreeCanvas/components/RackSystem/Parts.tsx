@@ -20,11 +20,10 @@ interface PartProps {
 export const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] }) => {
   const { getPartData } = useShelfParts();
   const { getMetalMaterial } = useMaterial();
-  
+
   const partData = getPartData(id);
   const isArm = partData?.category === 'arm';
-  const isXBrace = partData?.category === 'x_brace';
-  const materialName = isArm ? 'Red' : isXBrace ? 'Grey' : 'Blue';
+  const materialName = isArm ? 'Red' : 'Blue';
   const fallbackPath = '/model/columns/Kolommen_2M.glb';
 
   const { scene } = useGLTF(partData?.path ?? fallbackPath);
@@ -44,7 +43,7 @@ export const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotati
       rotation={rotation}
       scale={scale}
     >
-      <MetalMaterial scene={clonedScene} settings={getMetalMaterial(materialName)?.settings} boltSettings={getMetalMaterial('Grey')?.settings}/>
+      <MetalMaterial scene={clonedScene} settings={getMetalMaterial(materialName)?.settings} boltSettings={getMetalMaterial('Grey')?.settings} />
     </primitive>
   );
 };
