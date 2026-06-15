@@ -49,6 +49,7 @@ export const RackSystem: React.FC = () => {
 							<BraceAssembly
 								braceSize={braceSize}
 								columnId={columnId}
+								hasXBrace={(rackIds.length - 1 - index) % 3 === 0}
 							/>
 							{rackIds.length > 1 && rackId !== "initial-rack" && (
 								<Button3D

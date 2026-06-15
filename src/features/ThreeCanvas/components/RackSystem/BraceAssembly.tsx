@@ -9,9 +9,10 @@ const typedLayouts = braceLayouts as Record<string, BraceElement[]>;
 interface BraceAssemblyProps {
   braceSize: number;
   columnId: string;
+  hasXBrace: boolean;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace }) => {
   const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
@@ -24,8 +25,10 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
   return (
     <group>
       {layout.map((element, i) => {
-        const y = element.y_position;
         const isHBrace = element.type === 'h_brace';
+        if (!hasXBrace && !isHBrace) return null;
+
+        const y = element.y_position;
         const id = isHBrace ? hBraceId : xBraceId;
         const position: [number, number, number] = isHBrace
           ? [offsets.brace.h_x, y, offsets.brace.h_z]
