@@ -25,6 +25,7 @@ const Scene = () => {
                     opacity: 1,
                     blur: 0.25,
                     resolution: 1024,
+                    offset: -0.7
                 }}
             >
                 <RackSystem />
