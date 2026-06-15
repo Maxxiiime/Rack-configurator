@@ -3,7 +3,7 @@
         {
             "name": "Blue",
             "settings": {
-                "color": "#3d38ab"
+                "color": "#3085B4"
             }
         },
         {
@@ -11,6 +11,12 @@
             "settings": {
                 "color": "#ff2b36"
             }
-        }       
+        },
+        {
+            "name": "Grey",
+            "settings": {
+                "color": "#8290A6"
+            }
+        }
     ]
 }
