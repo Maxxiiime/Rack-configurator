@@ -10,9 +10,10 @@ interface BraceAssemblyProps {
   braceSize: number;
   columnId: string;
   hasXBrace: boolean;
+  selectedMode?: boolean;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode }) => {
   const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
@@ -34,7 +35,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
           ? [offsets.brace.h_x, y, offsets.brace.h_z]
           : [offsets.brace.x_x, y, offsets.brace.x_z];
 
-        return <BasePart key={`${element.type}-${i}`} id={id} position={position} />;
+        return <BasePart key={`${element.type}-${i}`} id={id} position={position} selectedMode={selectedMode} />;
       })}
     </group>
   );

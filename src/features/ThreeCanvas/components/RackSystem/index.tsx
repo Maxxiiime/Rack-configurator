@@ -16,6 +16,7 @@ export const RackSystem: React.FC = () => {
 	const columnId = useRackConfigStore((s) => s.columnId);
 	const armId = useRackConfigStore((s) => s.armId);
 	const braceId = useRackConfigStore((s) => s.braceId);
+	const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
 
 	const rackIds = useRackSectionsStore((s) => s.rackIds);
@@ -24,6 +25,7 @@ export const RackSystem: React.FC = () => {
 	const removeRack = useRackSectionsStore((s) => s.removeRack);
 
 	const showDimensions = useEditorStore((s) => s.showDimensions);
+	const selectedRackId = useEditorStore((s) => s.selectedRackId);
 
 	const { getPartSize } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX } = useRackPositions();
@@ -34,26 +36,35 @@ export const RackSystem: React.FC = () => {
 	return (
 		<group position={[-centerX, 0, 0]}>
 			<group ref={rackGroupRef}>
-				{columnPositionsX.map((posX, index) => (
-					<ColumnAssembly
-						key={`column-${index}`}
-						columnId={columnId}
-						legId={activeLegId}
-						armId={armId}
-						rackType={rackType}
-						position={[posX, 0, 0]}
-					/>
-				))}
+				{columnPositionsX.map((posX, index) => {
+					const leftSectionId = index > 0 ? rackIds[index - 1] : null;
+					const rightSectionId = index < rackIds.length ? rackIds[index] : null;
+					const isSelected = selectedRackId !== null && (selectedRackId === leftSectionId || selectedRackId === rightSectionId);
+
+					return (
+						<ColumnAssembly
+							key={`column-${index}`}
+							columnId={columnId}
+							legId={activeLegId}
+							armId={armId}
+							rackType={rackType}
+							position={[posX, 0, 0]}
+							selectedMode={isSelected}
+						/>
+					);
+				})}
 
 				{rackIds.map((rackId, index) => {
 					const posX = columnPositionsX[index];
+					const currentBraceSize = sectionWidthOverrides[rackId] ?? braceSize;
 
 					return (
 						<group key={rackId} position={[posX, 0, 0]}>
 							<BraceAssembly
-								braceSize={braceSize}
+								braceSize={currentBraceSize}
 								columnId={columnId}
 								hasXBrace={(rackIds.length - 1 - index) % 3 === 0}
+								selectedMode={selectedRackId === rackId}
 							/>
 							{rackIds.length > 1 && rackId !== "initial-rack" && (
 								<Button3D

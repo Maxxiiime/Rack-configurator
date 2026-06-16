@@ -40,6 +40,7 @@ const Sidepanel = ({ width = 300 }) => {
   const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
 
   const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
+  const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
   const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
     useShelfParts();
@@ -105,7 +106,7 @@ const Sidepanel = ({ width = 300 }) => {
         </Box>
 
         {activeMenu !== "main" && (
-          <Flex align="center" gap={2} mb={4} cursor="pointer" onClick={() => { setActiveMenu("main"); setSelectedArmIndex(null); }}>
+          <Flex align="center" gap={2} mb={4} cursor="pointer" onClick={() => { setActiveMenu("main"); setSelectedArmIndex(null); setSelectedRackId(null); }}>
             <Box transform="scale(0.8)" display="flex" alignItems="center" justifyContent="center">
               <ChevronLeft />
             </Box>

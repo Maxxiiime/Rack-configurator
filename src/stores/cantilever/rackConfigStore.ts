@@ -29,6 +29,7 @@ interface RackConfigState {
   armSpacing: number;
   armCount: number;
   armYOverrides: Record<number, number>;
+  sectionWidthOverrides: Record<string, number>;
   metalMaterial: string;
 
   setRackType: (type: RackType) => void;
@@ -40,6 +41,9 @@ interface RackConfigState {
   setArmYOverride: (index: number, y: number) => void;
   removeArmYOverride: (index: number) => void;
   clearArmYOverrides: () => void;
+  setSectionWidthOverride: (id: string, width: number) => void;
+  removeSectionWidthOverride: (id: string) => void;
+  clearSectionWidthOverrides: () => void;
 }
 
 /** Derived selector — leg is always computed from arm + rackType */
@@ -54,6 +58,7 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   armSpacing: 3,
   armCount: 99,
   armYOverrides: {},
+  sectionWidthOverrides: {},
   metalMaterial: 'Blue',
 
   setRackType: (type) => set({ rackType: type }),
@@ -86,5 +91,19 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   clearArmYOverrides: () => {
     set({ armYOverrides: {} });
     useEditorStore.getState().setSelectedArmIndex(null);
+  },
+
+  setSectionWidthOverride: (id, width) => set((state) => ({
+    sectionWidthOverrides: { ...state.sectionWidthOverrides, [id]: width },
+  })),
+
+  removeSectionWidthOverride: (id) => set((state) => {
+    const { [id]: _, ...rest } = state.sectionWidthOverrides;
+    return { sectionWidthOverrides: rest };
+  }),
+
+  clearSectionWidthOverrides: () => {
+    set({ sectionWidthOverrides: {} });
+    useEditorStore.getState().setSelectedRackId(null);
   },
 }));

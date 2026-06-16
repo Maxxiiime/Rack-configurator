@@ -11,6 +11,7 @@ interface ColumnAssemblyProps {
   armId: string;
   rackType: RackType;
   position?: [number, number, number];
+  selectedMode?: boolean;
 }
 
 export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
@@ -19,6 +20,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   armId,
   rackType,
   position = [0, 0, 0],
+  selectedMode = false,
 }) => {
   const { getColumnHeight, offsets } = useShelfParts();
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
@@ -38,7 +40,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   return (
     <group position={position}>
       {/*COLUMN*/}
-      <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} />
+      <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} selectedMode={selectedMode} />
       {/*LEGS*/}
       <BasePart
         id={legId}
@@ -47,6 +49,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             ? [offsets.leg.x, offsets.leg.y, offsets.leg.double_z]
             : [offsets.leg.x, offsets.leg.y, offsets.leg.z]
         }
+        selectedMode={selectedMode}
       />
       {armPositions.map((yPos, i) => {
         const isSelected = selectedArmIndex === i;

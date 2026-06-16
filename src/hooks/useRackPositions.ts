@@ -6,13 +6,17 @@ import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 export const useRackPositions = () => {
 	const rackIds = useRackSectionsStore((s) => s.rackIds);
 	const braceId = useRackConfigStore((s) => s.braceId);
+	const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
 	const { getPartSize } = useShelfParts();
 
 	return useMemo(() => {
-		const braceWidth = getPartSize(braceId) / 100;
+		const defaultBraceWidth = getPartSize(braceId) / 100;
 
-		// All racks share the same width
-		const rackWidths = rackIds.map(() => braceWidth);
+		// Calculate the width for each rack
+		const rackWidths = rackIds.map((id) => {
+			const override = sectionWidthOverrides[id];
+			return override !== undefined ? override / 100 : defaultBraceWidth;
+		});
 
 		// Find the initial rack to keep positions stable
 		const anchorIndex = rackIds.indexOf("initial-rack");
@@ -37,5 +41,5 @@ export const useRackPositions = () => {
 		const centerX = (minX + maxX) / 2;
 
 		return { columnPositionsX, rackWidths, centerX };
-	}, [rackIds, braceId, getPartSize]);
+	}, [rackIds, braceId, getPartSize, sectionWidthOverrides]);
 };
