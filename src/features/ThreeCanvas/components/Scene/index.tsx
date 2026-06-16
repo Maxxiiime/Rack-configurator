@@ -2,6 +2,8 @@ import { OrbitControls, Stage } from "@react-three/drei";
 import { RackSystem } from "../RackSystem";
 import CameraAutoZoom from "./CameraAutoZoom";
 import { useCameraDistance } from "@/hooks/useCameraDistance";
+import offsets from '@/data/shelving_offset.json';
+
 
 const MIN_MAX_DISTANCE = 50;
 const MAX_DISTANCE_MULTIPLIER = 1.4;
@@ -25,7 +27,7 @@ const Scene = () => {
                     opacity: 1,
                     blur: 0.25,
                     resolution: 1024,
-                    offset: -0.7
+                    offset: -offsets.bottom_bolt.y
                 }}
             >
                 <RackSystem />
