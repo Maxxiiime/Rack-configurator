@@ -49,6 +49,7 @@ const Sidepanel = ({ width = 300 }) => {
     setBraceId,
     setArmCount,
     setArmSpacing,
+    setSelectedArmIndex,
   } = useRackStore();
 
   const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
@@ -115,7 +116,7 @@ const Sidepanel = ({ width = 300 }) => {
         </Box>
 
         {activeMenu !== "main" && (
-          <Flex align="center" gap={2} mb={4} cursor="pointer" onClick={() => setActiveMenu("main")}>
+          <Flex align="center" gap={2} mb={4} cursor="pointer" onClick={() => { setActiveMenu("main"); setSelectedArmIndex(null); }}>
             <Box transform="scale(0.8)" display="flex" alignItems="center" justifyContent="center">
               <ChevronLeft />
             </Box>

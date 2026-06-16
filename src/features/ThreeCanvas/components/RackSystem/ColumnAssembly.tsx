@@ -2,7 +2,7 @@ import React from 'react';
 import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackStore, RackType } from '@/stores/rackStore';
-import { computeArmPositions } from '@/utils/armPositions';
+import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
 
 interface ColumnAssemblyProps {
   columnId: string;
@@ -20,15 +20,16 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
 }) => {
   const { getColumnHeight, offsets } = useShelfParts();
-  const { armSpacing, armCount } = useRackStore();
+  const { armSpacing, armCount, armYOverrides, selectedArmIndex } = useRackStore();
 
   const columnHeightUnits = getColumnHeight(columnId);
-  const armPositions = computeArmPositions(
+  const basePositions = computeArmPositions(
     offsets.arm.start_y,
     columnHeightUnits,
     armSpacing,
     armCount
   );
+  const armPositions = applyArmYOverrides(basePositions, armYOverrides);
 
   return (
     <group position={position}>
@@ -44,25 +45,28 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
         }
       />
       {armPositions.map((yPos, i) => {
+        const isSelected = selectedArmIndex === i;
         return (
           <group key={`arm-${i}`}>
             {/*ARMS*/}
             <BasePart
               id={armId}
               position={[offsets.arm.x, yPos, offsets.arm.z]}
+              selectedMode={isSelected}
             />
             {rackType === 'double' && (
               <BasePart
                 id={armId}
                 position={[offsets.arm.double_x, yPos, offsets.arm.double_z]}
                 rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
+                selectedMode={isSelected}
               />
             )}
           </group>
         );
       })}
 
-     
+
     </group>
   );
 };

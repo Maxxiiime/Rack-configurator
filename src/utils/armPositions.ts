@@ -63,3 +63,15 @@ export function computeArmPositions(
   
   return positions;
 }
+
+/**
+ * Apply per-arm Y-position overrides on top of computed base positions.
+ * Only indices present in `overrides` are replaced; others keep the base value.
+ */
+export function applyArmYOverrides(
+  basePositions: number[],
+  overrides: Record<number, number>
+): number[] {
+  if (Object.keys(overrides).length === 0) return basePositions;
+  return basePositions.map((y, i) => overrides[i] ?? y);
+}

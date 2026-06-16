@@ -29,6 +29,8 @@ interface RackState {
   braceId: string;
   armSpacing: number;
   armCount: number;
+  armYOverrides: Record<number, number>;
+  selectedArmIndex: number | null;
   rackIds: string[];
   metalMaterial: string;
   showDimensions: boolean;
@@ -39,6 +41,10 @@ interface RackState {
   setBraceId: (id: string) => void;
   setArmSpacing: (spacing: number) => void;
   setArmCount: (count: number) => void;
+  setArmYOverride: (index: number, y: number) => void;
+  removeArmYOverride: (index: number) => void;
+  clearArmYOverrides: () => void;
+  setSelectedArmIndex: (index: number | null) => void;
   addRackLeft: () => void;
   addRackRight: () => void;
   removeRack: (id: string) => void;
@@ -56,6 +62,8 @@ export const useRackStore = create<RackState>((set) => ({
   braceId: defaultBrace,
   armSpacing: 3,
   armCount: 99,
+  armYOverrides: {},
+  selectedArmIndex: null,
   rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
   showDimensions: false,
@@ -68,9 +76,22 @@ export const useRackStore = create<RackState>((set) => ({
 
   setBraceId: (id) => set({ braceId: id }),
 
-  setArmSpacing: (spacing) => set({ armSpacing: Math.max(2, spacing) }),
+  setArmSpacing: (spacing) => set({ armSpacing: Math.max(2, spacing), armYOverrides: {}, selectedArmIndex: null }),
 
-  setArmCount: (count) => set({ armCount: Math.max(1, count) }),
+  setArmCount: (count) => set({ armCount: Math.max(1, count), armYOverrides: {}, selectedArmIndex: null }),
+
+  setArmYOverride: (index, y) => set((state) => ({
+    armYOverrides: { ...state.armYOverrides, [index]: y },
+  })),
+
+  removeArmYOverride: (index) => set((state) => {
+    const { [index]: _, ...rest } = state.armYOverrides;
+    return { armYOverrides: rest };
+  }),
+
+  clearArmYOverrides: () => set({ armYOverrides: {}, selectedArmIndex: null }),
+
+  setSelectedArmIndex: (index) => set({ selectedArmIndex: index }),
 
   addRackLeft: () => set((state) => ({
     rackIds: [crypto.randomUUID(), ...state.rackIds],
