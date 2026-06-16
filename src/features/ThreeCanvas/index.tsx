@@ -3,15 +3,15 @@ import { Canvas } from "@react-three/fiber";
 import Scene from "./components/Scene";
 import { Perf } from "r3f-webgpu-perf";
 import Button from "@/components/Button";
-import { useRackStore } from "@/stores/rackStore";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useAppStore } from "@/stores/appStore";
 import Sidepanel from "../Sidepanel";
 
 const SIDEPANEL_WIDTH = 300;
 
 const ThreeCanvas = () => {
-	const setShowDimensions = useRackStore((s) => s.setShowDimensions);
-	const showDimensions = useRackStore((s) => s.showDimensions);
+	const setShowDimensions = useEditorStore((s) => s.setShowDimensions);
+	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (

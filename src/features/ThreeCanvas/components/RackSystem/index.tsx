@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import * as THREE from "three";
-import { useRackStore, selectActiveLegId } from "@/stores/rackStore";
+import { useRackConfigStore, selectActiveLegId } from "@/stores/cantilever/rackConfigStore";
+import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { ColumnAssembly } from "./ColumnAssembly";
 import { BraceAssembly } from "./BraceAssembly";
 import { useShelfParts } from "@/hooks/useShelfParts";
@@ -10,16 +12,18 @@ import { DimensionLines } from "./DimensionLines";
 
 export const RackSystem: React.FC = () => {
 
-	const rackType = useRackStore((s) => s.rackType);
-	const columnId = useRackStore((s) => s.columnId);
-	const armId = useRackStore((s) => s.armId);
-	const braceId = useRackStore((s) => s.braceId);
-	const activeLegId = useRackStore(selectActiveLegId);
-	const rackIds = useRackStore((s) => s.rackIds);
-	const addRackLeft = useRackStore((s) => s.addRackLeft);
-	const addRackRight = useRackStore((s) => s.addRackRight);
-	const removeRack = useRackStore((s) => s.removeRack);
-	const showDimensions = useRackStore((s) => s.showDimensions);
+	const rackType = useRackConfigStore((s) => s.rackType);
+	const columnId = useRackConfigStore((s) => s.columnId);
+	const armId = useRackConfigStore((s) => s.armId);
+	const braceId = useRackConfigStore((s) => s.braceId);
+	const activeLegId = useRackConfigStore(selectActiveLegId);
+
+	const rackIds = useRackSectionsStore((s) => s.rackIds);
+	const addRackLeft = useRackSectionsStore((s) => s.addRackLeft);
+	const addRackRight = useRackSectionsStore((s) => s.addRackRight);
+	const removeRack = useRackSectionsStore((s) => s.removeRack);
+
+	const showDimensions = useEditorStore((s) => s.showDimensions);
 
 	const { getPartSize } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX } = useRackPositions();

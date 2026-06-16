@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useThree } from "@react-three/fiber";
-import { useRackStore } from "@/stores/rackStore";
+import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 import { useRackPositions } from "@/hooks/useRackPositions";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { PerspectiveCamera } from "three";
@@ -15,7 +15,7 @@ const PADDING_VERTICAL = 1.8;
  */
 export const useCameraDistance = () => {
 	const { camera } = useThree();
-	const columnId = useRackStore((s) => s.columnId);
+	const columnId = useRackConfigStore((s) => s.columnId);
 	const { columnPositionsX } = useRackPositions();
 	const { getColumnHeight } = useShelfParts();
 

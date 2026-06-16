@@ -1,6 +1,7 @@
 import create from 'zustand';
 import partsData from '@/data/shelving_parts.json';
 import type { ShelvingPart } from '@/types/shelving';
+import { useEditorStore } from './editorStore';
 
 export type RackType = 'single' | 'double';
 
@@ -20,9 +21,7 @@ const defaultColumn = typedParts.find(p => p.category === 'column')?.shelving_sy
 const defaultArm = typedParts.find(p => p.category === 'arm')?.shelving_system_id || '';
 const defaultBrace = typedParts.find(p => p.category === 'x_brace')?.shelving_system_id || '';
 
-const INITIAL_RACK_ID = 'initial-rack';
-
-interface RackState {
+interface RackConfigState {
   rackType: RackType;
   columnId: string;
   armId: string;
@@ -30,10 +29,7 @@ interface RackState {
   armSpacing: number;
   armCount: number;
   armYOverrides: Record<number, number>;
-  selectedArmIndex: number | null;
-  rackIds: string[];
   metalMaterial: string;
-  showDimensions: boolean;
 
   setRackType: (type: RackType) => void;
   setColumnId: (id: string) => void;
@@ -44,18 +40,13 @@ interface RackState {
   setArmYOverride: (index: number, y: number) => void;
   removeArmYOverride: (index: number) => void;
   clearArmYOverrides: () => void;
-  setSelectedArmIndex: (index: number | null) => void;
-  addRackLeft: () => void;
-  addRackRight: () => void;
-  removeRack: (id: string) => void;
-  setShowDimensions: (showDimensions: boolean) => void;
 }
 
 /** Derived selector — leg is always computed from arm + rackType */
-export const selectActiveLegId = (state: RackState) =>
+export const selectActiveLegId = (state: RackConfigState) =>
   findMatchingLegId(state.armId, state.rackType);
 
-export const useRackStore = create<RackState>((set) => ({
+export const useRackConfigStore = create<RackConfigState>((set) => ({
   rackType: 'single',
   columnId: defaultColumn,
   armId: defaultArm,
@@ -63,10 +54,7 @@ export const useRackStore = create<RackState>((set) => ({
   armSpacing: 3,
   armCount: 99,
   armYOverrides: {},
-  selectedArmIndex: null,
-  rackIds: [INITIAL_RACK_ID],
   metalMaterial: 'Blue',
-  showDimensions: false,
 
   setRackType: (type) => set({ rackType: type }),
 
@@ -76,9 +64,15 @@ export const useRackStore = create<RackState>((set) => ({
 
   setBraceId: (id) => set({ braceId: id }),
 
-  setArmSpacing: (spacing) => set({ armSpacing: Math.max(2, spacing), armYOverrides: {}, selectedArmIndex: null }),
+  setArmSpacing: (spacing) => {
+    set({ armSpacing: Math.max(2, spacing), armYOverrides: {} });
+    useEditorStore.getState().setSelectedArmIndex(null);
+  },
 
-  setArmCount: (count) => set({ armCount: Math.max(1, count), armYOverrides: {}, selectedArmIndex: null }),
+  setArmCount: (count) => {
+    set({ armCount: Math.max(1, count), armYOverrides: {} });
+    useEditorStore.getState().setSelectedArmIndex(null);
+  },
 
   setArmYOverride: (index, y) => set((state) => ({
     armYOverrides: { ...state.armYOverrides, [index]: y },
@@ -89,22 +83,8 @@ export const useRackStore = create<RackState>((set) => ({
     return { armYOverrides: rest };
   }),
 
-  clearArmYOverrides: () => set({ armYOverrides: {}, selectedArmIndex: null }),
-
-  setSelectedArmIndex: (index) => set({ selectedArmIndex: index }),
-
-  addRackLeft: () => set((state) => ({
-    rackIds: [crypto.randomUUID(), ...state.rackIds],
-  })),
-
-  addRackRight: () => set((state) => ({
-    rackIds: [...state.rackIds, crypto.randomUUID()],
-  })),
-
-  removeRack: (id) => set((state) => {
-    if (state.rackIds.length <= 1 || id === INITIAL_RACK_ID) return {};
-    return { rackIds: state.rackIds.filter((rackId) => rackId !== id) };
-  }),
-
-  setShowDimensions: (showDimensions) => set({ showDimensions }),
+  clearArmYOverrides: () => {
+    set({ armYOverrides: {} });
+    useEditorStore.getState().setSelectedArmIndex(null);
+  },
 }));

@@ -1,17 +1,7 @@
 import { useMemo, useState } from "react";
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  VStack,
-  Select,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-} from "@chakra-ui/react";
-import { useRackStore, RackType } from "@/stores/rackStore";
+import { Box, Flex, Text, Button, VStack, Select, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
+import { useRackConfigStore, RackType } from "@/stores/cantilever/rackConfigStore";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useAppStore } from "@/stores/appStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing } from "@/utils/armPositions";
@@ -36,21 +26,20 @@ const Sidepanel = ({ width = 300 }) => {
   const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
   const toggleSidePanel = useAppStore((s) => s.toggleSidePanel);
 
-  const {
-    rackType,
-    columnId,
-    armId,
-    braceId,
-    armSpacing,
-    armCount,
-    setRackType,
-    setColumnId,
-    setArmId,
-    setBraceId,
-    setArmCount,
-    setArmSpacing,
-    setSelectedArmIndex,
-  } = useRackStore();
+  const rackType = useRackConfigStore((s) => s.rackType);
+  const columnId = useRackConfigStore((s) => s.columnId);
+  const armId = useRackConfigStore((s) => s.armId);
+  const braceId = useRackConfigStore((s) => s.braceId);
+  const armSpacing = useRackConfigStore((s) => s.armSpacing);
+  const armCount = useRackConfigStore((s) => s.armCount);
+  const setRackType = useRackConfigStore((s) => s.setRackType);
+  const setColumnId = useRackConfigStore((s) => s.setColumnId);
+  const setArmId = useRackConfigStore((s) => s.setArmId);
+  const setBraceId = useRackConfigStore((s) => s.setBraceId);
+  const setArmCount = useRackConfigStore((s) => s.setArmCount);
+  const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
+
+  const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
 
   const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
     useShelfParts();

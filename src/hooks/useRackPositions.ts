@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useShelfParts } from "./useShelfParts";
-import { useRackStore } from "@/stores/rackStore";
+import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
+import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 
 export const useRackPositions = () => {
-	const rackIds = useRackStore((s) => s.rackIds);
-	const braceId = useRackStore((s) => s.braceId);
+	const rackIds = useRackSectionsStore((s) => s.rackIds);
+	const braceId = useRackConfigStore((s) => s.braceId);
 	const { getPartSize } = useShelfParts();
 
 	return useMemo(() => {

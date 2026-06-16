@@ -2,18 +2,24 @@ import { useMemo } from "react";
 import { Box, Flex, Text, Slider, SliderTrack, SliderFilledTrack, SliderThumb, IconButton } from "@chakra-ui/react";
 import { Stepper } from "./Shared";
 import { sectionBoxStyle, sliderTrackStyle, sliderThumbStyle } from "../styles";
-import { useRackStore } from "@/stores/rackStore";
+import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing, computeArmPositions } from "@/utils/armPositions";
 
 export const CustomArms = () => {
-  const {
-    armSpacing, setArmSpacing,
-    armCount, setArmCount,
-    armYOverrides, setArmYOverride, removeArmYOverride, clearArmYOverrides,
-    selectedArmIndex, setSelectedArmIndex,
-    columnId,
-  } = useRackStore();
+  const armSpacing = useRackConfigStore(s => s.armSpacing);
+  const setArmSpacing = useRackConfigStore(s => s.setArmSpacing);
+  const armCount = useRackConfigStore(s => s.armCount);
+  const setArmCount = useRackConfigStore(s => s.setArmCount);
+  const armYOverrides = useRackConfigStore(s => s.armYOverrides);
+  const setArmYOverride = useRackConfigStore(s => s.setArmYOverride);
+  const removeArmYOverride = useRackConfigStore(s => s.removeArmYOverride);
+  const clearArmYOverrides = useRackConfigStore(s => s.clearArmYOverrides);
+  const columnId = useRackConfigStore(s => s.columnId);
+
+  const selectedArmIndex = useEditorStore(s => s.selectedArmIndex);
+  const setSelectedArmIndex = useEditorStore(s => s.setSelectedArmIndex);
   const { getColumnHeight, offsets } = useShelfParts();
 
   const columnHeightUnits = getColumnHeight(columnId);

@@ -1,7 +1,8 @@
 import React from 'react';
 import { BasePart } from './Parts';
 import { useShelfParts } from '@/hooks/useShelfParts';
-import { useRackStore, RackType } from '@/stores/rackStore';
+import { useRackConfigStore, RackType } from '@/stores/cantilever/rackConfigStore';
+import { useEditorStore } from '@/stores/cantilever/editorStore';
 import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
 
 interface ColumnAssemblyProps {
@@ -20,7 +21,10 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
 }) => {
   const { getColumnHeight, offsets } = useShelfParts();
-  const { armSpacing, armCount, armYOverrides, selectedArmIndex } = useRackStore();
+  const armSpacing = useRackConfigStore((s) => s.armSpacing);
+  const armCount = useRackConfigStore((s) => s.armCount);
+  const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
+  const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
 
   const columnHeightUnits = getColumnHeight(columnId);
   const basePositions = computeArmPositions(
