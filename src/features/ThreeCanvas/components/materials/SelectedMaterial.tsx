@@ -3,7 +3,11 @@ import { Group, Mesh, MeshStandardMaterial, Object3DEventMap } from "three";
 const selectedMaterial = new MeshStandardMaterial({
   transparent: true,
   opacity: 0.5,
-  color: "#14af00"
+  color: "#14af00",
+  depthTest: true,
+  depthWrite: false
+
+
 });
 
 export const SelectedMaterial = ({ scene, selectedMode }: { scene: Group<Object3DEventMap> | undefined; selectedMode: boolean | undefined }) => {
@@ -17,9 +21,7 @@ export const SelectedMaterial = ({ scene, selectedMode }: { scene: Group<Object3
         if (child instanceof Mesh) {
           originals.set(child, child.material as MeshStandardMaterial);
           child.material = selectedMaterial;
-          child.material.depthTest = false;
-          child.material.depthWrite = false;
-          child.material.needsUpdate = true;
+
         }
       });
 
