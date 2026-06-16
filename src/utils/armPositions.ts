@@ -13,6 +13,20 @@ export function getMaxArmCount(
 }
 
 /**
+ * Compute the maximum allowed spacing to fit a given number of arms on a column.
+ * Returns a value clamped between 2 and 10 (200mm to 1000mm).
+ */
+export function getMaxAllowedSpacing(
+  startY: number,
+  columnHeight: number,
+  armCount: number
+): number {
+  const safeArmCount = Math.max(1, armCount);
+  const maxAllowed = Math.floor((columnHeight - startY) / safeArmCount);
+  return Math.max(2, Math.min(10, maxAllowed));
+}
+
+/**
  * Compute the Y positions of arms on a column.
  * All positions follow the pattern n + 0.45 (1.45, 2.45, 3.45, ...)
  */
