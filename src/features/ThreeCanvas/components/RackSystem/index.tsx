@@ -8,7 +8,7 @@ import { BraceAssembly } from "./BraceAssembly";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { useRackPositions } from "@/hooks/useRackPositions";
 import { Button3D } from "./Button3D";
-import { DimensionLines } from "./DimensionLines";
+import { DimensionLines } from "../DimensionsLines/index";
 
 export const RackSystem: React.FC = () => {
 
