@@ -1,3 +1,6 @@
+/**
+ * Store the interactive state of the 3d editor and the display options
+ */
 import create from 'zustand';
 
 interface EditorState {

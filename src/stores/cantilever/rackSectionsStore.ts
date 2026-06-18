@@ -1,3 +1,6 @@
+/**
+ * Store an ordered list of rack sections
+ */
 import create from 'zustand';
 
 const INITIAL_RACK_ID = 'initial-rack';

@@ -1,3 +1,6 @@
+/**
+ * Store the complete configuration of a rack
+ */
 import create from 'zustand';
 import partsData from '@/data/shelving_parts.json';
 import type { ShelvingPart } from '@/types/shelving';
