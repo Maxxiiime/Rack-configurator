@@ -33,6 +33,7 @@ interface RackConfigState {
   armCount: number;
   armYOverrides: Record<number, number>;
   sectionWidthOverrides: Record<string, number>;
+  showArmStops: boolean;
   metalMaterial: string;
 
   setRackType: (type: RackType) => void;
@@ -47,6 +48,7 @@ interface RackConfigState {
   setSectionWidthOverride: (id: string, width: number) => void;
   removeSectionWidthOverride: (id: string) => void;
   clearSectionWidthOverrides: () => void;
+  toggleShowArmStops: () => void;
 }
 
 /** Derived selector — leg is always computed from arm + rackType */
@@ -62,6 +64,7 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   armCount: 99,
   armYOverrides: {},
   sectionWidthOverrides: {},
+  showArmStops: false,
   metalMaterial: 'Blue',
 
   setRackType: (type) => set({ rackType: type }),
@@ -109,4 +112,6 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
     set({ sectionWidthOverrides: {} });
     useEditorStore.getState().setSelectedRackId(null);
   },
+
+  toggleShowArmStops: () => set((state) => ({ showArmStops: !state.showArmStops })),
 }));

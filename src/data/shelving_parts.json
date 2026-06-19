@@ -4,28 +4,32 @@
         "category": "arm",
         "size_mm": 350,
         "name": "Arm 350",
-        "path": "/model/arms/Armen_350.glb"
+        "path": "/model/arms/Armen_350.glb",
+        "arm_stop_y": 0.8
     },
     {
         "shelving_system_id": "arm_600",
         "category": "arm",
         "size_mm": 600,
         "name": "Arm 600",
-        "path": "/model/arms/Armen_600.glb"
+        "path": "/model/arms/Armen_600.glb",
+        "arm_stop_y": 0.88
     },
     {
         "shelving_system_id": "arm_900",
         "category": "arm",
         "size_mm": 900,
         "name": "Arm 900",
-        "path": "/model/arms/Armen_900.glb"
+        "path": "/model/arms/Armen_900.glb",
+        "arm_stop_y": 0.99
     },
     {
         "shelving_system_id": "arm_1250",
         "category": "arm",
         "size_mm": 1250,
         "name": "Arm 1250",
-        "path": "/model/arms/Armen_1250.glb"
+        "path": "/model/arms/Armen_1250.glb",
+        "arm_stop_y": 1.12
     },
     {
         "shelving_system_id": "h_braces_750",
@@ -208,5 +212,11 @@
         "size_mm": 1250,
         "name": "Single Leg 1250",
         "path": "/model/legs/Enkelzijdige_1250.glb"
+    },
+    {
+        "shelving_system_id": "arm_stop",
+        "category": "arm_stop",
+        "name": "Arm Stop",
+        "path": "/model/arms/Armstop.glb"
     }
 ]

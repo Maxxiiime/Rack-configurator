@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { BasePart } from './Parts';
+import { ArmAssembly } from './ArmAssembly';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackConfigStore, RackType } from '@/stores/cantilever/rackConfigStore';
-import { useEditorStore } from '@/stores/cantilever/editorStore';
 import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
 
 interface ColumnAssemblyProps {
@@ -22,26 +22,36 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
   selectedMode = false,
 }) => {
-  const { getColumnHeight, offsets } = useShelfParts();
+  const { getColumnHeight, getPartSize, getPartData, offsets } = useShelfParts();
+
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const armCount = useRackConfigStore((s) => s.armCount);
   const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
-  const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+  const showArmStops = useRackConfigStore((s) => s.showArmStops);
 
   const columnHeightUnits = getColumnHeight(columnId);
-  const basePositions = computeArmPositions(
-    offsets.arm.start_y,
-    columnHeightUnits,
-    armSpacing,
-    armCount
-  );
-  const armPositions = applyArmYOverrides(basePositions, armYOverrides);
+  const armSizeUnits = getPartSize(armId) / 100;
+  const armStopLocalZ = armSizeUnits + offsets.arm_stop.z;
+  const doubleArmStopLocalZ = armSizeUnits - offsets.arm_stop.double_z;
+  const armStopY = getPartData(armId)?.arm_stop_y ?? 0;
+
+  // Mémoïsation des calculs de position
+  const armPositions = useMemo(() => {
+    const basePositions = computeArmPositions(
+      offsets.arm.start_y,
+      columnHeightUnits,
+      armSpacing,
+      armCount
+    );
+    return applyArmYOverrides(basePositions, armYOverrides);
+  }, [offsets.arm.start_y, columnHeightUnits, armSpacing, armCount, armYOverrides]);
 
   return (
     <group position={position}>
-      {/*COLUMN*/}
+      {/* COLUMN */}
       <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} selectedMode={selectedMode} />
-      {/*LEGS*/}
+
+      {/* LEGS */}
       <BasePart
         id={legId}
         position={
@@ -51,29 +61,22 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
         }
         selectedMode={selectedMode}
       />
-      {armPositions.map((yPos, i) => {
-        const isSelected = selectedArmIndex === i;
-        return (
-          <group key={`arm-${i}`}>
-            {/*ARMS*/}
-            <BasePart
-              id={armId}
-              position={[offsets.arm.x, yPos, offsets.arm.z]}
-              selectedMode={isSelected}
-            />
-            {rackType === 'double' && (
-              <BasePart
-                id={armId}
-                position={[offsets.arm.double_x, yPos, offsets.arm.double_z]}
-                rotation={[0, Math.PI, 0]} // Rotate 180 degrees for double face
-                selectedMode={isSelected}
-              />
-            )}
-          </group>
-        );
-      })}
 
-
+      {/* ARMS */}
+      {armPositions.map((yPos, i) => (
+        <ArmAssembly
+          key={`arm-${i}`}
+          index={i}
+          yPos={yPos}
+          armId={armId}
+          rackType={rackType}
+          offsets={offsets}
+          armStopY={armStopY}
+          armStopLocalZ={armStopLocalZ}
+          doubleArmStopLocalZ={doubleArmStopLocalZ}
+          showArmStops={showArmStops}
+        />
+      ))}
     </group>
   );
 };

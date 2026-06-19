@@ -25,5 +25,11 @@
     },
     "bottom_bolt": {
         "y": 0.74
+    },
+    "arm_stop": {
+        "x": 0.28,
+        "z": 1.5,
+        "double_x": 0.9,
+        "double_z": 0.5
     }
 }

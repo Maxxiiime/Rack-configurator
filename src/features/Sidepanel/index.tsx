@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Box, Flex, Text, Button, VStack, Select, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, VStack, Select, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Checkbox } from "@chakra-ui/react";
 import { useRackConfigStore, RackType } from "@/stores/cantilever/rackConfigStore";
 import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useAppStore } from "@/stores/appStore";
@@ -38,6 +38,8 @@ const Sidepanel = ({ width = 300 }) => {
   const setBraceId = useRackConfigStore((s) => s.setBraceId);
   const setArmCount = useRackConfigStore((s) => s.setArmCount);
   const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
+  const showArmStops = useRackConfigStore((s) => s.showArmStops);
+  const toggleShowArmStops = useRackConfigStore((s) => s.toggleShowArmStops);
 
   const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
   const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
@@ -215,6 +217,14 @@ const Sidepanel = ({ width = 300 }) => {
                       </Slider>
                     </Flex>
                   </Box>
+                  <Checkbox
+                    isChecked={showArmStops}
+                    onChange={toggleShowArmStops}
+                    size="lg"
+                    colorScheme="gray"
+                  >
+                    <Text fontSize="12px" fontWeight={500} color="gray.600">Add Arm Stops</Text>
+                  </Checkbox>
 
                   <Button
                     mt={2}
@@ -229,6 +239,8 @@ const Sidepanel = ({ width = 300 }) => {
                   >
                     Custom Arms
                   </Button>
+
+
 
                 </VStack>
               </Box>
