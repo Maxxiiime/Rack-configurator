@@ -7,6 +7,7 @@ export interface ShelvingPart {
 	name: string;
 	path: string;
 	arm_stop_y?: number;
+	price?: number;
 }
 
 export type BraceType = 'h_brace' | 'x_brace';

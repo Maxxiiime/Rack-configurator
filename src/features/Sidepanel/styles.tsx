@@ -26,6 +26,8 @@ export const StyledBox = styled(Box) <{ open: boolean; width: number }>`
 		padding: 1rem;
 		height: 100vh;
 		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.panel-toggle {

@@ -4,6 +4,7 @@ import { useRackConfigStore, RackType } from "@/stores/cantilever/rackConfigStor
 import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useAppStore } from "@/stores/appStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
+import { usePricing } from "@/hooks/usePricing";
 import { getMaxArmCount, getMaxAllowedSpacing } from "@/utils/armPositions";
 import { StyledBox } from "./styles";
 import ChevronLeft from "@/assets/svgs/ChevronLeft";
@@ -46,6 +47,8 @@ const Sidepanel = ({ width = 300 }) => {
 
   const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
     useShelfParts();
+
+  const { totalPrice } = usePricing();
 
   /* options */
   const columnOpts = useMemo(() => {
@@ -252,6 +255,17 @@ const Sidepanel = ({ width = 300 }) => {
           {activeMenu === "custom_arms" && <CustomArms />}
 
         </VStack>
+
+        <Box
+          mt="auto"
+          p={4}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text fontSize="18px" fontWeight={600} color="gray.600">Total Price:</Text>
+          <Text fontSize="20px" fontWeight={800} color="gray.800">{totalPrice.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</Text>
+        </Box>
       </div>
     </StyledBox>
   );
