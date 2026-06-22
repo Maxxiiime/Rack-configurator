@@ -6,7 +6,15 @@ const metalMaterial = new MeshStandardMaterial({
   roughness: 0.5,
 });
 
-export const MetalMaterial = ({ scene, settings, boltSettings }: { scene: Group<Object3DEventMap> | undefined; settings?: { color: string }; boltSettings?: { color: string } }) => {
+export const MetalMaterial = ({
+  scene,
+  settings,
+  boltSettings,
+}: {
+  scene: Group<Object3DEventMap> | undefined;
+  settings?: { color: string; metalness?: number; roughness?: number };
+  boltSettings?: { color: string; metalness?: number; roughness?: number };
+}) => {
   useEffect(() => {
     if (scene) {
       scene.traverse((child) => {
