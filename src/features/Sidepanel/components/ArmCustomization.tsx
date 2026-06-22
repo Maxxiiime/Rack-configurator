@@ -7,7 +7,7 @@ import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing, computeArmPositions } from "@/utils/armPositions";
 
-export const CustomArms = () => {
+export const ArmCustomization = () => {
   const armSpacing = useRackConfigStore(s => s.armSpacing);
   const setArmSpacing = useRackConfigStore(s => s.setArmSpacing);
   const armCount = useRackConfigStore(s => s.armCount);
@@ -106,7 +106,7 @@ export const CustomArms = () => {
       {/* Arm rows list */}
       <Box>
         <Flex align="center" justify="space-between" mb={2}>
-          <Text fontSize="10px" fontWeight={700} letterSpacing="0.08em" color="gray.400" textTransform="uppercase">
+          <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>
             Arm Positions
           </Text>
           {hasAnyOverride && (

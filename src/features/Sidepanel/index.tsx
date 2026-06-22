@@ -1,95 +1,89 @@
-import { useMemo, useState } from "react";
-import { Box, Flex, Text, Button, VStack, Select, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Checkbox } from "@chakra-ui/react";
-import { useRackConfigStore, RackType } from "@/stores/cantilever/rackConfigStore";
-import { useEditorStore } from "@/stores/cantilever/editorStore";
+import { useState } from "react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useAppStore } from "@/stores/appStore";
-import { useShelfParts } from "@/hooks/useShelfParts";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { usePricing } from "@/hooks/usePricing";
-import { getMaxArmCount, getMaxAllowedSpacing } from "@/utils/armPositions";
 import { StyledBox } from "./styles";
 import ChevronLeft from "@/assets/svgs/ChevronLeft";
-import {
-  sectionBoxStyle,
-  sectionLabelStyle,
-  selectStyle,
-  sliderTrackStyle,
-  sliderThumbStyle,
-} from "./styles";
+import { Step1 } from "./components/Step1";
+import { Step2 } from "./components/Step2";
 
-import { PillGroup, Row, Stepper } from "./components/Shared";
-import { CustomArms } from "./components/CustomArms";
-import { CustomDimensions } from "./components/CustomDimensions";
+/* ─── Step indicator ────────────────────────────────────────────── */
+
+const STEP_LABELS: Record<1 | 2, string> = {
+  1: "Global Layout",
+  2: "Advanced Options",
+};
+
+function StepDots({
+  currentStep,
+  onStepClick,
+}: {
+  currentStep: 1 | 2;
+  onStepClick: (s: 1 | 2) => void;
+}) {
+  return (
+    <Flex align="center" justify="center" gap={2} mb={4}>
+      {([1, 2] as const).map((s) => {
+        const isActive = currentStep === s;
+        const isPast = currentStep > s;
+        return (
+          <Flex key={s} align="center" gap={2}>
+            <Box
+              as="button"
+              onClick={() => onStepClick(s)}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              w="24px"
+              h="24px"
+              borderRadius="full"
+              border="1.5px solid"
+              borderColor={isActive ? "gray.800" : isPast ? "gray.400" : "gray.200"}
+              bg={isActive ? "gray.900" : isPast ? "gray.200" : "white"}
+              cursor={isPast ? "pointer" : "default"}
+              transition="all 0.15s ease"
+              _hover={isPast ? { bg: "gray.300" } : {}}
+            >
+              <Text
+                fontSize="10px"
+                fontWeight={700}
+                color={isActive ? "white" : isPast ? "gray.600" : "gray.300"}
+                lineHeight="1"
+              >
+                {s}
+              </Text>
+            </Box>
+            {s === 1 && (
+              <Box
+                h="1px"
+                w="20px"
+                bg={currentStep >= 2 ? "gray.400" : "gray.200"}
+                transition="background 0.2s ease"
+              />
+            )}
+          </Flex>
+        );
+      })}
+    </Flex>
+  );
+}
 
 /* ─── Sidepanel ──────────────────────────────────────────────────── */
 
 const Sidepanel = ({ width = 300 }) => {
-  const [activeMenu, setActiveMenu] = useState<"main" | "custom_dimensions" | "custom_arms">("main");
+  const [step, setStep] = useState<1 | 2>(1);
+
   const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
   const toggleSidePanel = useAppStore((s) => s.toggleSidePanel);
-
-  const rackType = useRackConfigStore((s) => s.rackType);
-  const columnId = useRackConfigStore((s) => s.columnId);
-  const armId = useRackConfigStore((s) => s.armId);
-  const braceId = useRackConfigStore((s) => s.braceId);
-  const armSpacing = useRackConfigStore((s) => s.armSpacing);
-  const armCount = useRackConfigStore((s) => s.armCount);
-  const setRackType = useRackConfigStore((s) => s.setRackType);
-  const setColumnId = useRackConfigStore((s) => s.setColumnId);
-  const setArmId = useRackConfigStore((s) => s.setArmId);
-  const setBraceId = useRackConfigStore((s) => s.setBraceId);
-  const setArmCount = useRackConfigStore((s) => s.setArmCount);
-  const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
-  const showArmStops = useRackConfigStore((s) => s.showArmStops);
-  const toggleShowArmStops = useRackConfigStore((s) => s.toggleShowArmStops);
-
+  const { totalPrice } = usePricing();
   const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
   const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
-  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
-    useShelfParts();
-
-  const { totalPrice } = usePricing();
-
-  /* options */
-  const columnOpts = useMemo(() => {
-    const raw = getColumnsOptions();
-    return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Column ", ""),
-      value,
-    }));
-  }, [getColumnsOptions]);
-
-  const armsOpts = useMemo(() => {
-    const raw = getArmsOptions();
-    return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Arm ", ""),
-      value,
-    }));
-  }, [getArmsOptions]);
-
-  const widthOpts = useMemo(
-    () => [750, 1000, 1250, 1500, 1750, 2000].map((v) => ({ label: String(v), value: v })),
-    []
-  );
-
-  const currentWidth = getPartSize(braceId) || 1000;
-
-  /* arm count constraints */
-  const columnHeightUnits = getColumnHeight(columnId);
-  const absoluteMaxArms = useMemo(
-    () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, 2),
-    [columnHeightUnits, offsets.arm.start_y]
-  );
-  const currentMaxArms = useMemo(
-    () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, armSpacing),
-    [columnHeightUnits, armSpacing, offsets.arm.start_y]
-  );
-  const actualArmCount = Math.min(armCount, currentMaxArms);
-
-  const handleArmCountChange = (newCount: number) => {
-    setArmCount(newCount);
-    // Overwrite spacing to maximum allowed so arms are evenly spaced and centered
-    setArmSpacing(getMaxAllowedSpacing(offsets.arm.start_y, columnHeightUnits, newCount));
+  const goToStep1 = () => {
+    setSelectedArmIndex(null);
+    setSelectedRackId(null);
+    setStep(1);
   };
 
   return (
@@ -97,7 +91,9 @@ const Sidepanel = ({ width = 300 }) => {
       <div className="panel-toggle" onClick={toggleSidePanel}>
         <ChevronLeft />
       </div>
+
       <div className="panel-inner">
+        {/* ── Header ─────────────────────────────────────────── */}
         <Box mb={4} pb={3} borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)">
           <Text
             fontSize="15px"
@@ -110,152 +106,29 @@ const Sidepanel = ({ width = 300 }) => {
           </Text>
         </Box>
 
-        {activeMenu !== "main" && (
-          <Flex align="center" gap={2} mb={4} cursor="pointer" onClick={() => { setActiveMenu("main"); setSelectedArmIndex(null); setSelectedRackId(null); }}>
-            <Box transform="scale(0.8)" display="flex" alignItems="center" justifyContent="center">
-              <ChevronLeft />
-            </Box>
-            <Text
-              fontSize="14px"
-              fontWeight={600}
-              color="gray.800"
-            >
-              {activeMenu === "custom_dimensions" ? "Custom Dimensions" : "Custom Arms"}
-            </Text>
-          </Flex>
-        )}
+        {/* ── Step dots ──────────────────────────────────────── */}
+        <StepDots
+          currentStep={step}
+          onStepClick={(s) => { if (s < step) goToStep1(); }}
+        />
 
-        <VStack align="stretch" spacing={0}>
-          {activeMenu === "main" && (
-            <>
+        {/* ── Step title ─────────────────────────────────────── */}
+        <Flex align="center" gap={2} mb={3}>
 
-              {/* ── Type ───────────────────────────────────── */}
-              <Box mb={3}>
-                <Row label="Type">
-                  <PillGroup<RackType>
-                    options={[
-                      { label: "Single", value: "single" },
-                      { label: "Double", value: "double" },
-                    ]}
-                    value={rackType}
-                    onChange={setRackType}
-                  />
-                </Row>
-              </Box>
+          <Text
+            fontSize="15px"
+            fontWeight={700}
+            color="gray.700"
+          >
+            Step {step} — {STEP_LABELS[step]}
+          </Text>
+        </Flex>
 
-              {/* ── Dimensions ─────────────────────────────── */}
-              <Box {...sectionBoxStyle}>
-                <Text {...sectionLabelStyle}>Dimensions</Text>
-                <VStack align="stretch" spacing={2}>
-                  <Row label="Height (mm)">
-                    <Select {...selectStyle} value={columnId} onChange={(e) => setColumnId(e.target.value)}>
-                      {columnOpts.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </Select>
-                  </Row>
+        {/* ── Step content ───────────────────────────────────── */}
+        {step === 1 && <Step1 onNext={() => setStep(2)} />}
+        {step === 2 && <Step2 onBack={goToStep1} />}
 
-                  <Row label="Width (mm)">
-                    <Select
-                      {...selectStyle}
-                      value={currentWidth}
-                      onChange={(e) => {
-                        const v = Number(e.target.value);
-                        const newBraceId = findPartId("x_brace", v);
-                        if (newBraceId) setBraceId(newBraceId);
-                      }}
-                    >
-                      {widthOpts.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </Select>
-                  </Row>
-
-                  <Row label="Depth (mm)">
-                    <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
-                      {armsOpts.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </Select>
-                  </Row>
-                  <Button
-                    mt={2}
-                    bg="white"
-                    border="1px solid"
-                    borderColor="gray.200"
-                    fontSize="12px"
-                    fontWeight={600}
-                    color="gray.700"
-                    _hover={{ bg: "gray.50" }}
-                    onClick={() => setActiveMenu("custom_dimensions")}
-                  >
-                    Custom dimensions
-                  </Button>
-                </VStack>
-              </Box>
-
-              {/* ── Arms ───────────────────────────────────── */}
-              <Box borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={3}>
-                <Text {...sectionLabelStyle}>Arms</Text>
-                <VStack align="stretch" spacing={4}>
-
-                  {/* Count */}
-                  <Box>
-                    <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Count</Text>
-                    <Flex align="center" gap={2}>
-                      <Stepper value={actualArmCount} min={1} max={absoluteMaxArms} onChange={handleArmCountChange} />
-                      <Slider
-                        flex={1}
-                        min={1}
-                        max={absoluteMaxArms}
-                        step={1}
-                        value={actualArmCount}
-                        onChange={handleArmCountChange}
-                        focusThumbOnChange={false}
-                      >
-                        <SliderTrack {...sliderTrackStyle}>
-                          <SliderFilledTrack bg="gray.800" />
-                        </SliderTrack>
-                        <SliderThumb {...sliderThumbStyle} />
-                      </Slider>
-                    </Flex>
-                  </Box>
-                  <Checkbox
-                    isChecked={showArmStops}
-                    onChange={toggleShowArmStops}
-                    size="lg"
-                    colorScheme="gray"
-                  >
-                    <Text fontSize="12px" fontWeight={500} color="gray.600">Add Arm Stops</Text>
-                  </Checkbox>
-
-                  <Button
-                    mt={2}
-                    bg="white"
-                    border="1px solid"
-                    borderColor="gray.200"
-                    fontSize="12px"
-                    fontWeight={600}
-                    color="gray.700"
-                    _hover={{ bg: "gray.50" }}
-                    onClick={() => setActiveMenu("custom_arms")}
-                  >
-                    Custom Arms
-                  </Button>
-
-
-
-                </VStack>
-              </Box>
-            </>
-          )}
-
-          {activeMenu === "custom_dimensions" && <CustomDimensions />}
-
-          {activeMenu === "custom_arms" && <CustomArms />}
-
-        </VStack>
-
+        {/* ── Price footer ───────────────────────────────────── */}
         <Box
           mt="auto"
           p={4}
@@ -264,7 +137,9 @@ const Sidepanel = ({ width = 300 }) => {
           alignItems="center"
         >
           <Text fontSize="18px" fontWeight={600} color="gray.600">Total Price:</Text>
-          <Text fontSize="20px" fontWeight={800} color="gray.800">{totalPrice.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</Text>
+          <Text fontSize="20px" fontWeight={800} color="gray.800">
+            {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+          </Text>
         </Box>
       </div>
     </StyledBox>

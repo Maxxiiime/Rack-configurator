@@ -6,7 +6,7 @@ import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
 import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 
-export const CustomDimensions = () => {
+export const DimensionsCustomization = () => {
   const braceId = useRackConfigStore(s => s.braceId);
   const sectionWidthOverrides = useRackConfigStore(s => s.sectionWidthOverrides);
   const setSectionWidthOverride = useRackConfigStore(s => s.setSectionWidthOverride);
@@ -40,9 +40,6 @@ export const CustomDimensions = () => {
   return (
     <Box {...sectionBoxStyle}>
       <Flex align="center" justify="space-between" mb={2}>
-        <Text fontSize="10px" fontWeight={700} letterSpacing="0.08em" color="gray.400" textTransform="uppercase">
-          Column Sections
-        </Text>
         {hasAnyOverride && (
           <Text
             fontSize="10px"
