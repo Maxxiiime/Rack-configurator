@@ -2,113 +2,113 @@
     "2000": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "x_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         }
     ],
     "2500": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "x_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         }
     ],
     "3000": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "x_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "h_brace",
-            "y_position": 28.6
+            "y_position": 28.3
         }
     ],
     "3500": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "x_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "h_brace",
-            "y_position": 30.6
+            "y_position": 30.3
         }
     ],
     "4000": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "x_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "h_brace",
-            "y_position": 30.6
+            "y_position": 30.3
         },
         {
             "type": "h_brace",
-            "y_position": 38.6
+            "y_position": 38.3
         }
     ],
     "4500": [
         {
             "type": "h_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "x_brace",
-            "y_position": 6.4
+            "y_position": 6.3
         },
         {
             "type": "h_brace",
-            "y_position": 18.4
+            "y_position": 18.3
         },
         {
             "type": "h_brace",
-            "y_position": 30.6
+            "y_position": 30.3
         },
         {
             "type": "x_brace",
-            "y_position": 30.6
+            "y_position": 30.3
         },
         {
             "type": "h_brace",
-            "y_position": 42.6
+            "y_position": 42.3
         }
     ]
 }
