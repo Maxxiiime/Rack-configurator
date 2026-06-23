@@ -23,6 +23,11 @@
         "x_x": 1.3,
         "x_z": -0.67
     },
+    "brace_bolt": {
+        "first_x": 0.3,
+        "last_x": 0.9,
+        "z": -1
+    },
     "bottom_bolt": {
         "y": 0.74
     },

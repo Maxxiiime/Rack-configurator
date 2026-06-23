@@ -11,9 +11,11 @@ interface BraceAssemblyProps {
   columnId: string;
   hasXBrace: boolean;
   selectedMode?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false }) => {
   const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
@@ -35,7 +37,35 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
           ? [offsets.brace.h_x, y, offsets.brace.h_z]
           : [offsets.brace.x_x, y, offsets.brace.x_z];
 
-        return <BasePart key={`${element.type}-${i}`} id={id} position={position} selectedMode={selectedMode} />;
+        return (
+          <group key={`${element.type}-${i}`}>
+            <BasePart id={id} position={position} selectedMode={selectedMode} />
+
+            {isHBrace && (() => {
+              const braceSizeUnits = braceSize / 100;
+              const gap = braceSizeUnits + offsets.brace_bolt.last_x;
+              return (
+                <>
+                  {isFirst && (
+                    <BasePart
+                      id="bolts"
+                      rotation={[0, Math.PI, 0]}
+                      position={[offsets.brace_bolt.first_x, y, offsets.brace_bolt.z]}
+                      selectedMode={selectedMode}
+                    />
+                  )}
+                  {isLast && (
+                    <BasePart
+                      id="bolts"
+                      position={[gap, y, offsets.brace_bolt.z]}
+                      selectedMode={selectedMode}
+                    />
+                  )}
+                </>
+              );
+            })()}
+          </group>
+        );
       })}
     </group>
   );

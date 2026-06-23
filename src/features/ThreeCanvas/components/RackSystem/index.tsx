@@ -65,6 +65,8 @@ export const RackSystem: React.FC = () => {
 								columnId={columnId}
 								hasXBrace={(rackIds.length - 1 - index) % 3 === 0}
 								selectedMode={selectedRackId === rackId}
+								isFirst={index === 0}
+								isLast={index === rackIds.length - 1}
 							/>
 							{rackIds.length > 1 && rackId !== "initial-rack" && (
 								<Button3D

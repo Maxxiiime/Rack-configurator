@@ -263,5 +263,11 @@
         "name": "Arm Stop",
         "path": "/model/arms/Armstop.glb",
         "price": 4.03
+    },
+    {
+        "shelving_system_id": "bolts",
+        "category": "bolts",
+        "name": "Bolts",
+        "path": "/model/braces/Bolts.glb"
     }
 ]
