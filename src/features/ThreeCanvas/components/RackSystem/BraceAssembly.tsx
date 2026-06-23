@@ -13,9 +13,11 @@ interface BraceAssemblyProps {
   selectedMode?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  removeLeftColumn?: boolean;
+  removeRightColumn?: boolean;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false }) => {
   const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
@@ -46,7 +48,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
               const gap = braceSizeUnits + offsets.brace_bolt.last_x;
               return (
                 <>
-                  {isFirst && (
+                  {isFirst && !removeLeftColumn && (
                     <BasePart
                       id="bolts"
                       rotation={[0, Math.PI, 0]}
@@ -54,7 +56,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
                       selectedMode={selectedMode}
                     />
                   )}
-                  {isLast && (
+                  {isLast && !removeRightColumn && (
                     <BasePart
                       id="bolts"
                       position={[gap, y, offsets.brace_bolt.z]}

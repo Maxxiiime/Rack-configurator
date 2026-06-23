@@ -17,6 +17,8 @@ export const usePricing = () => {
   const armCount = useRackConfigStore((s) => s.armCount);
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
+  const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
+  const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 
   // Selector for derived state
   const activeLegId = useRackConfigStore(selectActiveLegId);
@@ -30,7 +32,9 @@ export const usePricing = () => {
 
     // 1. Calculate the number of items
     const numSections = rackIds.length;
-    const numColumns = numSections + 1;
+    let numColumns = numSections + 1;
+    if (removeFirstColumn) numColumns -= 1;
+    if (removeLastColumn) numColumns -= 1;
 
     // Get the actual number of arms per column side
     const columnHeightUnits = getColumnHeight(columnId);
@@ -88,12 +92,12 @@ export const usePricing = () => {
         legs: numColumns * legPrice,
         arms: totalArms * armPrice,
         armStops: showArmStops ? totalArms * armStopPrice : 0,
-        // The rest is braces
       }
     };
   }, [
     rackType, columnId, armId, braceId, activeLegId,
     sectionWidthOverrides, armCount, armSpacing, showArmStops,
+    removeFirstColumn, removeLastColumn,
     rackIds, getPartData, getPartSize, findPartId, getColumnHeight, offsets.arm.start_y
   ]);
 };

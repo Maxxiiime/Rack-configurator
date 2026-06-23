@@ -17,6 +17,8 @@ export const RackSystem: React.FC = () => {
 	const armId = useRackConfigStore((s) => s.armId);
 	const braceId = useRackConfigStore((s) => s.braceId);
 	const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
+	const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
+	const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
 
 	const rackIds = useRackSectionsStore((s) => s.rackIds);
@@ -37,6 +39,9 @@ export const RackSystem: React.FC = () => {
 		<group position={[-centerX, 0, 0]}>
 			<group ref={rackGroupRef}>
 				{columnPositionsX.map((posX, index) => {
+					if (removeLastColumn && index === 0) return null;
+					if (removeFirstColumn && index === columnPositionsX.length - 1) return null;
+
 					const leftSectionId = index > 0 ? rackIds[index - 1] : null;
 					const rightSectionId = index < rackIds.length ? rackIds[index] : null;
 					const isSelected = selectedRackId !== null && (selectedRackId === leftSectionId || selectedRackId === rightSectionId);
@@ -67,6 +72,8 @@ export const RackSystem: React.FC = () => {
 								selectedMode={selectedRackId === rackId}
 								isFirst={index === 0}
 								isLast={index === rackIds.length - 1}
+								removeLeftColumn={removeLastColumn}
+								removeRightColumn={removeFirstColumn}
 							/>
 							{rackIds.length > 1 && rackId !== "initial-rack" && (
 								<Button3D

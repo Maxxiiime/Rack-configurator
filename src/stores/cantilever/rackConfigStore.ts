@@ -34,6 +34,8 @@ interface RackConfigState {
   armYOverrides: Record<number, number>;
   sectionWidthOverrides: Record<string, number>;
   showArmStops: boolean;
+  removeFirstColumn: boolean;
+  removeLastColumn: boolean;
   metalMaterial: string;
 
   setRackType: (type: RackType) => void;
@@ -49,6 +51,8 @@ interface RackConfigState {
   removeSectionWidthOverride: (id: string) => void;
   clearSectionWidthOverrides: () => void;
   toggleShowArmStops: () => void;
+  toggleRemoveFirstColumn: () => void;
+  toggleRemoveLastColumn: () => void;
 }
 
 /** Derived selector — leg is always computed from arm + rackType */
@@ -65,6 +69,8 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   armYOverrides: {},
   sectionWidthOverrides: {},
   showArmStops: false,
+  removeFirstColumn: false,
+  removeLastColumn: false,
   metalMaterial: 'Blue',
 
   setRackType: (type) => set({ rackType: type }),
@@ -114,4 +120,6 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   },
 
   toggleShowArmStops: () => set((state) => ({ showArmStops: !state.showArmStops })),
+  toggleRemoveFirstColumn: () => set((state) => ({ removeFirstColumn: !state.removeFirstColumn })),
+  toggleRemoveLastColumn: () => set((state) => ({ removeLastColumn: !state.removeLastColumn })),
 }));

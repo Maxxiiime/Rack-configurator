@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Box, Flex, Text, IconButton, Select } from "@chakra-ui/react";
+import { Box, Flex, Text, IconButton, Select, Checkbox, VStack } from "@chakra-ui/react";
 import { sectionBoxStyle, selectStyle } from "../styles";
 import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
@@ -12,6 +12,10 @@ export const DimensionsCustomization = () => {
   const setSectionWidthOverride = useRackConfigStore(s => s.setSectionWidthOverride);
   const removeSectionWidthOverride = useRackConfigStore(s => s.removeSectionWidthOverride);
   const clearSectionWidthOverrides = useRackConfigStore(s => s.clearSectionWidthOverrides);
+  const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
+  const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
+  const toggleRemoveFirstColumn = useRackConfigStore((s) => s.toggleRemoveFirstColumn);
+  const toggleRemoveLastColumn = useRackConfigStore((s) => s.toggleRemoveLastColumn);
 
   const rackIds = useRackSectionsStore(s => s.rackIds);
 
@@ -39,6 +43,7 @@ export const DimensionsCustomization = () => {
 
   return (
     <Box {...sectionBoxStyle}>
+      <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Column widths</Text>
       <Flex align="center" justify="space-between" mb={2}>
         {hasAnyOverride && (
           <Text
@@ -146,6 +151,28 @@ export const DimensionsCustomization = () => {
           );
         })}
       </Flex>
+      <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={3} mt={4}>Remove columns</Text>
+
+      <Box pt={3}>
+        <VStack align="flex-start" spacing={3}>
+          <Checkbox
+            isChecked={removeFirstColumn}
+            onChange={toggleRemoveFirstColumn}
+            size="md"
+            colorScheme="gray"
+          >
+            <Text fontSize="12px" fontWeight={500} color="gray.600">Remove first column</Text>
+          </Checkbox>
+          <Checkbox
+            isChecked={removeLastColumn}
+            onChange={toggleRemoveLastColumn}
+            size="md"
+            colorScheme="gray"
+          >
+            <Text fontSize="12px" fontWeight={500} color="gray.600">Remove last column</Text>
+          </Checkbox>
+        </VStack>
+      </Box>
     </Box>
   );
 };
