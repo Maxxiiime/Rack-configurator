@@ -78,7 +78,7 @@ export const ArmCustomization = () => {
       {/* Spacing */}
       <Box mb={4}>
         <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Spacing (mm)</Text>
-        <Flex align="center" gap={2}>
+        <Flex align="center" gap={2} minW={0} overflow="hidden">
           <Stepper
             value={armSpacing * 100}
             min={200}
@@ -86,20 +86,21 @@ export const ArmCustomization = () => {
             step={100}
             onChange={(v) => handleSpacingChange(v / 100)}
           />
-          <Slider
-            flex={1}
-            min={2}
-            max={maxSpacing}
-            step={1}
-            value={armSpacing}
-            onChange={handleSpacingChange}
-            focusThumbOnChange={false}
-          >
-            <SliderTrack {...sliderTrackStyle}>
-              <SliderFilledTrack bg="gray.800" />
-            </SliderTrack>
-            <SliderThumb {...sliderThumbStyle} />
-          </Slider>
+          <Box flex={1} minW={0} pr={2}>
+            <Slider
+              min={2}
+              max={maxSpacing}
+              step={1}
+              value={armSpacing}
+              onChange={handleSpacingChange}
+              focusThumbOnChange={false}
+            >
+              <SliderTrack {...sliderTrackStyle}>
+                <SliderFilledTrack bg="gray.800" />
+              </SliderTrack>
+              <SliderThumb {...sliderThumbStyle} />
+            </Slider>
+          </Box>
         </Flex>
       </Box>
 
