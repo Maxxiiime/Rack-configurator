@@ -1,6 +1,7 @@
 import { OrbitControls, Stage } from "@react-three/drei";
 import { RackSystem } from "../RackSystem";
 import CameraAutoZoom from "./CameraAutoZoom";
+import FloorLogo from "./FloorLogo";
 import { useCameraDistance } from "@/hooks/useCameraDistance";
 import offsets from '@/data/shelving_offset.json';
 
@@ -32,6 +33,8 @@ const Scene = () => {
             >
                 <RackSystem />
             </Stage>
+            <FloorLogo />
+
             {import.meta.env.DEV ? (
                 <OrbitControls />
             ) : (
