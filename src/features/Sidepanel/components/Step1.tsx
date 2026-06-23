@@ -135,13 +135,6 @@ export function Step1({ onNext }: Step1Props) {
             </Select>
           </Row>
 
-          <Row label="Depth (mm)">
-            <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
-              {armsOpts.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </Select>
-          </Row>
         </VStack>
       </Box>
 
@@ -149,6 +142,14 @@ export function Step1({ onNext }: Step1Props) {
       <Box borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={5} mt={2}>
         <Text {...sectionLabelStyle}>Arms</Text>
         <VStack align="stretch" spacing={5}>
+
+          <Row label="Arms Length (mm)">
+            <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
+              {armsOpts.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </Select>
+          </Row>
 
           <Box>
             <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Count</Text>
