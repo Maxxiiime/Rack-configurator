@@ -3,37 +3,51 @@
         "shelving_system_id": "arm_350",
         "category": "arm",
         "size_mm": 350,
-        "name": "Arm 350",
+        "name": "Arm 350 (900 kg)",
         "path": "/model/arms/Armen_350.glb",
         "arm_stop_y": 0.8,
-        "price": 10
+        "price": 9.97,
+        "max_weight": 900
     },
     {
         "shelving_system_id": "arm_600",
         "category": "arm",
         "size_mm": 600,
-        "name": "Arm 600",
+        "name": "Arm 600 (800 kg)",
         "path": "/model/arms/Armen_600.glb",
         "arm_stop_y": 0.88,
-        "price": 20
+        "price": 13.17,
+        "max_weight": 800
     },
     {
         "shelving_system_id": "arm_900",
         "category": "arm",
         "size_mm": 900,
-        "name": "Arm 900",
+        "name": "Arm 900 (480 kg)",
         "path": "/model/arms/Armen_900.glb",
         "arm_stop_y": 0.99,
-        "price": 30
+        "price": 17.24,
+        "max_weight": 480
     },
     {
         "shelving_system_id": "arm_1250",
         "category": "arm",
         "size_mm": 1250,
-        "name": "Arm 1250",
+        "name": "Arm 1250 (230 kg)",
         "path": "/model/arms/Armen_1250.glb",
         "arm_stop_y": 1.12,
-        "price": 40
+        "price": 22.02,
+        "max_weight": 230
+    },
+    {
+        "shelving_system_id": "arm_1250_1",
+        "category": "arm",
+        "size_mm": 1250,
+        "name": "Arm 1250 (600 kg)",
+        "path": "/model/arms/Armen_1250_2.glb",
+        "arm_stop_y": 1.12,
+        "price": 28.74,
+        "max_weight": 600
     },
     {
         "shelving_system_id": "h_braces_750",
@@ -41,7 +55,7 @@
         "size_mm": 750,
         "name": "H-Brace 750",
         "path": "/model/braces/H_schoringen_750.glb",
-        "price": 50
+        "price": 9.42
     },
     {
         "shelving_system_id": "h_braces_1000",
@@ -49,7 +63,7 @@
         "size_mm": 1000,
         "name": "H-Brace 1000",
         "path": "/model/braces/H_schoringen_1000.glb",
-        "price": 100
+        "price": 12.06
     },
     {
         "shelving_system_id": "h_braces_1250",
@@ -57,7 +71,7 @@
         "size_mm": 1250,
         "name": "H-Brace 1250",
         "path": "/model/braces/H_schoringen_1250.glb",
-        "price": 150
+        "price": 14.74
     },
     {
         "shelving_system_id": "h_braces_1500",
@@ -65,7 +79,7 @@
         "size_mm": 1500,
         "name": "H-Brace 1500",
         "path": "/model/braces/H_schoringen_1500.glb",
-        "price": 200
+        "price": 17.41
     },
     {
         "shelving_system_id": "h_braces_1750",
@@ -73,7 +87,7 @@
         "size_mm": 1750,
         "name": "H-Brace 1750",
         "path": "/model/braces/H_schoringen_1750.glb",
-        "price": 250
+        "price": 20.06
     },
     {
         "shelving_system_id": "h_braces_2000",
@@ -81,7 +95,7 @@
         "size_mm": 2000,
         "name": "H-Brace 2000",
         "path": "/model/braces/H_schoringen_2000.glb",
-        "price": 300
+        "price": 22.72
     },
     {
         "shelving_system_id": "x_braces_750",
@@ -89,7 +103,7 @@
         "size_mm": 750,
         "name": "X-Brace 750",
         "path": "/model/braces/X_schoringen_750.glb",
-        "price": 50
+        "price": 11.48
     },
     {
         "shelving_system_id": "x_braces_1000",
@@ -97,7 +111,7 @@
         "size_mm": 1000,
         "name": "X-Brace 1000",
         "path": "/model/braces/X_schoringen_1000.glb",
-        "price": 100
+        "price": 12.37
     },
     {
         "shelving_system_id": "x_braces_1250",
@@ -105,7 +119,7 @@
         "size_mm": 1250,
         "name": "X-Brace 1250",
         "path": "/model/braces/X_schoringen_1250.glb",
-        "price": 150
+        "price": 13.47
     },
     {
         "shelving_system_id": "x_braces_1500",
@@ -113,7 +127,7 @@
         "size_mm": 1500,
         "name": "X-Brace 1500",
         "path": "/model/braces/X_schoringen_1500.glb",
-        "price": 200
+        "price": 14.77
     },
     {
         "shelving_system_id": "x_braces_1750",
@@ -121,7 +135,7 @@
         "size_mm": 1750,
         "name": "X-Brace 1750",
         "path": "/model/braces/X_schoringen_1750.glb",
-        "price": 250
+        "price": 16.17
     },
     {
         "shelving_system_id": "x_braces_2000",
@@ -129,7 +143,7 @@
         "size_mm": 2000,
         "name": "X-Brace 2000",
         "path": "/model/braces/X_schoringen_2000.glb",
-        "price": 300
+        "price": 17.69
     },
     {
         "shelving_system_id": "column_2000",
@@ -137,7 +151,7 @@
         "size_mm": 2000,
         "name": "Column 2000",
         "path": "/model/columns/Kolommen_2M.glb",
-        "price": 100
+        "price": 77.29
     },
     {
         "shelving_system_id": "column_2500",
@@ -145,7 +159,7 @@
         "size_mm": 2500,
         "name": "Column 2500",
         "path": "/model/columns/Kolommen_2M50.glb",
-        "price": 200
+        "price": 96.32
     },
     {
         "shelving_system_id": "column_3000",
@@ -153,7 +167,7 @@
         "size_mm": 3000,
         "name": "Column 3000",
         "path": "/model/columns/Kolommen_3M.glb",
-        "price": 300
+        "price": 132.61
     },
     {
         "shelving_system_id": "column_3500",
@@ -161,7 +175,7 @@
         "size_mm": 3500,
         "name": "Column 3500",
         "path": "/model/columns/Kolommen_3M50.glb",
-        "price": 400
+        "price": 154.43
     },
     {
         "shelving_system_id": "column_4000",
@@ -169,7 +183,7 @@
         "size_mm": 4000,
         "name": "Column 4000",
         "path": "/model/columns/Kolommen_4M.glb",
-        "price": 500
+        "price": 176.79
     },
     {
         "shelving_system_id": "column_4500",
@@ -177,7 +191,7 @@
         "size_mm": 4500,
         "name": "Column 4500",
         "path": "/model/columns/Kolommen_4M50.glb",
-        "price": 600
+        "price": 198.62
     },
     {
         "shelving_system_id": "double_leg_350",
@@ -185,7 +199,7 @@
         "size_mm": 350,
         "name": "Double Leg 350",
         "path": "/model/legs/Dubblezijdige_350.glb",
-        "price": 20
+        "price": 53.77
     },
     {
         "shelving_system_id": "double_leg_600",
@@ -193,7 +207,7 @@
         "size_mm": 600,
         "name": "Double Leg 600",
         "path": "/model/legs/Dubblezijdige_600.glb",
-        "price": 40
+        "price": 78.13
     },
     {
         "shelving_system_id": "double_leg_900",
@@ -201,7 +215,7 @@
         "size_mm": 900,
         "name": "Double Leg 900",
         "path": "/model/legs/Dubblezijdige_900.glb",
-        "price": 60
+        "price": 104.63
     },
     {
         "shelving_system_id": "double_leg_1250",
@@ -209,7 +223,7 @@
         "size_mm": 1250,
         "name": "Double Leg 1250",
         "path": "/model/legs/Dubblezijdige_1250.glb",
-        "price": 80
+        "price": 133.31
     },
     {
         "shelving_system_id": "single_leg_350",
@@ -217,7 +231,7 @@
         "size_mm": 350,
         "name": "Single Leg 350",
         "path": "/model/legs/Enkelzijdige_350.glb",
-        "price": 10
+        "price": 38.33
     },
     {
         "shelving_system_id": "single_leg_600",
@@ -225,7 +239,7 @@
         "size_mm": 600,
         "name": "Single Leg 600",
         "path": "/model/legs/Enkelzijdige_600.glb",
-        "price": 20
+        "price": 49.39
     },
     {
         "shelving_system_id": "single_leg_900",
@@ -233,7 +247,7 @@
         "size_mm": 900,
         "name": "Single Leg 900",
         "path": "/model/legs/Enkelzijdige_900.glb",
-        "price": 30
+        "price": 62.66
     },
     {
         "shelving_system_id": "single_leg_1250",
@@ -241,13 +255,13 @@
         "size_mm": 1250,
         "name": "Single Leg 1250",
         "path": "/model/legs/Enkelzijdige_1250.glb",
-        "price": 40
+        "price": 78.11
     },
     {
         "shelving_system_id": "arm_stop",
         "category": "arm_stop",
         "name": "Arm Stop",
         "path": "/model/arms/Armstop.glb",
-        "price": 50
+        "price": 4.03
     }
 ]
