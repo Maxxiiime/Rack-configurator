@@ -47,7 +47,8 @@
         "path": "/model/arms/Armen_1250_2.glb",
         "arm_stop_y": 1.12,
         "price": 28.74,
-        "max_weight": 600
+        "max_weight": 600,
+        "arm_stop_id": "heavy_arm_stop"
     },
     {
         "shelving_system_id": "h_braces_750",
@@ -293,5 +294,12 @@
         "category": "bolts",
         "name": "Bolts",
         "path": "/model/braces/Bolts.glb"
+    },
+    {
+        "shelving_system_id": "heavy_arm_stop",
+        "category": "arm_stop",
+        "name": "Heavy Arm Stop",
+        "path": "/model/arms/HeavyArmstop.glb",
+        "price": 4.03
     }
 ]

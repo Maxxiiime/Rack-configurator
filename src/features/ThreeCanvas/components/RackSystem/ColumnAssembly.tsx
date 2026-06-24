@@ -34,6 +34,8 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const armStopLocalZ = armSizeUnits + offsets.arm_stop.z;
   const doubleArmStopLocalZ = armSizeUnits - offsets.arm_stop.double_z;
   const armStopY = getPartData(armId)?.arm_stop_y ?? 0;
+  const armStopId = getPartData(armId)?.arm_stop_id ?? 'arm_stop';
+
 
 
   const armPositions = useMemo(() => {
@@ -75,6 +77,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
           armStopLocalZ={armStopLocalZ}
           doubleArmStopLocalZ={doubleArmStopLocalZ}
           showArmStops={showArmStops}
+          armStopId={armStopId}
         />
       ))}
     </group>

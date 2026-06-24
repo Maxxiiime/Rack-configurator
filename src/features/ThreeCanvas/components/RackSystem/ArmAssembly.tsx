@@ -13,6 +13,7 @@ interface ArmAssemblyProps {
   armStopLocalZ: number;
   doubleArmStopLocalZ: number;
   showArmStops: boolean;
+  armStopId: string;
 }
 
 export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
@@ -25,6 +26,7 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   armStopLocalZ,
   doubleArmStopLocalZ,
   showArmStops,
+  armStopId,
 }) => {
   const isSelected = useEditorStore((s) => s.selectedArmIndex === index);
 
@@ -40,7 +42,7 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
       {/* ARM STOP - Single Face */}
       {showArmStops && (
         <BasePart
-          id="arm_stop"
+          id={armStopId}
           position={[offsets.arm_stop.x, yPos + armStopY, -armStopLocalZ]}
           selectedMode={isSelected}
         />
@@ -60,7 +62,7 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
           {/* ARM STOP - Double Face */}
           {showArmStops && (
             <BasePart
-              id="arm_stop"
+              id={armStopId}
               position={[offsets.arm_stop.double_x, yPos + armStopY, doubleArmStopLocalZ]}
               rotation={[0, Math.PI, 0]}
               selectedMode={isSelected}
