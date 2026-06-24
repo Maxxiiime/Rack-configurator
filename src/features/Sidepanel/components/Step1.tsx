@@ -96,16 +96,16 @@ export function Step1({ onNext }: Step1Props) {
   const actualArmCount = Math.min(armCount, currentMaxArms);
 
   /* ── Auto-update arms when column or arm type changes ──────── */
-  const prevRef = useRef({ columnId: '', armId: '' });
+  const prevRef = useRef({ columnId, armId });
   useEffect(() => {
-    if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId) {
+    if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId || armCount === 99) {
       prevRef.current = { columnId, armId };
       // Default to max arms with max spacing
       const maxSpacing = getMaxAllowedSpacing(offsets.arm.start_y, columnHeightUnits, absoluteMaxArms);
       setArmCount(absoluteMaxArms);
       setArmSpacing(maxSpacing);
     }
-  }, [columnId, armId, absoluteMaxArms, columnHeightUnits, offsets.arm.start_y, setArmCount, setArmSpacing]);
+  }, [columnId, armId, armCount, absoluteMaxArms, columnHeightUnits, offsets.arm.start_y, setArmCount, setArmSpacing]);
 
   const handleArmCountChange = (newCount: number) => {
     setArmCount(newCount);
