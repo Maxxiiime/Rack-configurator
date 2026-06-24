@@ -44,7 +44,7 @@ export default function Button(props: ButtonProps) {
             }}
         >
             {type === "dimension" ? (
-                <DimensionIcon style={{ width: "1.6rem", height: "1.6rem", display: "block" }} />
+                <DimensionIcon style={{ width: "1.9rem", height: "1.9rem", display: "block" }} />
             ) : (
                 <WeightIcon style={{ width: "2rem", height: "2rem", display: "block" }} />
             )}
