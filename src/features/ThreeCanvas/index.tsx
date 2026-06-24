@@ -12,6 +12,8 @@ const SIDEPANEL_WIDTH = 300;
 const ThreeCanvas = () => {
 	const setShowDimensions = useEditorStore((s) => s.setShowDimensions);
 	const showDimensions = useEditorStore((s) => s.showDimensions);
+	const setShowWeightInfo = useEditorStore((s) => s.setShowWeightInfo);
+	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
 	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (
@@ -33,6 +35,10 @@ const ThreeCanvas = () => {
 			<Button
 				type="dimension"
 				onClick={() => setShowDimensions(!showDimensions)}
+			/>
+			<Button
+				type="weight"
+				onClick={() => setShowWeightInfo(!showWeightInfo)}
 			/>
 			<Sidepanel width={SIDEPANEL_WIDTH} />
 		</Box>

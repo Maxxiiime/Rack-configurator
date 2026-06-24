@@ -9,6 +9,7 @@ import { useShelfParts } from "@/hooks/useShelfParts";
 import { useRackPositions } from "@/hooks/useRackPositions";
 import { Button3D } from "./Button3D";
 import { DimensionLines } from "../DimensionsLines/index";
+import { WeightInfo } from "../WeightInfo/index";
 
 export const RackSystem: React.FC = () => {
 
@@ -27,6 +28,7 @@ export const RackSystem: React.FC = () => {
 	const removeRack = useRackSectionsStore((s) => s.removeRack);
 
 	const showDimensions = useEditorStore((s) => s.showDimensions);
+	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
 
 	const { getPartSize } = useShelfParts();
@@ -88,6 +90,7 @@ export const RackSystem: React.FC = () => {
 			</group>
 
 			{showDimensions && <DimensionLines rackGroupRef={rackGroupRef} />}
+			{showWeightInfo && <WeightInfo rackGroupRef={rackGroupRef} />}
 
 			<Button3D
 				type="plus"

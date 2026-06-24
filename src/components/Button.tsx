@@ -1,9 +1,9 @@
-import React from "react";
 import { Box } from "@chakra-ui/react";
 import DimensionIcon from "@/assets/svgs/DimensionIcon";
+import WeightIcon from "@/assets/svgs/WeightIcon";
 
 interface ButtonProps {
-    type: "dimension";
+    type: "dimension" | "weight";
     onClick: () => void;
 }
 
@@ -13,7 +13,9 @@ export default function Button(props: ButtonProps) {
     const { type, onClick } = props;
     const blueColor = "#2563eb";
 
-    if (type !== "dimension") return null;
+    if (type !== "dimension" && type !== "weight") return null;
+
+    const bottomPos = type === "dimension" ? "24px" : "90px";
 
     return (
         <Box
@@ -21,7 +23,7 @@ export default function Button(props: ButtonProps) {
             type="button"
             onClick={onClick}
             position="fixed"
-            bottom="24px"
+            bottom={bottomPos}
             left="24px"
             zIndex={999}
             w="3.25rem"
@@ -41,7 +43,11 @@ export default function Button(props: ButtonProps) {
                 color: "white",
             }}
         >
-            <DimensionIcon style={{ width: "1.6rem", height: "1.6rem", display: "block" }} />
+            {type === "dimension" ? (
+                <DimensionIcon style={{ width: "1.6rem", height: "1.6rem", display: "block" }} />
+            ) : (
+                <WeightIcon style={{ width: "2rem", height: "2rem", display: "block" }} />
+            )}
         </Box>
     );
 }
