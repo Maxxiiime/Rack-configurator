@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { Box, Flex, Text, IconButton, Select, Checkbox, VStack } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { Box, Flex, Text, IconButton, Select, Checkbox, VStack, Collapse } from "@chakra-ui/react";
 import { sectionBoxStyle, selectStyle } from "../styles";
 import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
@@ -40,26 +40,69 @@ export const DimensionsCustomization = () => {
   };
 
   const hasAnyOverride = Object.keys(sectionWidthOverrides).length > 0;
+  const [columnsOpen, setColumnsOpen] = useState(true);
 
   return (
     <Box {...sectionBoxStyle}>
-      <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Column widths</Text>
-      <Flex align="center" justify="space-between" mb={2}>
-        {hasAnyOverride && (
-          <Text
-            fontSize="10px"
-            fontWeight={600}
-            color="red.500"
-            cursor="pointer"
-            _hover={{ color: "red.700" }}
-            onClick={clearSectionWidthOverrides}
+      <Flex
+        align="center"
+        justify="space-between"
+        cursor="pointer"
+        onClick={() => setColumnsOpen(!columnsOpen)}
+        mb={2}
+      >
+        <Text fontSize="12px" fontWeight={500} color="gray.500">
+          Column widths
+        </Text>
+        <Flex align="center" gap={2}>
+          {hasAnyOverride && (
+            <Text
+              fontSize="10px"
+              fontWeight={600}
+              color="red.500"
+              cursor="pointer"
+              _hover={{ color: "red.700" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                clearSectionWidthOverrides();
+              }}
+            >
+              Reset all
+            </Text>
+          )}
+          <Box
+            as="span"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            w="16px"
+            h="16px"
+            borderRadius="full"
+            bg="gray.100"
+            transition="transform 0.2s ease"
+            transform={columnsOpen ? "rotate(0deg)" : "rotate(-90deg)"}
           >
-            Reset all
-          </Text>
-        )}
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 3.5L5 6.5L8 3.5"
+                stroke="#718096"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Box>
+        </Flex>
       </Flex>
 
-      <Flex direction="column" gap="2px">
+      <Collapse in={columnsOpen} animateOpacity>
+        <Flex direction="column" gap="2px">
         {rackIds.map((rackId, index) => {
           const isSelected = selectedRackId === rackId;
           const isOverridden = sectionWidthOverrides[rackId] !== undefined;
@@ -150,7 +193,8 @@ export const DimensionsCustomization = () => {
             </Box>
           );
         })}
-      </Flex>
+        </Flex>
+      </Collapse>
       <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={3} mt={4}>Remove columns</Text>
 
       <Box pt={3}>
