@@ -151,7 +151,11 @@
         "size_mm": 2000,
         "name": "Column 2000",
         "path": "/model/columns/Kolommen_2M.glb",
-        "price": 77.29
+        "price": 77.29,
+        "max_weight_350mm": 3095,
+        "max_weight_600mm": 3095,
+        "max_weight_900mm": 2304,
+        "max_weight_1250mm": 1830
     },
     {
         "shelving_system_id": "column_2500",
@@ -159,7 +163,11 @@
         "size_mm": 2500,
         "name": "Column 2500",
         "path": "/model/columns/Kolommen_2M50.glb",
-        "price": 96.32
+        "price": 96.32,
+        "max_weight_350mm": 2908,
+        "max_weight_600mm": 2908,
+        "max_weight_900mm": 2165,
+        "max_weight_1250mm": 1719
     },
     {
         "shelving_system_id": "column_3000",
@@ -167,7 +175,11 @@
         "size_mm": 3000,
         "name": "Column 3000",
         "path": "/model/columns/Kolommen_3M.glb",
-        "price": 132.61
+        "price": 132.61,
+        "max_weight_350mm": 4121,
+        "max_weight_600mm": 4121,
+        "max_weight_900mm": 3068,
+        "max_weight_1250mm": 2436
     },
     {
         "shelving_system_id": "column_3500",
@@ -175,7 +187,11 @@
         "size_mm": 3500,
         "name": "Column 3500",
         "path": "/model/columns/Kolommen_3M50.glb",
-        "price": 154.43
+        "price": 154.43,
+        "max_weight_350mm": 3837,
+        "max_weight_600mm": 3837,
+        "max_weight_900mm": 2857,
+        "max_weight_1250mm": 2268
     },
     {
         "shelving_system_id": "column_4000",
@@ -183,7 +199,11 @@
         "size_mm": 4000,
         "name": "Column 4000",
         "path": "/model/columns/Kolommen_4M.glb",
-        "price": 176.79
+        "price": 176.79,
+        "max_weight_350mm": 3588,
+        "max_weight_600mm": 3588,
+        "max_weight_900mm": 2672,
+        "max_weight_1250mm": 2121
     },
     {
         "shelving_system_id": "column_4500",
@@ -191,7 +211,11 @@
         "size_mm": 4500,
         "name": "Column 4500",
         "path": "/model/columns/Kolommen_4M50.glb",
-        "price": 198.62
+        "price": 198.62,
+        "max_weight_350mm": 3375,
+        "max_weight_600mm": 3375,
+        "max_weight_900mm": 2513,
+        "max_weight_1250mm": 1995
     },
     {
         "shelving_system_id": "double_leg_350",

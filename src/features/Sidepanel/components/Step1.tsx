@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -15,7 +15,6 @@ import {
 import { useRackConfigStore, RackType } from "@/stores/cantilever/rackConfigStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing } from "@/utils/armPositions";
-import ChevronLeft from "@/assets/svgs/ChevronLeft";
 import {
   sectionBoxStyle,
   sectionLabelStyle,
@@ -46,7 +45,7 @@ export function Step1({ onNext }: Step1Props) {
   const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
   const toggleShowArmStops = useRackConfigStore((s) => s.toggleShowArmStops);
 
-  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
+  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } =
     useShelfParts();
 
   /* ── Options ───────────────────────────────────────────────── */
@@ -75,15 +74,38 @@ export function Step1({ onNext }: Step1Props) {
 
   /* ── Arm count constraints ─────────────────────────────────── */
   const columnHeightUnits = getColumnHeight(columnId);
-  const absoluteMaxArms = useMemo(
+  const weightMaxArms = useMemo(
+    () => getMaxArmsByWeight(columnId, armId),
+    [columnId, armId, getMaxArmsByWeight]
+  );
+  const physicalMaxArms = useMemo(
     () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, 2),
     [columnHeightUnits, offsets.arm.start_y]
   );
+  const absoluteMaxArms = useMemo(
+    () => Math.min(physicalMaxArms, weightMaxArms === Infinity ? physicalMaxArms : weightMaxArms),
+    [physicalMaxArms, weightMaxArms]
+  );
   const currentMaxArms = useMemo(
-    () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, armSpacing),
-    [columnHeightUnits, armSpacing, offsets.arm.start_y]
+    () => Math.min(
+      getMaxArmCount(offsets.arm.start_y, columnHeightUnits, armSpacing),
+      absoluteMaxArms
+    ),
+    [columnHeightUnits, armSpacing, offsets.arm.start_y, absoluteMaxArms]
   );
   const actualArmCount = Math.min(armCount, currentMaxArms);
+
+  /* ── Auto-update arms when column or arm type changes ──────── */
+  const prevRef = useRef({ columnId: '', armId: '' });
+  useEffect(() => {
+    if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId) {
+      prevRef.current = { columnId, armId };
+      // Default to max arms with max spacing
+      const maxSpacing = getMaxAllowedSpacing(offsets.arm.start_y, columnHeightUnits, absoluteMaxArms);
+      setArmCount(absoluteMaxArms);
+      setArmSpacing(maxSpacing);
+    }
+  }, [columnId, armId, absoluteMaxArms, columnHeightUnits, offsets.arm.start_y, setArmCount, setArmSpacing]);
 
   const handleArmCountChange = (newCount: number) => {
     setArmCount(newCount);

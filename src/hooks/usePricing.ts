@@ -25,7 +25,7 @@ export const usePricing = () => {
 
   const rackIds = useRackSectionsStore((s) => s.rackIds);
 
-  const { getPartData, getPartSize, findPartId, getColumnHeight, offsets } = useShelfParts();
+  const { getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } = useShelfParts();
 
   return useMemo(() => {
     let totalPrice = 0;
@@ -36,13 +36,8 @@ export const usePricing = () => {
     if (removeFirstColumn) numColumns -= 1;
     if (removeLastColumn) numColumns -= 1;
 
-    // Get the actual number of arms per column side
-    const columnHeightUnits = getColumnHeight(columnId);
-    const maxArms = getMaxArmCount(offsets.arm.start_y, columnHeightUnits, armSpacing);
-    const actualArmCountPerSide = Math.min(armCount, maxArms);
-
     const totalSides = numColumns * (rackType === 'double' ? 2 : 1);
-    const totalArms = actualArmCountPerSide * totalSides;
+    const totalArms = armCount * totalSides;
 
     // 2. Fetch prices
     const columnPrice = getPartData(columnId)?.price || 0;
@@ -98,6 +93,6 @@ export const usePricing = () => {
     rackType, columnId, armId, braceId, activeLegId,
     sectionWidthOverrides, armCount, armSpacing, showArmStops,
     removeFirstColumn, removeLastColumn,
-    rackIds, getPartData, getPartSize, findPartId, getColumnHeight, offsets.arm.start_y
+    rackIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
   ]);
 };

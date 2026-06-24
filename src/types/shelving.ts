@@ -8,6 +8,11 @@ export interface ShelvingPart {
 	path: string;
 	arm_stop_y?: number;
 	price?: number;
+	max_weight?: number;
+	max_weight_350mm?: number;
+	max_weight_600mm?: number;
+	max_weight_900mm?: number;
+	max_weight_1250mm?: number;
 }
 
 export type BraceType = 'h_brace' | 'x_brace';

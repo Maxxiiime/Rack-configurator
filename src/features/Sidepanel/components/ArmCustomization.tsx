@@ -1,11 +1,11 @@
-import { useMemo } from "react";
-import { Box, Flex, Text, Slider, SliderTrack, SliderFilledTrack, SliderThumb, IconButton } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { Box, Flex, Text, Slider, SliderTrack, SliderFilledTrack, SliderThumb, IconButton, Collapse } from "@chakra-ui/react";
 import { Stepper } from "./Shared";
 import { sectionBoxStyle, sliderTrackStyle, sliderThumbStyle } from "../styles";
 import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
 import { useEditorStore } from "@/stores/cantilever/editorStore";
 import { useShelfParts } from "@/hooks/useShelfParts";
-import { getMaxArmCount, getMaxAllowedSpacing, computeArmPositions } from "@/utils/armPositions";
+import { getMaxAllowedSpacing, computeArmPositions } from "@/utils/armPositions";
 
 export const ArmCustomization = () => {
   const armSpacing = useRackConfigStore(s => s.armSpacing);
@@ -25,14 +25,12 @@ export const ArmCustomization = () => {
   const columnHeightUnits = getColumnHeight(columnId);
   const startY = offsets.arm.start_y;
 
-  const currentMaxArms = getMaxArmCount(startY, columnHeightUnits, armSpacing);
-  const actualArmCount = Math.min(armCount, currentMaxArms);
-  const maxSpacing = getMaxAllowedSpacing(startY, columnHeightUnits, actualArmCount);
+  const maxSpacing = getMaxAllowedSpacing(startY, columnHeightUnits, armCount);
 
   // Compute the base (auto) positions — used for display and as defaults
   const basePositions = useMemo(
-    () => computeArmPositions(startY, columnHeightUnits, armSpacing, actualArmCount),
-    [startY, columnHeightUnits, armSpacing, actualArmCount]
+    () => computeArmPositions(startY, columnHeightUnits, armSpacing, armCount),
+    [startY, columnHeightUnits, armSpacing, armCount]
   );
 
   // Y constraints for manual override — snap to .45 pattern
@@ -40,9 +38,6 @@ export const ArmCustomization = () => {
   const globalMaxY = columnHeightUnits - armSpacing;   // don't exceed column top
 
   const handleSpacingChange = (newSpacing: number) => {
-    if (armCount > actualArmCount) {
-      setArmCount(actualArmCount);
-    }
     setArmSpacing(newSpacing);
   };
 
@@ -72,6 +67,7 @@ export const ArmCustomization = () => {
   };
 
   const hasAnyOverride = Object.keys(armYOverrides).length > 0;
+  const [positionsOpen, setPositionsOpen] = useState(true);
 
   return (
     <Box {...sectionBoxStyle}>
@@ -106,25 +102,65 @@ export const ArmCustomization = () => {
 
       {/* Arm rows list */}
       <Box>
-        <Flex align="center" justify="space-between" mb={2}>
-          <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>
+        <Flex
+          align="center"
+          justify="space-between"
+          cursor="pointer"
+          onClick={() => setPositionsOpen(!positionsOpen)}
+          mb={2}
+        >
+          <Text fontSize="12px" fontWeight={500} color="gray.500">
             Arm Positions
           </Text>
-          {hasAnyOverride && (
-            <Text
-              fontSize="10px"
-              fontWeight={600}
-              color="red.500"
-              cursor="pointer"
-              _hover={{ color: "red.700" }}
-              onClick={clearArmYOverrides}
+          <Flex align="center" gap={2}>
+            {hasAnyOverride && (
+              <Text
+                fontSize="10px"
+                fontWeight={600}
+                color="red.500"
+                cursor="pointer"
+                _hover={{ color: "red.700" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearArmYOverrides();
+                }}
+              >
+                Reset all
+              </Text>
+            )}
+            <Box
+              as="span"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              w="16px"
+              h="16px"
+              borderRadius="full"
+              bg="gray.100"
+              transition="transform 0.2s ease"
+              transform={positionsOpen ? "rotate(0deg)" : "rotate(-90deg)"}
             >
-              Reset all
-            </Text>
-          )}
+              <svg
+                width="8"
+                height="8"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 3.5L5 6.5L8 3.5"
+                  stroke="#718096"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Box>
+          </Flex>
         </Flex>
 
-        <Flex direction="column" gap="2px">
+        <Collapse in={positionsOpen} animateOpacity>
+          <Flex direction="column" gap="2px">
           {basePositions.map((_, index) => {
             const isSelected = selectedArmIndex === index;
             const isOverridden = armYOverrides[index] !== undefined;
@@ -232,7 +268,8 @@ export const ArmCustomization = () => {
               </Box>
             );
           })}
-        </Flex>
+          </Flex>
+        </Collapse>
       </Box>
     </Box>
   );

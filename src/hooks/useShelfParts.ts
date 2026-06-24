@@ -43,6 +43,24 @@ export const useShelfParts = () => {
     return typedParts.find((p) => p.shelving_system_id === id);
   };
 
+  const getColumnMaxWeightForArm = (columnId: string, armId: string): number => {
+    const column = typedParts.find((p) => p.shelving_system_id === columnId);
+    const arm = typedParts.find((p) => p.shelving_system_id === armId);
+    if (!column || !arm) return Infinity;
+
+    const armSize = arm.size_mm ?? 0;
+    const key = `max_weight_${armSize}mm` as keyof typeof column;
+    return (column[key] as number | undefined) ?? Infinity;
+  };
+
+  const getMaxArmsByWeight = (columnId: string, armId: string): number => {
+    const columnMaxWeight = getColumnMaxWeightForArm(columnId, armId);
+    const arm = typedParts.find((p) => p.shelving_system_id === armId);
+    const armWeight = arm?.max_weight ?? 0;
+    if (armWeight <= 0 || columnMaxWeight === Infinity) return Infinity;
+    return Math.floor(columnMaxWeight / armWeight);
+  };
+
   return {
     getColumnsOptions,
     getArmsOptions,
@@ -50,6 +68,8 @@ export const useShelfParts = () => {
     getPartSize,
     findPartId,
     getPartData,
+    getColumnMaxWeightForArm,
+    getMaxArmsByWeight,
     offsets: typedOffsets,
     partsData: typedParts,
   };

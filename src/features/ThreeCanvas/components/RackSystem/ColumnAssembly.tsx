@@ -35,7 +35,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const doubleArmStopLocalZ = armSizeUnits - offsets.arm_stop.double_z;
   const armStopY = getPartData(armId)?.arm_stop_y ?? 0;
 
-  // Mémoïsation des calculs de position
+
   const armPositions = useMemo(() => {
     const basePositions = computeArmPositions(
       offsets.arm.start_y,
