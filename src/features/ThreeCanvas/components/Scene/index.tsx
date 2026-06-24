@@ -8,8 +8,8 @@ import offsets from '@/data/shelving_offset.json';
 
 const MIN_MAX_DISTANCE = 50;
 const MAX_DISTANCE_MULTIPLIER = 1.4;
-const MIN_MIN_DISTANCE = 30;
-const MIN_DISTANCE_MULTIPLIER = 0.8;
+const MIN_MIN_DISTANCE = 10;
+const MIN_DISTANCE_MULTIPLIER = 0.4;
 
 const Scene = () => {
     const { autoDistance } = useCameraDistance();
@@ -35,16 +35,14 @@ const Scene = () => {
             </Stage>
             <FloorLogo />
 
-            {import.meta.env.DEV ? (
-                <OrbitControls />
-            ) : (
-                <OrbitControls
-                    maxPolarAngle={Math.PI / 2}
-                    maxDistance={maxDistance}
-                    minDistance={minDistance}
-                    dampingFactor={0.2}
-                />
-            )}
+
+            <OrbitControls
+                maxPolarAngle={Math.PI / 2}
+                maxDistance={maxDistance}
+                minDistance={minDistance}
+                dampingFactor={0.2}
+            />
+
             <CameraAutoZoom />
         </>
     );
