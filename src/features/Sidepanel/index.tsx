@@ -6,24 +6,26 @@ import { StyledBox } from "./styles";
 import ChevronLeft from "@/assets/svgs/ChevronLeft";
 import { Step1 } from "./components/Step1";
 import { Step2 } from "./components/Step2";
+import { Step3 } from "./components/Step3";
 
 /* ─── Step indicator ────────────────────────────────────────────── */
 
-const STEP_LABELS: Record<1 | 2, string> = {
+const STEP_LABELS: Record<1 | 2 | 3, string> = {
   1: "Global Layout",
   2: "Advanced Options",
+  3: "Bill of Materials",
 };
 
 function StepDots({
   currentStep,
   onStepClick,
 }: {
-  currentStep: 1 | 2;
-  onStepClick: (s: 1 | 2) => void;
+  currentStep: 1 | 2 | 3;
+  onStepClick: (s: 1 | 2 | 3) => void;
 }) {
   return (
     <Flex align="center" justify="center" gap={2} mb={4}>
-      {([1, 2] as const).map((s) => {
+      {([1, 2, 3] as const).map((s) => {
         const isActive = currentStep === s;
         const isPast = currentStep > s;
         return (
@@ -53,11 +55,11 @@ function StepDots({
                 {s}
               </Text>
             </Box>
-            {s === 1 && (
+            {s < 3 && (
               <Box
                 h="1px"
                 w="20px"
-                bg={currentStep >= 2 ? "gray.400" : "gray.200"}
+                bg={currentStep >= s + 1 ? "gray.400" : "gray.200"}
                 transition="background 0.2s ease"
               />
             )}
@@ -109,11 +111,14 @@ const Sidepanel = ({ width = 300 }) => {
         {/* ── Step dots ──────────────────────────────────────── */}
         <StepDots
           currentStep={currentStep}
-          onStepClick={(s) => { if (s < currentStep) goToStep1(); }}
+          onStepClick={(s) => {
+            if (s === 1) goToStep1();
+            else if (s === 2 && currentStep === 3) setCurrentStep(2);
+          }}
         />
 
         {/* ── Step title ─────────────────────────────────────── */}
-        <Flex align="center" gap={2} mb={3}>
+        <Flex align="center" gap={2} mb={8}>
 
           <Text
             fontSize="15px"
@@ -127,20 +132,23 @@ const Sidepanel = ({ width = 300 }) => {
         {/* ── Step content ───────────────────────────────────── */}
         {currentStep === 1 && <Step1 onNext={() => setCurrentStep(2)} />}
         {currentStep === 2 && <Step2 onBack={goToStep1} />}
+        {currentStep === 3 && <Step3 onBack={() => setCurrentStep(2)} />}
 
         {/* ── Price footer ───────────────────────────────────── */}
-        <Box
-          mt="auto"
-          p={4}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text fontSize="18px" fontWeight={600} color="gray.600">Total Price:</Text>
-          <Text fontSize="20px" fontWeight={800} color="gray.800">
-            {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-          </Text>
-        </Box>
+        {currentStep !== 3 && (
+          <Box
+            mt="auto"
+            p={4}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Text fontSize="18px" fontWeight={600} color="gray.600">Total Price:</Text>
+            <Text fontSize="20px" fontWeight={800} color="gray.800">
+              {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+            </Text>
+          </Box>
+        )}
       </div>
     </StyledBox>
   );

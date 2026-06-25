@@ -18,6 +18,7 @@ export function Step2({ onBack }: Step2Props) {
 
   const selectedRackId = useEditorStore((s) => s.selectedRackId);
   const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+  const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
 
   const hasSelection = selectedRackId !== null || selectedArmIndex !== null;
 
@@ -99,6 +100,7 @@ export function Step2({ onBack }: Step2Props) {
           borderRadius="lg"
           _hover={{ bg: "gray.700" }}
           _active={{ bg: "gray.800" }}
+          onClick={() => setCurrentStep(3)}
         >
           Finish
         </Button>

@@ -4,13 +4,13 @@
 import create from 'zustand';
 
 interface EditorState {
-  currentStep: 1 | 2;
+  currentStep: 1 | 2 | 3;
   selectedArmIndex: number | null;
   selectedRackId: string | null;
   showDimensions: boolean;
   showWeightInfo: boolean;
 
-  setCurrentStep: (step: 1 | 2) => void;
+  setCurrentStep: (step: 1 | 2 | 3) => void;
   setSelectedArmIndex: (index: number | null) => void;
   setSelectedRackId: (id: string | null) => void;
   setShowDimensions: (showDimensions: boolean) => void;
