@@ -1,7 +1,7 @@
 import { useTexture } from "@react-three/drei";
 import { DoubleSide } from "three";
 
-const LOGO_WIDTH = 20;
+const LOGO_WIDTH = 100;
 const LOGO_HEIGHT = LOGO_WIDTH / 4;
 
 const FloorLogo = () => {
@@ -10,14 +10,13 @@ const FloorLogo = () => {
     return (
         <mesh
             rotation={[-Math.PI / 2, 0, Math.PI]}
-            position={[0, -10, -10]}
+            position={[0, -10, 3]}
         >
             <planeGeometry args={[LOGO_WIDTH, LOGO_HEIGHT]} />
             <meshBasicMaterial
                 map={texture}
                 transparent
-                opacity={0.6}
-                side={DoubleSide}
+                opacity={0.05}
                 depthWrite={false}
             />
         </mesh>
