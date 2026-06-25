@@ -21,8 +21,14 @@ export const useEditorStore = create<EditorState>((set) => ({
   showDimensions: false,
   showWeightInfo: false,
 
-  setSelectedArmIndex: (index) => set({ selectedArmIndex: index }),
-  setSelectedRackId: (id) => set({ selectedRackId: id }),
+  setSelectedArmIndex: (index) => set(() => ({
+    selectedArmIndex: index,
+    ...(index !== null ? { selectedRackId: null } : {})
+  })),
+  setSelectedRackId: (id) => set(() => ({
+    selectedRackId: id,
+    ...(id !== null ? { selectedArmIndex: null } : {})
+  })),
   setShowDimensions: (showDimensions) => set({ showDimensions }),
   setShowWeightInfo: (showWeightInfo) => set({ showWeightInfo }),
 }));
