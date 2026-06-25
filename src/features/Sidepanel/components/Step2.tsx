@@ -1,125 +1,73 @@
 import { useState } from "react";
-import { Text, VStack, Box, Button, Flex, Collapse } from "@chakra-ui/react";
-import { sectionLabelStyle } from "../styles";
-import { DimensionsCustomization } from "./DimensionsCustomization";
-import { ArmCustomization } from "./ArmCustomization";
+import { Text, VStack, Box, Button } from "@chakra-ui/react";
+import { useEditorStore } from "@/stores/cantilever/editorStore";
+import { CollapsibleMenu } from "./CollapsibleMenu";
+import { GlobalSettings } from "./GlobalSettings";
+import { RackEditor } from "./RackEditor";
+import { ArmRowEditor } from "./ArmRowEditor";
+import RulerIcon from "@/assets/svgs/RulerIcon";
 
 interface Step2Props {
   onBack: () => void;
 }
 
-/* ── Collapsible section header ────────────────────────────────────── */
-
-interface CollapsibleSectionProps {
-  label: string;
-  isOpen: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-  withTopBorder?: boolean;
-}
-
-function CollapsibleSection({
-  label,
-  isOpen,
-  onToggle,
-  children,
-  withTopBorder = false,
-}: CollapsibleSectionProps) {
-  return (
-    <Box
-      borderTop={withTopBorder ? "1px solid" : undefined}
-      borderColor={withTopBorder ? "rgba(0,0,0,0.08)" : undefined}
-      pt={withTopBorder ? 4 : 0}
-    >
-      {/* Header row */}
-      <Flex
-        align="center"
-        justify="space-between"
-        cursor="pointer"
-        onClick={onToggle}
-        mb={isOpen ? 3 : 0}
-        py={1}
-        px={1}
-        borderRadius="md"
-        _hover={{ bg: "gray.50" }}
-        transition="background 0.15s ease"
-        userSelect="none"
-      >
-        <Text {...sectionLabelStyle} mb={0}>
-          {label}
-        </Text>
-
-        {/* Chevron icon */}
-        <Box
-          as="span"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          w="18px"
-          h="18px"
-          borderRadius="full"
-          bg="gray.100"
-          transition="transform 0.2s ease"
-          transform={isOpen ? "rotate(0deg)" : "rotate(-90deg)"}
-          flexShrink={0}
-        >
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M2 3.5L5 6.5L8 3.5"
-              stroke="#718096"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Box>
-      </Flex>
-
-      {/* Collapsible content */}
-      <Collapse in={isOpen} animateOpacity>
-        <Box pb={2}>{children}</Box>
-      </Collapse>
-    </Box>
-  );
-}
-
 /* ── Step2 ─────────────────────────────────────────────────────────── */
 
 export function Step2({ onBack }: Step2Props) {
-  const [dimensionsOpen, setDimensionsOpen] = useState(true);
-  const [armsOpen, setArmsOpen] = useState(true);
+  const [globalOpen, setGlobalOpen] = useState(true);
+
+  const selectedRackId = useEditorStore((s) => s.selectedRackId);
+  const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+
+  const hasSelection = selectedRackId !== null || selectedArmIndex !== null;
 
   return (
     <VStack align="stretch" spacing={0} flex={1}>
 
-      {/* ── Custom Dimensions ─────────────────────────────────── */}
+      {/* ── Global Settings ───────────────────────────────────── */}
       <Box mb={4}>
-        <CollapsibleSection
-          label="Custom Dimensions"
-          isOpen={dimensionsOpen}
-          onToggle={() => setDimensionsOpen((v) => !v)}
+        <CollapsibleMenu
+          label="Global Settings"
+          isOpen={globalOpen}
+          onToggle={() => setGlobalOpen((v) => !v)}
         >
-          <DimensionsCustomization />
-        </CollapsibleSection>
+          <GlobalSettings />
+        </  CollapsibleMenu>
       </Box>
 
-      {/* ── Custom Arms ───────────────────────────────────────── */}
-      <Box mb={4}>
-        <CollapsibleSection
-          label="Custom Arms"
-          isOpen={armsOpen}
-          onToggle={() => setArmsOpen((v) => !v)}
-          withTopBorder
+      {/* ── Dynamic: Selected Rack ────────────────────────────── */}
+      {selectedRackId && <RackEditor rackId={selectedRackId} />}
+
+      {/* ── Dynamic: Selected Arm Row ─────────────────────────── */}
+      {selectedArmIndex !== null && <ArmRowEditor armIndex={selectedArmIndex} />}
+
+      {/* ── No selection hint ─────────────────────────────────── */}
+      {!hasSelection && (
+        <Box
+          mb={4}
+          p={3}
+          borderRadius="lg"
+          bg="orange.50"
+          border="1px solid"
+          borderColor="orange.200"
         >
-          <ArmCustomization />
-        </CollapsibleSection>
-      </Box>
+          <Text fontSize="11px" color="orange.600" lineHeight="1.4">
+            Click on{' '}
+            <Box
+              as="span"
+              display="inline-block"
+              w="18px"
+              h="18px"
+              color="orange.500"
+              verticalAlign="middle"
+              mx={1}
+            >
+              <RulerIcon width="100%" height="100%" />
+            </Box>{' '}
+            to edit a specific rack or arm row.
+          </Text>
+        </Box>
+      )}
 
       {/* ── Back button ───────────────────────────────────────── */}
       <Box pt={5} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" mt={4}>
@@ -159,4 +107,3 @@ export function Step2({ onBack }: Step2Props) {
     </VStack>
   );
 }
-

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useAppStore } from "@/stores/appStore";
 import { useEditorStore } from "@/stores/cantilever/editorStore";
@@ -72,18 +71,19 @@ function StepDots({
 /* ─── Sidepanel ──────────────────────────────────────────────────── */
 
 const Sidepanel = ({ width = 300 }) => {
-  const [step, setStep] = useState<1 | 2>(1);
+  const currentStep = useEditorStore((s) => s.currentStep);
+  const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
+  const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
+  const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
   const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
   const toggleSidePanel = useAppStore((s) => s.toggleSidePanel);
   const { totalPrice } = usePricing();
-  const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
-  const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
   const goToStep1 = () => {
     setSelectedArmIndex(null);
     setSelectedRackId(null);
-    setStep(1);
+    setCurrentStep(1);
   };
 
   return (
@@ -108,8 +108,8 @@ const Sidepanel = ({ width = 300 }) => {
 
         {/* ── Step dots ──────────────────────────────────────── */}
         <StepDots
-          currentStep={step}
-          onStepClick={(s) => { if (s < step) goToStep1(); }}
+          currentStep={currentStep}
+          onStepClick={(s) => { if (s < currentStep) goToStep1(); }}
         />
 
         {/* ── Step title ─────────────────────────────────────── */}
@@ -120,13 +120,13 @@ const Sidepanel = ({ width = 300 }) => {
             fontWeight={700}
             color="gray.700"
           >
-            Step {step} — {STEP_LABELS[step]}
+            Step {currentStep} — {STEP_LABELS[currentStep]}
           </Text>
         </Flex>
 
         {/* ── Step content ───────────────────────────────────── */}
-        {step === 1 && <Step1 onNext={() => setStep(2)} />}
-        {step === 2 && <Step2 onBack={goToStep1} />}
+        {currentStep === 1 && <Step1 onNext={() => setCurrentStep(2)} />}
+        {currentStep === 2 && <Step2 onBack={goToStep1} />}
 
         {/* ── Price footer ───────────────────────────────────── */}
         <Box

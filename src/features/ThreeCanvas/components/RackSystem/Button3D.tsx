@@ -4,34 +4,45 @@ import { Box } from "@chakra-ui/react";
 import DimensionIcon from "@/assets/svgs/DimensionIcon";
 import PlusIcon from "@/assets/svgs/PlusIcon";
 import DeleteIcon from "@/assets/svgs/DeleteIcon";
+import RulerIcon from "@/assets/svgs/RulerIcon";
 
 interface Button3DProps {
-    type: "plus" | "delete" | "dimension";
+    type: "plus" | "delete" | "dimension" | "ruler";
     position: [number, number, number];
     onClick: () => void;
+    isActive?: boolean;
 }
 
 const ICON_CONFIG = {
     plus: {
         component: <PlusIcon />,
         color: "#16C700",
+        activeColor: "#16C700",
         size: "1.8rem",
     },
     delete: {
         component: <DeleteIcon />,
         color: "#FF0000",
+        activeColor: "#FF0000",
         size: "1.6rem",
     },
     dimension: {
         component: <DimensionIcon width="100%" height="100%" />,
         color: "#0066CC",
+        activeColor: "#0066CC",
+        size: "1.6rem",
+    },
+    ruler: {
+        component: <RulerIcon width="100%" height="100%" />,
+        color: "#F59E0B",
+        activeColor: "#F59E0B",
         size: "1.6rem",
     },
 };
 
-export const Button3D: React.FC<Button3DProps> = ({ type, position, onClick }) => {
+export const Button3D: React.FC<Button3DProps> = ({ type, position, onClick, isActive = false }) => {
     // Récupère les configurations liées au type
-    const { component, color, size } = ICON_CONFIG[type];
+    const { component, color, activeColor, size } = ICON_CONFIG[type];
 
     return (
         <Html position={position} center transform={false} zIndexRange={[20, 0]}>
@@ -54,11 +65,14 @@ export const Button3D: React.FC<Button3DProps> = ({ type, position, onClick }) =
                 transition="all 140ms ease"
                 outline="none"
                 pointerEvents="auto"
-                bg="white"
-                color={color}
-                boxShadow="0 0.5rem 1.25rem rgba(0, 0, 0, 0.25)"
+                bg={isActive ? activeColor : "white"}
+                color={isActive ? "white" : color}
+                boxShadow={isActive
+                    ? `0 0.5rem 1.25rem rgba(0, 0, 0, 0.35), 0 0 0 3px ${activeColor}40`
+                    : "0 0.5rem 1.25rem rgba(0, 0, 0, 0.25)"
+                }
                 _hover={{
-                    bg: color,
+                    bg: isActive ? activeColor : color,
                     color: "white",
                 }}
             >

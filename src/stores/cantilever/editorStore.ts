@@ -4,11 +4,13 @@
 import create from 'zustand';
 
 interface EditorState {
+  currentStep: 1 | 2;
   selectedArmIndex: number | null;
   selectedRackId: string | null;
   showDimensions: boolean;
   showWeightInfo: boolean;
 
+  setCurrentStep: (step: 1 | 2) => void;
   setSelectedArmIndex: (index: number | null) => void;
   setSelectedRackId: (id: string | null) => void;
   setShowDimensions: (showDimensions: boolean) => void;
@@ -16,11 +18,17 @@ interface EditorState {
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
+  currentStep: 1,
   selectedArmIndex: null,
   selectedRackId: null,
   showDimensions: false,
   showWeightInfo: false,
 
+  setCurrentStep: (step) => set({
+    currentStep: step,
+    selectedArmIndex: null,
+    selectedRackId: null,
+  }),
   setSelectedArmIndex: (index) => set(() => ({
     selectedArmIndex: index,
     ...(index !== null ? { selectedRackId: null } : {})

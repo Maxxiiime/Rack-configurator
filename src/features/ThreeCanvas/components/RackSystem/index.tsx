@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import * as THREE from "three";
 import { useRackConfigStore, selectActiveLegId } from "@/stores/cantilever/rackConfigStore";
 import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
@@ -10,6 +10,7 @@ import { useRackPositions } from "@/hooks/useRackPositions";
 import { Button3D } from "./Button3D";
 import { DimensionLines } from "../DimensionsLines/index";
 import { WeightInfo } from "../WeightInfo/index";
+import { computeArmPositions, applyArmYOverrides } from "@/utils/armPositions";
 
 export const RackSystem: React.FC = () => {
 
@@ -21,21 +22,43 @@ export const RackSystem: React.FC = () => {
 	const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
 	const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
+	const armSpacing = useRackConfigStore((s) => s.armSpacing);
+	const armCount = useRackConfigStore((s) => s.armCount);
+	const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
 
 	const rackIds = useRackSectionsStore((s) => s.rackIds);
 	const addRackLeft = useRackSectionsStore((s) => s.addRackLeft);
 	const addRackRight = useRackSectionsStore((s) => s.addRackRight);
 	const removeRack = useRackSectionsStore((s) => s.removeRack);
 
+	const currentStep = useEditorStore((s) => s.currentStep);
 	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
+	const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
+	const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
 
-	const { getPartSize } = useShelfParts();
+	const { getPartSize, getColumnHeight, offsets } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX } = useRackPositions();
 
 	const braceSize = getPartSize(braceId);
 	const rackGroupRef = useRef<THREE.Group>(null);
+
+	// Compute arm positions for ruler icon placement (Step 2)
+	const columnHeightUnits = getColumnHeight(columnId);
+	const armPositions = useMemo(() => {
+		const basePositions = computeArmPositions(
+			offsets.arm.start_y,
+			columnHeightUnits,
+			armSpacing,
+			armCount
+		);
+		return applyArmYOverrides(basePositions, armYOverrides);
+	}, [offsets.arm.start_y, columnHeightUnits, armSpacing, armCount, armYOverrides]);
+
+	// Rightmost column X for arm ruler icons
+	const rightmostColumnX = columnPositionsX[columnPositionsX.length - 1];
 
 	return (
 		<group position={[-centerX, 0, 0]}>
@@ -77,11 +100,23 @@ export const RackSystem: React.FC = () => {
 								removeLeftColumn={removeLastColumn}
 								removeRightColumn={removeFirstColumn}
 							/>
-							{rackIds.length > 1 && rackId !== "initial-rack" && (
+
+							{/* Step 1: Delete buttons */}
+							{currentStep === 1 && rackIds.length > 1 && rackId !== "initial-rack" && (
 								<Button3D
 									type="delete"
 									position={[rackWidths[index] / 2, 1.0, 0]}
 									onClick={() => removeRack(rackId)}
+								/>
+							)}
+
+							{/* Step 2: Ruler icon under each rack section */}
+							{currentStep === 2 && (
+								<Button3D
+									type="ruler"
+									position={[rackWidths[index] / 2, -0.5, 0]}
+									onClick={() => setSelectedRackId(selectedRackId === rackId ? null : rackId)}
+									isActive={selectedRackId === rackId}
 								/>
 							)}
 						</group>
@@ -92,18 +127,32 @@ export const RackSystem: React.FC = () => {
 			{showDimensions && <DimensionLines rackGroupRef={rackGroupRef} />}
 			{showWeightInfo && <WeightInfo rackGroupRef={rackGroupRef} />}
 
-			<Button3D
-				type="plus"
-				position={[columnPositionsX[0] - 5, 10.0, 0]}
-				onClick={addRackLeft}
-			/>
+			{/* Step 1: Plus buttons */}
+			{currentStep === 1 && (
+				<>
+					<Button3D
+						type="plus"
+						position={[columnPositionsX[0] - 5, 10.0, 0]}
+						onClick={addRackLeft}
+					/>
+					<Button3D
+						type="plus"
+						position={[columnPositionsX[columnPositionsX.length - 1] + 5, 10.0, 0]}
+						onClick={addRackRight}
+					/>
+				</>
+			)}
 
-			<Button3D
-				type="plus"
-				position={[columnPositionsX[columnPositionsX.length - 1] + 5, 10.0, 0]}
-				onClick={addRackRight}
-			/>
-
+			{/* Step 2: Ruler icons at the end of each arm row */}
+			{currentStep === 2 && armPositions.map((yPos, i) => (
+				<Button3D
+					key={`arm-ruler-${i}`}
+					type="ruler"
+					position={[rightmostColumnX + 6, yPos, 0]}
+					onClick={() => setSelectedArmIndex(selectedArmIndex === i ? null : i)}
+					isActive={selectedArmIndex === i}
+				/>
+			))}
 
 		</group>
 	);

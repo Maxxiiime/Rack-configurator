@@ -14,6 +14,8 @@ const ThreeCanvas = () => {
 	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const setShowWeightInfo = useEditorStore((s) => s.setShowWeightInfo);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
+	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
+	const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
 	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (
@@ -27,7 +29,13 @@ const ThreeCanvas = () => {
 				transition="transform 0.25s ease"
 				transform={sidePanelOpen ? `translateX(-${SIDEPANEL_WIDTH / 2}px)` : "translateX(0)"}
 			>
-				<Canvas camera={{ fov: 45, position: [0, 5, -30] }}>
+				<Canvas
+					camera={{ fov: 45, position: [0, 5, -30] }}
+					onPointerMissed={() => {
+						setSelectedRackId(null);
+						setSelectedArmIndex(null);
+					}}
+				>
 					<Scene />
 					{import.meta.env.MODE === "development" && <Perf position="top-left" showVRAM />}
 				</Canvas>
