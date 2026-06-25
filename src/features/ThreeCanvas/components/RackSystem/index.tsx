@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef } from "react";
 import * as THREE from "three";
 import { useRackConfigStore, selectActiveLegId } from "@/stores/cantilever/rackConfigStore";
 import { useRackSectionsStore } from "@/stores/cantilever/rackSectionsStore";
@@ -10,7 +10,7 @@ import { useRackPositions } from "@/hooks/useRackPositions";
 import { Button3D } from "./Button3D";
 import { DimensionLines } from "../DimensionsLines/index";
 import { WeightInfo } from "../WeightInfo/index";
-import { computeArmPositions, applyArmYOverrides } from "@/utils/armPositions";
+import { useArmPositions } from "@/hooks/useArmPositions";
 
 export const RackSystem: React.FC = () => {
 
@@ -22,9 +22,6 @@ export const RackSystem: React.FC = () => {
 	const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
 	const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
-	const armSpacing = useRackConfigStore((s) => s.armSpacing);
-	const armCount = useRackConfigStore((s) => s.armCount);
-	const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
 
 	const rackIds = useRackSectionsStore((s) => s.rackIds);
 	const addRackLeft = useRackSectionsStore((s) => s.addRackLeft);
@@ -39,23 +36,13 @@ export const RackSystem: React.FC = () => {
 	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 	const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
 
-	const { getPartSize, getColumnHeight, offsets } = useShelfParts();
+	const { getPartSize } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX } = useRackPositions();
 
 	const braceSize = getPartSize(braceId);
 	const rackGroupRef = useRef<THREE.Group>(null);
 
-	// Compute arm positions for ruler icon placement (Step 2)
-	const columnHeightUnits = getColumnHeight(columnId);
-	const armPositions = useMemo(() => {
-		const basePositions = computeArmPositions(
-			offsets.arm.start_y,
-			columnHeightUnits,
-			armSpacing,
-			armCount
-		);
-		return applyArmYOverrides(basePositions, armYOverrides);
-	}, [offsets.arm.start_y, columnHeightUnits, armSpacing, armCount, armYOverrides]);
+	const { armPositions } = useArmPositions();
 
 	// Rightmost column X for arm ruler icons
 	const rightmostColumnX = columnPositionsX[columnPositionsX.length - 1];

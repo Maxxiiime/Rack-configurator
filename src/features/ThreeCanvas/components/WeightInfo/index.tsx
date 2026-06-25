@@ -1,14 +1,13 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { getBoundingBoxPoints } from "@/utils/boundingBox";
-import offsets from '@/data/shelving_offset.json';
 import { useRackConfigStore } from '@/stores/cantilever/rackConfigStore';
 import { useRackSectionsStore } from '@/stores/cantilever/rackSectionsStore';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackPositions } from '@/hooks/useRackPositions';
-import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
+import { useArmPositions } from "@/hooks/useArmPositions";
 import { baseLabelStyle } from '../DimensionsLines/style';
 
 const WEIGHT_CONFIG = {
@@ -44,9 +43,6 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const [box, setBox] = useState<THREE.Box3 | null>(null);
     const invMatrix = useMemo(() => new THREE.Matrix4(), []);
 
-    const armSpacing = useRackConfigStore((s) => s.armSpacing);
-    const armCount = useRackConfigStore((s) => s.armCount);
-    const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
     const columnId = useRackConfigStore((s) => s.columnId);
     const armId = useRackConfigStore((s) => s.armId);
     const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
@@ -56,12 +52,8 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const { getColumnHeight, getColumnMaxWeightForArm, getPartData } = useShelfParts();
     const { columnPositionsX } = useRackPositions();
 
-    const columnHeightUnits = getColumnHeight(columnId);
-
-    const armPositions = useMemo(() => {
-        const base = computeArmPositions(offsets.arm.start_y, columnHeightUnits, armSpacing, armCount);
-        return [...applyArmYOverrides(base, armYOverrides)].sort((a, b) => a - b);
-    }, [columnHeightUnits, armSpacing, armCount, armYOverrides]);
+    const { armPositions } = useArmPositions();
+    const sortedArmPositions = [...armPositions].sort((a, b) => a - b);
 
     useFrame(() => {
         if (!rackGroupRef.current) return;
@@ -115,7 +107,7 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
             })}
 
             {/* Arm Level Labels */}
-            {armPositions.map((yPos, index) => {
+            {sortedArmPositions.map((yPos, index) => {
                 const actualY = yPos + 1.3;
                 const rightX = max.x + WEIGHT_CONFIG.offset;
                 return (

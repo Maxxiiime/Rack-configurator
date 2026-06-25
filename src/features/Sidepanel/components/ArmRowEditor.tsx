@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   Box, Flex, Text,
   Slider, SliderTrack, SliderFilledTrack, SliderThumb,
@@ -7,29 +6,20 @@ import { sectionBoxStyle, sliderTrackStyle, sliderThumbStyle } from "../styles";
 import { CollapsibleMenu } from "./CollapsibleMenu";
 import { Stepper } from "./Shared";
 import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
-import { useShelfParts } from "@/hooks/useShelfParts";
-import { computeArmPositions } from "@/utils/armPositions";
+import { useArmPositions } from "@/hooks/useArmPositions";
 
 interface ArmRowEditorProps {
   armIndex: number;
 }
 
 export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
+
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
-  const armCount = useRackConfigStore((s) => s.armCount);
-  const columnId = useRackConfigStore((s) => s.columnId);
   const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
   const setArmYOverride = useRackConfigStore((s) => s.setArmYOverride);
   const removeArmYOverride = useRackConfigStore((s) => s.removeArmYOverride);
 
-  const { getColumnHeight, offsets } = useShelfParts();
-  const columnHeightUnits = getColumnHeight(columnId);
-  const startY = offsets.arm.start_y;
-
-  const basePositions = useMemo(
-    () => computeArmPositions(startY, columnHeightUnits, armSpacing, armCount),
-    [startY, columnHeightUnits, armSpacing, armCount]
-  );
+  const { basePositions, startY, columnHeightUnits } = useArmPositions();
 
   // ── Arm Y helpers ──
   const globalMinY = startY;

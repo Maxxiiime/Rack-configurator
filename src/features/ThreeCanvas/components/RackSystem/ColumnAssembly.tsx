@@ -1,9 +1,8 @@
-import React, { useMemo } from 'react';
 import { BasePart } from './Parts';
 import { ArmAssembly } from './ArmAssembly';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackConfigStore, RackType } from '@/stores/cantilever/rackConfigStore';
-import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
+import { useArmPositions } from "@/hooks/useArmPositions";
 
 interface ColumnAssemblyProps {
   columnId: string;
@@ -22,14 +21,11 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
   selectedMode = false,
 }) => {
-  const { getColumnHeight, getPartSize, getPartData, offsets } = useShelfParts();
+  const { getPartSize, getPartData, offsets } = useShelfParts();
 
-  const armSpacing = useRackConfigStore((s) => s.armSpacing);
-  const armCount = useRackConfigStore((s) => s.armCount);
-  const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
+
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
 
-  const columnHeightUnits = getColumnHeight(columnId);
   const armSizeUnits = getPartSize(armId) / 100;
   const armStopLocalZ = armSizeUnits + offsets.arm_stop.z;
   const doubleArmStopLocalZ = armSizeUnits - offsets.arm_stop.double_z;
@@ -37,16 +33,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const armStopId = getPartData(armId)?.arm_stop_id ?? 'arm_stop';
 
 
-
-  const armPositions = useMemo(() => {
-    const basePositions = computeArmPositions(
-      offsets.arm.start_y,
-      columnHeightUnits,
-      armSpacing,
-      armCount
-    );
-    return applyArmYOverrides(basePositions, armYOverrides);
-  }, [offsets.arm.start_y, columnHeightUnits, armSpacing, armCount, armYOverrides]);
+  const { armPositions } = useArmPositions();
 
   return (
     <group position={position}>

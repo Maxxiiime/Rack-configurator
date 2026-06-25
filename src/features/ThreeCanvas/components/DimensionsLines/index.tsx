@@ -4,9 +4,7 @@ import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { getBoundingBoxPoints } from "@/utils/boundingBox";
 import offsets from '@/data/shelving_offset.json';
-import { useRackConfigStore } from '@/stores/cantilever/rackConfigStore';
-import { useShelfParts } from '@/hooks/useShelfParts';
-import { computeArmPositions, applyArmYOverrides } from '@/utils/armPositions';
+import { useArmPositions } from "@/hooks/useArmPositions";
 import { DIM_CONFIG, labelStyle, detailLabelStyle } from './style';
 
 interface DimensionLineProps {
@@ -47,20 +45,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     // Memoize the matrix to prevent high garbage collection overhead during the 60fps useFrame loop
     const invMatrix = useMemo(() => new THREE.Matrix4(), []);
 
-    // Retrieve rack configuration states from the global store
-    const armSpacing = useRackConfigStore((s) => s.armSpacing);
-    const armCount = useRackConfigStore((s) => s.armCount);
-    const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
-    const columnId = useRackConfigStore((s) => s.columnId);
-    const { getColumnHeight } = useShelfParts();
-
-    const columnHeightUnits = getColumnHeight(columnId);
-
-    // Calculate and sort the absolute Y positions of each arm from bottom to top
-    const armPositions = useMemo(() => {
-        const base = computeArmPositions(offsets.arm.start_y, columnHeightUnits, armSpacing, armCount);
-        return [...applyArmYOverrides(base, armYOverrides)].sort((a, b) => a - b);
-    }, [columnHeightUnits, armSpacing, armCount, armYOverrides]);
+    const { armPositions } = useArmPositions();
 
     // Continuously update the bounding box to react to user configuration changes or animations
     useFrame(() => {
