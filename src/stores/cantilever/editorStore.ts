@@ -5,13 +5,13 @@ import create from 'zustand';
 
 interface EditorState {
   currentStep: 1 | 2 | 3;
-  selectedArmIndex: number | null;
+  selectedArm: { armIndex: number; columnIndex?: number } | null;
   selectedRackId: string | null;
   showDimensions: boolean;
   showWeightInfo: boolean;
 
   setCurrentStep: (step: 1 | 2 | 3) => void;
-  setSelectedArmIndex: (index: number | null) => void;
+  setSelectedArm: (arm: { armIndex: number; columnIndex?: number } | null) => void;
   setSelectedRackId: (id: string | null) => void;
   setShowDimensions: (showDimensions: boolean) => void;
   setShowWeightInfo: (showWeightInfo: boolean) => void;
@@ -19,23 +19,23 @@ interface EditorState {
 
 export const useEditorStore = create<EditorState>((set) => ({
   currentStep: 1,
-  selectedArmIndex: null,
+  selectedArm: null,
   selectedRackId: null,
   showDimensions: false,
   showWeightInfo: false,
 
   setCurrentStep: (step) => set({
     currentStep: step,
-    selectedArmIndex: null,
+    selectedArm: null,
     selectedRackId: null,
   }),
-  setSelectedArmIndex: (index) => set(() => ({
-    selectedArmIndex: index,
-    ...(index !== null ? { selectedRackId: null } : {})
+  setSelectedArm: (arm) => set(() => ({
+    selectedArm: arm,
+    ...(arm !== null ? { selectedRackId: null } : {})
   })),
   setSelectedRackId: (id) => set(() => ({
     selectedRackId: id,
-    ...(id !== null ? { selectedArmIndex: null } : {})
+    ...(id !== null ? { selectedArm: null } : {})
   })),
   setShowDimensions: (showDimensions) => set({ showDimensions }),
   setShowWeightInfo: (showWeightInfo) => set({ showWeightInfo }),

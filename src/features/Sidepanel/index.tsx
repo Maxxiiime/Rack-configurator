@@ -75,7 +75,7 @@ function StepDots({
 const Sidepanel = ({ width = 300 }) => {
   const currentStep = useEditorStore((s) => s.currentStep);
   const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
-  const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
+  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
   const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
   const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
@@ -83,7 +83,7 @@ const Sidepanel = ({ width = 300 }) => {
   const { totalPrice } = usePricing();
 
   const goToStep1 = () => {
-    setSelectedArmIndex(null);
+    setSelectedArm(null);
     setSelectedRackId(null);
     setCurrentStep(1);
   };

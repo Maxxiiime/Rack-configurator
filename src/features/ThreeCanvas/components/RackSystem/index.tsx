@@ -32,9 +32,9 @@ export const RackSystem: React.FC = () => {
 	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
-	const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+	const selectedArm = useEditorStore((s) => s.selectedArm);
 	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
-	const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
+	const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
 
 	const { getPartSize } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX } = useRackPositions();
@@ -58,6 +58,13 @@ export const RackSystem: React.FC = () => {
 					const rightSectionId = index < rackIds.length ? rackIds[index] : null;
 					const isSelected = selectedRackId !== null && (selectedRackId === leftSectionId || selectedRackId === rightSectionId);
 
+					let iconDirection: 1 | -1 = 1;
+					if (selectedRackId === leftSectionId) {
+						iconDirection = 1;
+					} else if (selectedRackId === rightSectionId) {
+						iconDirection = -1;
+					}
+
 					return (
 						<ColumnAssembly
 							key={`column-${index}`}
@@ -67,6 +74,8 @@ export const RackSystem: React.FC = () => {
 							rackType={rackType}
 							position={[posX, 0, 0]}
 							selectedMode={isSelected}
+							columnIndex={index}
+							iconDirection={iconDirection}
 						/>
 					);
 				})}
@@ -98,7 +107,7 @@ export const RackSystem: React.FC = () => {
 							)}
 
 							{/* Step 2: Ruler icon under each rack section */}
-							{currentStep === 2 && (
+							{currentStep === 2 && (selectedRackId === null || selectedRackId === rackId) && (
 								<Button3D
 									type="ruler"
 									position={[rackWidths[index] / 2, -0.5, 0]}
@@ -106,6 +115,7 @@ export const RackSystem: React.FC = () => {
 									isActive={selectedRackId === rackId}
 								/>
 							)}
+
 						</group>
 					);
 				})}
@@ -131,15 +141,18 @@ export const RackSystem: React.FC = () => {
 			)}
 
 			{/* Step 2: Ruler icons at the end of each arm row */}
-			{currentStep === 2 && armPositions.map((yPos, i) => (
-				<Button3D
-					key={`arm-ruler-${i}`}
-					type="ruler"
-					position={[rightmostColumnX + 6, yPos, 0]}
-					onClick={() => setSelectedArmIndex(selectedArmIndex === i ? null : i)}
-					isActive={selectedArmIndex === i}
-				/>
-			))}
+			{currentStep === 2 && selectedRackId === null && (selectedArm === null || selectedArm.columnIndex === undefined) && armPositions.map((yPos, i) => {
+				const isRowSelected = selectedArm?.armIndex === i && selectedArm?.columnIndex === undefined;
+				return (
+					<Button3D
+						key={`arm-row-ruler-${i}`}
+						type="ruler"
+						position={[rightmostColumnX + 6, yPos, 0]}
+						onClick={() => setSelectedArm(isRowSelected ? null : { armIndex: i })}
+						isActive={isRowSelected}
+					/>
+				);
+			})}
 
 		</group>
 	);

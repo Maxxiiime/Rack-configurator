@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
 import { BasePart } from './Parts';
 import { ArmAssembly } from './ArmAssembly';
+import { Button3D } from './Button3D';
+import { useEditorStore } from '@/stores/cantilever/editorStore';
 import { useShelfParts } from '@/hooks/useShelfParts';
 import { useRackConfigStore, RackType } from '@/stores/cantilever/rackConfigStore';
 import { useArmPositions } from "@/hooks/useArmPositions";
@@ -11,6 +14,8 @@ interface ColumnAssemblyProps {
   rackType: RackType;
   position?: [number, number, number];
   selectedMode?: boolean;
+  columnIndex: number;
+  iconDirection?: 1 | -1;
 }
 
 export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
@@ -20,9 +25,17 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   rackType,
   position = [0, 0, 0],
   selectedMode = false,
+  columnIndex,
+  iconDirection = 1,
 }) => {
   const { getPartSize, getPartData, offsets } = useShelfParts();
 
+  const [buttonDirection, setButtonDirection] = useState<1 | -1>(iconDirection);
+  useEffect(() => {
+    if (selectedMode) {
+      setButtonDirection(iconDirection);
+    }
+  }, [selectedMode, iconDirection]);
 
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
 
@@ -33,7 +46,10 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const armStopId = getPartData(armId)?.arm_stop_id ?? 'arm_stop';
 
 
-  const { armPositions } = useArmPositions();
+  const { armPositions } = useArmPositions(columnIndex);
+  const currentStep = useEditorStore((s) => s.currentStep);
+  const selectedArm = useEditorStore((s) => s.selectedArm);
+  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
 
   return (
     <group position={position}>
@@ -52,21 +68,40 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
       />
 
       {/* ARMS */}
-      {armPositions.map((yPos, i) => (
-        <ArmAssembly
-          key={`arm-${i}`}
-          index={i}
-          yPos={yPos}
-          armId={armId}
-          rackType={rackType}
-          offsets={offsets}
-          armStopY={armStopY}
-          armStopLocalZ={armStopLocalZ}
-          doubleArmStopLocalZ={doubleArmStopLocalZ}
-          showArmStops={showArmStops}
-          armStopId={armStopId}
-        />
-      ))}
+      {armPositions.map((yPos, i) => {
+        const isArmSelected = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i;
+
+        return (
+          <group key={`arm-group-${i}`}>
+            <ArmAssembly
+              index={i}
+              yPos={yPos}
+              armId={armId}
+              rackType={rackType}
+              offsets={offsets}
+              armStopY={armStopY}
+              armStopLocalZ={armStopLocalZ}
+              doubleArmStopLocalZ={doubleArmStopLocalZ}
+              showArmStops={showArmStops}
+              armStopId={armStopId}
+              columnIndex={columnIndex}
+            />
+            {/* Edit button for this specific arm */}
+            {currentStep === 2 && (selectedMode || isArmSelected) && (() => {
+              const buttonX = buttonDirection === 1 ? offsets.arm.x + 3 : offsets.arm.x - 3;
+
+              return (
+                <Button3D
+                  type="ruler"
+                  position={[buttonX, yPos + 1, offsets.arm.z + 2]}
+                  onClick={() => setSelectedArm(isArmSelected ? null : { columnIndex, armIndex: i })}
+                  isActive={isArmSelected}
+                />
+              );
+            })()}
+          </group>
+        );
+      })}
     </group>
   );
 };

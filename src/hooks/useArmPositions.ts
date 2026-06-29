@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useShelfParts } from "./useShelfParts";
 import { useRackConfigStore } from "@/stores/cantilever/rackConfigStore";
-import { computeArmPositions, applyArmYOverrides } from "@/utils/armPositions";
+import { computeArmPositions } from "@/utils/armPositions";
 
-export const useArmPositions = () => {
+export const useArmPositions = (columnIndex?: number) => {
     const armSpacing = useRackConfigStore((s) => s.armSpacing);
     const armCount = useRackConfigStore((s) => s.armCount);
     const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
@@ -22,7 +22,12 @@ export const useArmPositions = () => {
             armCount
         );
 
-        const armPositions = applyArmYOverrides(basePositions, armYOverrides);
+        const armPositions = basePositions.map((y, i) => {
+            if (columnIndex !== undefined) {
+                return armYOverrides[`${columnIndex}-${i}`] ?? armYOverrides[`row-${i}`] ?? y;
+            }
+            return armYOverrides[`row-${i}`] ?? y;
+        });
 
         return {
             basePositions,
@@ -30,5 +35,5 @@ export const useArmPositions = () => {
             startY,
             columnHeightUnits
         };
-    }, [armSpacing, armCount, armYOverrides, columnId, getColumnHeight, offsets.arm.start_y]);
+    }, [armSpacing, armCount, armYOverrides, columnId, getColumnHeight, offsets.arm.start_y, columnIndex]);
 };

@@ -10,9 +10,10 @@ import { useArmPositions } from "@/hooks/useArmPositions";
 
 interface ArmRowEditorProps {
   armIndex: number;
+  columnIndex?: number;
 }
 
-export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
+export const ArmRowEditor = ({ armIndex, columnIndex }: ArmRowEditorProps) => {
 
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
@@ -27,8 +28,12 @@ export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
 
   const snapToGrid = (v: number): number => Math.round(v - 0.45) + 0.45;
 
-  const getArmY = (index: number): number =>
-    armYOverrides[index] ?? basePositions[index] ?? startY;
+  const getArmY = (index: number): number => {
+    if (columnIndex !== undefined) {
+      return armYOverrides[`${columnIndex}-${index}`] ?? armYOverrides[`row-${index}`] ?? basePositions[index] ?? startY;
+    }
+    return armYOverrides[`row-${index}`] ?? basePositions[index] ?? startY;
+  };
 
   const getArmBounds = (index: number): { min: number; max: number } => {
     const belowY = index > 0 ? getArmY(index - 1) : globalMinY - 1;
@@ -43,7 +48,7 @@ export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
     const snapped = snapToGrid(unitValue);
     const { min, max } = getArmBounds(index);
     const clamped = Math.max(min, Math.min(max, snapped));
-    setArmYOverride(index, clamped);
+    setArmYOverride(index, clamped, columnIndex);
   };
 
   // Guard: index out of range
@@ -51,12 +56,14 @@ export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
 
   const currentY = getArmY(armIndex);
   const bounds = getArmBounds(armIndex);
-  const isOverridden = armYOverrides[armIndex] !== undefined;
+  const isOverridden = columnIndex !== undefined 
+    ? armYOverrides[`${columnIndex}-${armIndex}`] !== undefined 
+    : armYOverrides[`row-${armIndex}`] !== undefined;
 
   return (
     <Box mb={4}>
       <CollapsibleMenu
-        label={`Arm Row ${armIndex + 1}`}
+        label={columnIndex !== undefined ? `Arm ${armIndex + 1} (Col ${columnIndex + 1})` : `Arm Row ${armIndex + 1}`}
         isOpen
         onToggle={() => { }}
         withTopBorder
@@ -74,7 +81,7 @@ export const ArmRowEditor = ({ armIndex }: ArmRowEditorProps) => {
                 color="red.500"
                 cursor="pointer"
                 _hover={{ color: "red.700" }}
-                onClick={() => removeArmYOverride(armIndex)}
+                onClick={() => removeArmYOverride(armIndex, columnIndex)}
               >
                 Reset
               </Text>

@@ -17,10 +17,10 @@ export function Step2({ onBack }: Step2Props) {
   const [globalOpen, setGlobalOpen] = useState(true);
 
   const selectedRackId = useEditorStore((s) => s.selectedRackId);
-  const selectedArmIndex = useEditorStore((s) => s.selectedArmIndex);
+  const selectedArm = useEditorStore((s) => s.selectedArm);
   const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
 
-  const hasSelection = selectedRackId !== null || selectedArmIndex !== null;
+  const hasSelection = selectedRackId !== null || selectedArm !== null;
 
   return (
     <VStack align="stretch" spacing={0} flex={1}>
@@ -39,8 +39,8 @@ export function Step2({ onBack }: Step2Props) {
       {/* ── Dynamic: Selected Rack ────────────────────────────── */}
       {selectedRackId && <RackEditor rackId={selectedRackId} />}
 
-      {/* ── Dynamic: Selected Arm Row ─────────────────────────── */}
-      {selectedArmIndex !== null && <ArmRowEditor armIndex={selectedArmIndex} />}
+      {/* ── Dynamic: Selected Arm ─────────────────────────── */}
+      {selectedArm !== null && <ArmRowEditor armIndex={selectedArm.armIndex} columnIndex={selectedArm.columnIndex} />}
 
       {/* ── No selection hint ─────────────────────────────────── */}
       {!hasSelection && (

@@ -31,7 +31,7 @@ interface RackConfigState {
   braceId: string;
   armSpacing: number;
   armCount: number;
-  armYOverrides: Record<number, number>;
+  armYOverrides: Record<string, number>; // key: `${columnIndex}-${armIndex}`
   sectionWidthOverrides: Record<string, number>;
   showArmStops: boolean;
   removeFirstColumn: boolean;
@@ -44,8 +44,8 @@ interface RackConfigState {
   setBraceId: (id: string) => void;
   setArmSpacing: (spacing: number) => void;
   setArmCount: (count: number) => void;
-  setArmYOverride: (index: number, y: number) => void;
-  removeArmYOverride: (index: number) => void;
+  setArmYOverride: (armIndex: number, y: number, columnIndex?: number) => void;
+  removeArmYOverride: (armIndex: number, columnIndex?: number) => void;
   clearArmYOverrides: () => void;
   setSectionWidthOverride: (id: string, width: number) => void;
   removeSectionWidthOverride: (id: string) => void;
@@ -83,26 +83,40 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
 
   setArmSpacing: (spacing) => {
     set({ armSpacing: Math.max(2, spacing), armYOverrides: {} });
-    useEditorStore.getState().setSelectedArmIndex(null);
+    useEditorStore.getState().setSelectedArm(null);
   },
 
   setArmCount: (count) => {
     set({ armCount: Math.max(1, count), armYOverrides: {} });
-    useEditorStore.getState().setSelectedArmIndex(null);
+    useEditorStore.getState().setSelectedArm(null);
   },
 
-  setArmYOverride: (index, y) => set((state) => ({
-    armYOverrides: { ...state.armYOverrides, [index]: y },
-  })),
+  setArmYOverride: (armIndex, y, columnIndex) => set((state) => {
+    const key = columnIndex !== undefined ? `${columnIndex}-${armIndex}` : `row-${armIndex}`;
 
-  removeArmYOverride: (index) => set((state) => {
-    const { [index]: _, ...rest } = state.armYOverrides;
+    let newOverrides = { ...state.armYOverrides };
+    if (columnIndex === undefined) {
+      Object.keys(newOverrides).forEach(k => {
+        if (k.endsWith(`-${armIndex}`)) {
+          delete newOverrides[k];
+        }
+      });
+    }
+
+    return {
+      armYOverrides: { ...newOverrides, [key]: y },
+    };
+  }),
+
+  removeArmYOverride: (armIndex, columnIndex) => set((state) => {
+    const key = columnIndex !== undefined ? `${columnIndex}-${armIndex}` : `row-${armIndex}`;
+    const { [key]: _, ...rest } = state.armYOverrides;
     return { armYOverrides: rest };
   }),
 
   clearArmYOverrides: () => {
     set({ armYOverrides: {} });
-    useEditorStore.getState().setSelectedArmIndex(null);
+    useEditorStore.getState().setSelectedArm(null);
   },
 
   setSectionWidthOverride: (id, width) => set((state) => ({

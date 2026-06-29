@@ -14,6 +14,7 @@ interface ArmAssemblyProps {
   doubleArmStopLocalZ: number;
   showArmStops: boolean;
   armStopId: string;
+  columnIndex: number;
 }
 
 export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
@@ -27,8 +28,11 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   doubleArmStopLocalZ,
   showArmStops,
   armStopId,
+  columnIndex,
 }) => {
-  const isSelected = useEditorStore((s) => s.selectedArmIndex === index);
+  const selectedArm = useEditorStore((s) => s.selectedArm);
+  const isSelected = selectedArm?.armIndex === index && 
+    (selectedArm.columnIndex === columnIndex || selectedArm.columnIndex === undefined);
 
   return (
     <group>

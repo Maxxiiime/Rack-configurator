@@ -15,7 +15,7 @@ const ThreeCanvas = () => {
 	const setShowWeightInfo = useEditorStore((s) => s.setShowWeightInfo);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
 	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
-	const setSelectedArmIndex = useEditorStore((s) => s.setSelectedArmIndex);
+	const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
 	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (
@@ -33,7 +33,7 @@ const ThreeCanvas = () => {
 					camera={{ fov: 45, position: [0, 5, -30] }}
 					onPointerMissed={() => {
 						setSelectedRackId(null);
-						setSelectedArmIndex(null);
+						setSelectedArm(null);
 					}}
 				>
 					<Scene />
