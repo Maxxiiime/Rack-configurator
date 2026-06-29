@@ -37,6 +37,7 @@ const Scene = () => {
 
 
             <OrbitControls
+                makeDefault
                 maxPolarAngle={Math.PI / 2}
                 maxDistance={maxDistance}
                 minDistance={minDistance}
