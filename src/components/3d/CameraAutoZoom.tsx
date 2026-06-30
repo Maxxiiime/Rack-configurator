@@ -1,9 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
-import { useCameraDistance } from "../hooks/useCameraDistance";
-import { useEditorStore } from "../stores/editorStore";
-import { useRackSectionsStore } from "../stores/sectionsStore";
-import { useRackPositions } from "../hooks/useRackPositions";
+import { useEffect, useRef, useMemo } from "react";
 import * as THREE from "three";
 
 const MIN_DISTANCE = 30;
@@ -12,18 +8,24 @@ const ARRIVAL_THRESHOLD = 0.05;
 const PADDING_HORIZONTAL = 1.6;
 const PADDING_VERTICAL = 1.8;
 
-/**
- * Automatically adjusts camera distance and target to fit the entire rack system in view.
- * When a specific rack is selected, it focuses the camera on that rack.
- */
-const CameraAutoZoom = () => {
-	const { camera, controls } = useThree();
-	const { autoDistance, maxHeight } = useCameraDistance();
+export interface CameraAutoZoomProps {
+	/** Maximum height of the entire scene (used for default fit) */
+	maxHeight: number;
+	/** Total width of the entire scene (used for default fit) */
+	totalWidth: number;
+	/** Optional specific target to focus on */
+	focusTarget?: {
+		centerX: number;
+		width: number;
+	} | null;
+}
 
-	const selectedRackId = useEditorStore((s: any) => s.selectedRackId);
-	const selectedArm = useEditorStore((s: any) => s.selectedArm);
-	const rackIds = useRackSectionsStore((s: any) => s.rackIds);
-	const { columnPositionsX, rackWidths, centerX } = useRackPositions();
+/**
+ * A generic camera controller that automatically adjusts distance and target 
+ * to fit the provided dimensions in view. It smoothly animates between states.
+ */
+export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, totalWidth, focusTarget }) => {
+	const { camera, controls } = useThree();
 
 	const isAnimating = useRef(false);
 	const targetDistance = useRef(MIN_DISTANCE);
@@ -32,45 +34,34 @@ const CameraAutoZoom = () => {
 	const currentTarget = useRef(new THREE.Vector3(0, 0, 0));
 	const targetCameraPos = useRef(new THREE.Vector3(0, 0, 0));
 	const useSpecificPosition = useRef(false);
-
 	const wasFocused = useRef(false);
 
-	// Trigger animation when a rack is selected
+	// Compute default auto distance based on total width/height
+	const autoDistance = useMemo(() => {
+		const perspCamera = camera as THREE.PerspectiveCamera;
+		const fovRad = (perspCamera.fov * Math.PI) / 180;
+		const aspect = perspCamera.aspect;
+
+		const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
+		const distForWidth = (totalWidth * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
+		const distForHeight = (maxHeight * PADDING_VERTICAL) / (2 * Math.tan(fovRad / 2));
+
+		return Math.max(distForWidth, distForHeight);
+	}, [totalWidth, maxHeight, camera]);
+
 	useEffect(() => {
-		let focusWidth = 0;
-		let focusCenterX = 0;
-		let hasFocus = false;
-
-		if (selectedRackId) {
-			const index = rackIds.indexOf(selectedRackId);
-			if (index !== -1) {
-				const leftCol = columnPositionsX[index];
-				const rightCol = columnPositionsX[index + 1];
-				focusCenterX = (leftCol + rightCol) / 2 - centerX;
-				focusWidth = rackWidths[index];
-				hasFocus = true;
-			}
-		} else if (selectedArm && selectedArm.columnIndex !== undefined) {
-			const colX = columnPositionsX[selectedArm.columnIndex];
-			focusCenterX = colX - centerX;
-			const rackIndex = Math.min(selectedArm.columnIndex, rackWidths.length - 1);
-			focusWidth = rackWidths[rackIndex];
-			hasFocus = true;
-		}
-
-		if (hasFocus && focusWidth > 0) {
-			// Calculate distance for this single rack/column
+		if (focusTarget && focusTarget.width > 0) {
 			const perspCamera = camera as THREE.PerspectiveCamera;
 			const fovRad = (perspCamera.fov * Math.PI) / 180;
 			const aspect = perspCamera.aspect;
 			const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
 
-			const distForWidth = (focusWidth * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
+			const distForWidth = (focusTarget.width * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
 			const distForHeight = (maxHeight * PADDING_VERTICAL) / (2 * Math.tan(fovRad / 2));
 
 			targetDistance.current = Math.max(MIN_DISTANCE, Math.max(distForWidth, distForHeight));
-			targetLookAt.current.set(focusCenterX, 0, 0);
-			targetCameraPos.current.set(focusCenterX, 0, -targetDistance.current);
+			targetLookAt.current.set(focusTarget.centerX, 0, 0);
+			targetCameraPos.current.set(focusTarget.centerX, 0, -targetDistance.current);
 			useSpecificPosition.current = true;
 			wasFocused.current = true;
 		} else {
@@ -78,6 +69,7 @@ const CameraAutoZoom = () => {
 			targetLookAt.current.set(0, 0, 0);
 
 			if (wasFocused.current) {
+				// Zoom back out smoothly
 				targetCameraPos.current.set(0, 5, -30).normalize().multiplyScalar(targetDistance.current);
 				useSpecificPosition.current = true;
 				wasFocused.current = false;
@@ -87,7 +79,7 @@ const CameraAutoZoom = () => {
 		}
 
 		isAnimating.current = true;
-	}, [autoDistance, selectedRackId, selectedArm, rackIds, columnPositionsX, rackWidths, centerX, maxHeight, camera]);
+	}, [autoDistance, focusTarget, maxHeight, camera]);
 
 	useFrame((_, delta) => {
 		if (!isAnimating.current) return;
@@ -105,11 +97,9 @@ const CameraAutoZoom = () => {
 			desiredCameraPos = targetCameraPos.current;
 		} else {
 			direction.current.subVectors(camera.position, currentTarget.current).normalize();
-
 			if (direction.current.lengthSq() < 0.01) {
 				direction.current.set(0, 0, -1);
 			}
-
 			desiredCameraPos = new THREE.Vector3().copy(currentTarget.current).add(
 				direction.current.multiplyScalar(targetDistance.current)
 			);
@@ -121,7 +111,6 @@ const CameraAutoZoom = () => {
 			(controls as any).update();
 		}
 
-		// Stop animating once close enough (check both position and target)
 		const distToPos = camera.position.distanceTo(desiredCameraPos);
 		const distToTarget = currentTarget.current.distanceTo(targetLookAt.current);
 
@@ -137,5 +126,3 @@ const CameraAutoZoom = () => {
 
 	return null;
 };
-
-export default CameraAutoZoom;
