@@ -1,5 +1,5 @@
 import React from 'react';
-import { BasePart } from '@/components/3d/BasePart';
+import { CantileverPart as BasePart } from './CantileverPart';
 import { useShelfParts } from '../hooks/useShelfParts';
 import braceLayouts from '../data/brace_layouts.json';
 import type { BraceElement } from '../types';

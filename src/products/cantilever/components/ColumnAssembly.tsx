@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BasePart } from '@/components/3d/BasePart';
+import { CantileverPart as BasePart } from './CantileverPart';
 import { ArmAssembly } from './ArmAssembly';
 import { Button3D } from '@/components/3d/Button3D';
 import { useEditorStore } from '../stores/editorStore';

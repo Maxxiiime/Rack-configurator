@@ -1,5 +1,5 @@
 import React from 'react';
-import { BasePart } from '@/components/3d/BasePart';
+import { CantileverPart as BasePart } from './CantileverPart';
 import { useEditorStore } from '../stores/editorStore';
 import type { RackType } from '../stores/configStore';
 import { computeArmDividerPositions } from '../utils/armPositions';
