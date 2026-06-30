@@ -39,7 +39,8 @@ export const useRackPositions = () => {
 		const minX = columnPositionsX[0];
 		const maxX = columnPositionsX[columnPositionsX.length - 1];
 		const centerX = (minX + maxX) / 2;
+		const totalWidth = maxX - minX;
 
-		return { columnPositionsX, rackWidths, centerX };
+		return { columnPositionsX, rackWidths, centerX, totalWidth };
 	}, [rackIds, braceId, getPartSize, sectionWidthOverrides]);
 };
