@@ -3,19 +3,21 @@ import { Canvas } from "@react-three/fiber";
 import Scene from "./components/Scene";
 import { Perf } from "r3f-webgpu-perf";
 import Button from "@/components/Button";
-import { useEditorStore } from "@/stores/cantilever/editorStore";
+import { useActiveProduct } from "@/products";
 import { useAppStore } from "@/stores/appStore";
 import Sidepanel from "../Sidepanel";
 
 const SIDEPANEL_WIDTH = 300;
 
 const ThreeCanvas = () => {
+	const activeProduct = useActiveProduct();
+	const useEditorStore = activeProduct.useEditorStore;
+
 	const setShowDimensions = useEditorStore((s) => s.setShowDimensions);
 	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const setShowWeightInfo = useEditorStore((s) => s.setShowWeightInfo);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
-	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
-	const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
+	const clearSelection = useEditorStore((s) => s.clearSelection);
 	const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
 
 	return (
@@ -32,22 +34,25 @@ const ThreeCanvas = () => {
 				<Canvas
 					camera={{ fov: 45, position: [0, 5, -30] }}
 					onPointerMissed={() => {
-						setSelectedRackId(null);
-						setSelectedArm(null);
+						if (clearSelection) clearSelection();
 					}}
 				>
 					<Scene />
 					{import.meta.env.MODE === "development" && <Perf position="top-left" showVRAM />}
 				</Canvas>
 			</Box>
-			<Button
-				type="dimension"
-				onClick={() => setShowDimensions(!showDimensions)}
-			/>
-			<Button
-				type="weight"
-				onClick={() => setShowWeightInfo(!showWeightInfo)}
-			/>
+			{setShowDimensions && (
+				<Button
+					type="dimension"
+					onClick={() => setShowDimensions(!showDimensions)}
+				/>
+			)}
+			{setShowWeightInfo && (
+				<Button
+					type="weight"
+					onClick={() => setShowWeightInfo(!showWeightInfo)}
+				/>
+			)}
 			<Sidepanel width={SIDEPANEL_WIDTH} />
 		</Box>
 	);
