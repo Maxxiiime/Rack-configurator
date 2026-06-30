@@ -332,5 +332,13 @@
         "name": "Heavy Arm Stop",
         "path": "/model/arms/HeavyArmstop.glb",
         "price": 4.03
+    },
+    {
+        "shelving_system_id": "arm_divider",
+        "category": "arm_divider",
+        "name": "Arm Divider",
+        "path": "/model/arms/Arm_divider.glb",
+        "price": 4.03,
+        "code": "MDCPC-00067"
     }
 ]

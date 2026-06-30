@@ -17,6 +17,7 @@ export const usePricing = () => {
   const armCount = useRackConfigStore((s) => s.armCount);
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
+  const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
   const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
   const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 
@@ -44,6 +45,7 @@ export const usePricing = () => {
     const legPrice = getPartData(activeLegId)?.price || 0;
     const armPrice = getPartData(armId)?.price || 0;
     const armStopPrice = getPartData('arm_stop')?.price || 0;
+    const armDividerPrice = getPartData('arm_divider')?.price || 0;
 
     // Add Columns & Legs
     totalPrice += numColumns * columnPrice;
@@ -53,6 +55,9 @@ export const usePricing = () => {
     totalPrice += totalArms * armPrice;
     if (showArmStops) {
       totalPrice += totalArms * armStopPrice;
+    }
+    if (showArmDividers) {
+      totalPrice += totalArms * armDividerPrice;
     }
 
     // 3. Add Braces
@@ -87,11 +92,12 @@ export const usePricing = () => {
         legs: numColumns * legPrice,
         arms: totalArms * armPrice,
         armStops: showArmStops ? totalArms * armStopPrice : 0,
+        armDividers: showArmDividers ? totalArms * armDividerPrice : 0,
       }
     };
   }, [
     rackType, columnId, armId, braceId, activeLegId,
-    sectionWidthOverrides, armCount, armSpacing, showArmStops,
+    sectionWidthOverrides, armCount, armSpacing, showArmStops, showArmDividers,
     removeFirstColumn, removeLastColumn,
     rackIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
   ]);

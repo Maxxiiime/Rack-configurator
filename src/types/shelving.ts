@@ -1,4 +1,4 @@
-export type PartCategory = 'arm' | 'arm_stop' | 'h_brace' | 'x_brace' | 'column' | 'single_leg' | 'double_leg' | 'bolts';
+export type PartCategory = 'arm' | 'arm_stop' | 'h_brace' | 'x_brace' | 'column' | 'single_leg' | 'double_leg' | 'bolts' | 'arm_divider';
 
 export interface ShelvingPart {
 	shelving_system_id: string;
@@ -62,5 +62,10 @@ export interface ShelvingOffsets {
 		z: number;
 		double_x: number;
 		double_z: number;
+	};
+	arm_divider: {
+		x: number;
+		y: number;
+		z: number;
 	};
 }

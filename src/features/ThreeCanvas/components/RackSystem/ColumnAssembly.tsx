@@ -38,6 +38,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   }, [selectedMode, iconDirection]);
 
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
+  const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
 
   const armSizeUnits = getPartSize(armId) / 100;
   const armStopLocalZ = armSizeUnits + offsets.arm_stop.z;
@@ -83,8 +84,10 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               armStopLocalZ={armStopLocalZ}
               doubleArmStopLocalZ={doubleArmStopLocalZ}
               showArmStops={showArmStops}
+              showArmDividers={showArmDividers}
               armStopId={armStopId}
               columnIndex={columnIndex}
+              armSizeUnits={armSizeUnits}
             />
             {/* Edit button for this specific arm */}
             {currentStep === 2 && (selectedMode || isArmSelected) && (() => {

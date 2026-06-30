@@ -51,7 +51,7 @@ export function computeArmPositions(
   if (snappedStartY + armsTotalSpan > topLimit) {
     snappedStartY -= 1;
   }
-  
+
   if (snappedStartY < startY) {
     snappedStartY = startY;
   }
@@ -60,7 +60,7 @@ export function computeArmPositions(
   for (let i = 0; i < clampedCount; i++) {
     positions.push(snappedStartY + i * spacing);
   }
-  
+
   return positions;
 }
 
@@ -74,4 +74,40 @@ export function applyArmYOverrides(
 ): number[] {
   if (Object.keys(overrides).length === 0) return basePositions;
   return basePositions.map((y, i) => overrides[i] ?? y);
+}
+
+/**
+ * Compute the specific X, Y, Z positions for arm dividers taking slope into account.
+ */
+export function computeArmDividerPositions(
+  armSizeUnits: number,
+  yPos: number,
+  armStopY: number,
+  offsets: Record<string, any>
+) {
+  const zOffset = offsets.arm_divider.z;
+  const armDividerZ = offsets.arm.z - (armSizeUnits / 2) + zOffset;
+  const doubleArmDividerZ = offsets.arm.double_z + (armSizeUnits / 2) - zOffset;
+
+  const doubleArmDividerX = offsets.arm.double_x - (offsets.arm_divider?.x - offsets.arm.x || 0);
+
+  const singleRatio = (offsets.arm.z - armDividerZ) / armSizeUnits;
+  const doubleRatio = (doubleArmDividerZ - offsets.arm.double_z) / armSizeUnits;
+
+  const baseY = offsets.arm_divider.y;
+  const singleDividerY = yPos + baseY + (armStopY - baseY) * singleRatio;
+  const doubleDividerY = yPos + baseY + (armStopY - baseY) * doubleRatio;
+
+  return {
+    single: {
+      x: offsets.arm_divider.x,
+      y: singleDividerY,
+      z: armDividerZ,
+    },
+    double: {
+      x: doubleArmDividerX,
+      y: doubleDividerY,
+      z: doubleArmDividerZ,
+    }
+  };
 }

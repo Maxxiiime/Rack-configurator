@@ -2,6 +2,7 @@ import React from 'react';
 import { BasePart } from './Parts';
 import { useEditorStore } from '@/stores/cantilever/editorStore';
 import type { RackType } from '@/stores/cantilever/rackConfigStore';
+import { computeArmDividerPositions } from '@/utils/armPositions';
 
 interface ArmAssemblyProps {
   index: number;
@@ -13,8 +14,10 @@ interface ArmAssemblyProps {
   armStopLocalZ: number;
   doubleArmStopLocalZ: number;
   showArmStops: boolean;
+  showArmDividers: boolean;
   armStopId: string;
   columnIndex: number;
+  armSizeUnits: number;
 }
 
 export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
@@ -27,12 +30,21 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   armStopLocalZ,
   doubleArmStopLocalZ,
   showArmStops,
+  showArmDividers,
   armStopId,
   columnIndex,
+  armSizeUnits,
 }) => {
   const selectedArm = useEditorStore((s) => s.selectedArm);
-  const isSelected = selectedArm?.armIndex === index && 
+  const isSelected = selectedArm?.armIndex === index &&
     (selectedArm.columnIndex === columnIndex || selectedArm.columnIndex === undefined);
+
+  const { single: singleDivider, double: doubleDivider } = computeArmDividerPositions(
+    armSizeUnits, 
+    yPos, 
+    armStopY, 
+    offsets
+  );
 
   return (
     <group>
@@ -48,6 +60,15 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
         <BasePart
           id={armStopId}
           position={[offsets.arm_stop.x, yPos + armStopY, -armStopLocalZ]}
+          selectedMode={isSelected}
+        />
+      )}
+
+      {/* ARM DIVIDER - Single Face */}
+      {showArmDividers && (
+        <BasePart
+          id="arm_divider"
+          position={[singleDivider.x, singleDivider.y, singleDivider.z]}
           selectedMode={isSelected}
         />
       )}
@@ -68,6 +89,16 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
             <BasePart
               id={armStopId}
               position={[offsets.arm_stop.double_x, yPos + armStopY, doubleArmStopLocalZ]}
+              rotation={[0, Math.PI, 0]}
+              selectedMode={isSelected}
+            />
+          )}
+
+          {/* ARM DIVIDER - Double Face */}
+          {showArmDividers && (
+            <BasePart
+              id="arm_divider"
+              position={[doubleDivider.x, doubleDivider.y, doubleDivider.z]}
               rotation={[0, Math.PI, 0]}
               selectedMode={isSelected}
             />

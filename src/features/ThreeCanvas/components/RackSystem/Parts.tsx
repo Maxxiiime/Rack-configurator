@@ -24,8 +24,13 @@ export const BasePart: React.FC<PartProps> = ({ id, position = [0, 0, 0], rotati
   const { getMetalMaterial } = useMaterial();
 
   const partData = getPartData(id);
-  const isArm = partData?.category === 'arm' || partData?.category === 'arm_stop';
-  const materialName = isArm ? 'Red' : 'Blue';
+  let materialName = 'Blue';
+  if (partData?.category === 'arm' || partData?.category === 'arm_stop') {
+    materialName = 'Red';
+  } else if (partData?.category === 'arm_divider') {
+    materialName = 'Grey';
+  }
+
   const fallbackPath = '/model/columns/Kolommen_2M.glb';
 
   const { scene } = useGLTF(partData?.path ?? fallbackPath);
