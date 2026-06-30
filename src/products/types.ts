@@ -114,6 +114,9 @@ export interface ProductDefinition<
   /** Ordered configuration steps rendered in the Sidepanel wizard. */
   steps: ProductStep[];
 
+  /** Optional vertical offset for the Stage shadows (e.g. to align shadow with ground plane). */
+  shadowOffset?: number;
+
   /* ── Hooks ────────────────────────────────────────────────────────────── */
 
   /** Returns live pricing derived from the current configuration. */

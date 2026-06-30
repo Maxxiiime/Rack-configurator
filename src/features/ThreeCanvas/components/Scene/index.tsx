@@ -18,6 +18,7 @@ const Scene = () => {
                     opacity: 1,
                     blur: 0.25,
                     resolution: 1024,
+                    offset: activeProduct.shadowOffset ?? 0,
                 }}
             >
                 <Renderer />

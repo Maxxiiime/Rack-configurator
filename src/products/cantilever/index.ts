@@ -17,6 +17,7 @@ import { RackSystem } from './components/CantileverRenderer';
 import { Step1 } from './panels/Step1';
 import { Step2 } from './panels/Step2';
 import { Step3 } from './panels/Step3';
+import offsets from './data/offsets.json';
 
 export const cantileverProduct: ProductDefinition<RackConfigState, CantileverEditorState> = {
   id: 'cantilever',
@@ -36,6 +37,8 @@ export const cantileverProduct: ProductDefinition<RackConfigState, CantileverEdi
     { label: 'Advanced Options', Component: Step2 },
     { label: 'Bill of Materials', Component: Step3 },
   ],
+
+  shadowOffset: -offsets.bottom_bolt.y,
 
   // Pricing & BOM hooks
   usePricing,
