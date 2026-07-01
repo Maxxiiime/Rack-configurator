@@ -39,6 +39,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
 
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
   const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
+  const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
 
   const armSizeUnits = getPartSize(armId) / 100;
   const armStopLocalZ = armSizeUnits + offsets.arm_stop.z;
@@ -85,6 +86,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               doubleArmStopLocalZ={doubleArmStopLocalZ}
               showArmStops={showArmStops}
               showArmDividers={showArmDividers}
+              armDividerCount={armDividerCount}
               armStopId={armStopId}
               columnIndex={columnIndex}
               armSizeUnits={armSizeUnits}

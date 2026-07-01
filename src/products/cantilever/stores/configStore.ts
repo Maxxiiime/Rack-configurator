@@ -35,6 +35,7 @@ export interface RackConfigState {
   sectionWidthOverrides: Record<string, number>;
   showArmStops: boolean;
   showArmDividers: boolean;
+  armDividerCount: number;
   removeFirstColumn: boolean;
   removeLastColumn: boolean;
   metalMaterial: string;
@@ -53,6 +54,7 @@ export interface RackConfigState {
   clearSectionWidthOverrides: () => void;
   toggleShowArmStops: () => void;
   toggleShowArmDividers: () => void;
+  setArmDividerCount: (count: number) => void;
   toggleRemoveFirstColumn: () => void;
   toggleRemoveLastColumn: () => void;
 }
@@ -72,6 +74,7 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   sectionWidthOverrides: {},
   showArmStops: false,
   showArmDividers: false,
+  armDividerCount: 1,
   removeFirstColumn: false,
   removeLastColumn: false,
   metalMaterial: 'Blue',
@@ -138,6 +141,7 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
 
   toggleShowArmStops: () => set((state) => ({ showArmStops: !state.showArmStops })),
   toggleShowArmDividers: () => set((state) => ({ showArmDividers: !state.showArmDividers })),
+  setArmDividerCount: (count) => set({ armDividerCount: Math.max(1, count) }),
   toggleRemoveFirstColumn: () => set((state) => ({ removeFirstColumn: !state.removeFirstColumn })),
   toggleRemoveLastColumn: () => set((state) => ({ removeLastColumn: !state.removeLastColumn })),
 }));

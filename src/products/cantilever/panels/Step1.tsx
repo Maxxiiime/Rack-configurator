@@ -37,6 +37,7 @@ export function Step1({ onNext }: Step1Props) {
   const armCount = useRackConfigStore((s) => s.armCount);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
   const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
+  const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
 
   const setRackType = useRackConfigStore((s) => s.setRackType);
   const setColumnId = useRackConfigStore((s) => s.setColumnId);
@@ -46,6 +47,7 @@ export function Step1({ onNext }: Step1Props) {
   const setArmSpacing = useRackConfigStore((s) => s.setArmSpacing);
   const toggleShowArmStops = useRackConfigStore((s) => s.toggleShowArmStops);
   const toggleShowArmDividers = useRackConfigStore((s) => s.toggleShowArmDividers);
+  const setArmDividerCount = useRackConfigStore((s) => s.setArmDividerCount);
 
   const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } =
     useShelfParts();
@@ -218,6 +220,34 @@ export function Step1({ onNext }: Step1Props) {
           >
             <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Dividers</Text>
           </Checkbox>
+
+          {showArmDividers && (
+            <Box pl={7}>
+              <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Dividers Count</Text>
+              <Flex align="center" gap={2}>
+                <Stepper
+                  value={armDividerCount}
+                  min={1}
+                  max={5}
+                  onChange={setArmDividerCount}
+                />
+                <Slider
+                  flex={1}
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={armDividerCount}
+                  onChange={setArmDividerCount}
+                  focusThumbOnChange={false}
+                >
+                  <SliderTrack {...sliderTrackStyle}>
+                    <SliderFilledTrack bg="gray.800" />
+                  </SliderTrack>
+                  <SliderThumb {...sliderThumbStyle} />
+                </Slider>
+              </Flex>
+            </Box>
+          )}
 
         </VStack>
       </Box>

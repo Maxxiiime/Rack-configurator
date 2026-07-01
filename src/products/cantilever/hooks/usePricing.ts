@@ -4,7 +4,6 @@ import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useShelfParts } from './useShelfParts';
 import braceLayouts from '../data/brace_layouts.json';
 import type { BraceElement } from '../types';
-import { getMaxArmCount } from '../utils/armPositions';
 
 const typedLayouts = braceLayouts as Record<string, BraceElement[]>;
 
@@ -18,6 +17,7 @@ export const usePricing = () => {
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
   const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
+  const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
   const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
   const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 
@@ -57,7 +57,7 @@ export const usePricing = () => {
       totalPrice += totalArms * armStopPrice;
     }
     if (showArmDividers) {
-      totalPrice += totalArms * armDividerPrice;
+      totalPrice += totalArms * armDividerCount * armDividerPrice;
     }
 
     // 3. Add Braces
@@ -92,12 +92,12 @@ export const usePricing = () => {
         legs: numColumns * legPrice,
         arms: totalArms * armPrice,
         armStops: showArmStops ? totalArms * armStopPrice : 0,
-        armDividers: showArmDividers ? totalArms * armDividerPrice : 0,
+        armDividers: showArmDividers ? totalArms * armDividerCount * armDividerPrice : 0,
       }
     };
   }, [
     rackType, columnId, armId, braceId, activeLegId,
-    sectionWidthOverrides, armCount, armSpacing, showArmStops, showArmDividers,
+    sectionWidthOverrides, armCount, armSpacing, showArmStops, showArmDividers, armDividerCount,
     removeFirstColumn, removeLastColumn,
     rackIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
   ]);

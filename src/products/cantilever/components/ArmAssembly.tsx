@@ -15,6 +15,7 @@ interface ArmAssemblyProps {
   doubleArmStopLocalZ: number;
   showArmStops: boolean;
   showArmDividers: boolean;
+  armDividerCount: number;
   armStopId: string;
   columnIndex: number;
   armSizeUnits: number;
@@ -31,6 +32,7 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   doubleArmStopLocalZ,
   showArmStops,
   showArmDividers,
+  armDividerCount,
   armStopId,
   columnIndex,
   armSizeUnits,
@@ -39,11 +41,12 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   const isSelected = selectedArm?.armIndex === index &&
     (selectedArm.columnIndex === columnIndex || selectedArm.columnIndex === undefined);
 
-  const { single: singleDivider, double: doubleDivider } = computeArmDividerPositions(
-    armSizeUnits, 
-    yPos, 
-    armStopY, 
-    offsets
+  const { singles, doubles } = computeArmDividerPositions(
+    armSizeUnits,
+    yPos,
+    armStopY,
+    offsets,
+    armDividerCount
   );
 
   return (
@@ -64,14 +67,15 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
         />
       )}
 
-      {/* ARM DIVIDER - Single Face */}
-      {showArmDividers && (
+      {/* ARM DIVIDERS - Single Face */}
+      {showArmDividers && singles.map((pos, i) => (
         <BasePart
+          key={`divider-single-${i}`}
           id="arm_divider"
-          position={[singleDivider.x, singleDivider.y, singleDivider.z]}
+          position={[pos.x, pos.y, pos.z]}
           selectedMode={isSelected}
         />
-      )}
+      ))}
 
       {/* Double Face */}
       {rackType === 'double' && (
@@ -94,15 +98,16 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
             />
           )}
 
-          {/* ARM DIVIDER - Double Face */}
-          {showArmDividers && (
+          {/* ARM DIVIDERS - Double Face */}
+          {showArmDividers && doubles.map((pos, i) => (
             <BasePart
+              key={`divider-double-${i}`}
               id="arm_divider"
-              position={[doubleDivider.x, doubleDivider.y, doubleDivider.z]}
+              position={[pos.x, pos.y, pos.z]}
               rotation={[0, Math.PI, 0]}
               selectedMode={isSelected}
             />
-          )}
+          ))}
         </>
       )}
     </group>

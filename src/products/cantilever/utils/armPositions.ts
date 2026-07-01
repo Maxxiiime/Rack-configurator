@@ -78,36 +78,49 @@ export function applyArmYOverrides(
 
 /**
  * Compute the specific X, Y, Z positions for arm dividers taking slope into account.
+ * When count > 1, dividers are distributed uniformly along the arm length.
  */
 export function computeArmDividerPositions(
   armSizeUnits: number,
   yPos: number,
   armStopY: number,
-  offsets: Record<string, any>
+  offsets: Record<string, any>,
+  count: number = 1
 ) {
+  const clampedCount = Math.max(1, count);
   const zOffset = offsets.arm_divider.z;
-  const armDividerZ = offsets.arm.z - (armSizeUnits / 2) + zOffset;
-  const doubleArmDividerZ = offsets.arm.double_z + (armSizeUnits / 2) - zOffset;
-
   const doubleArmDividerX = offsets.arm.double_x - (offsets.arm_divider?.x - offsets.arm.x || 0);
-
-  const singleRatio = (offsets.arm.z - armDividerZ) / armSizeUnits;
-  const doubleRatio = (doubleArmDividerZ - offsets.arm.double_z) / armSizeUnits;
-
   const baseY = offsets.arm_divider.y;
-  const singleDividerY = yPos + baseY + (armStopY - baseY) * singleRatio;
-  const doubleDividerY = yPos + baseY + (armStopY - baseY) * doubleRatio;
 
-  return {
-    single: {
+  const singles: { x: number; y: number; z: number }[] = [];
+  const doubles: { x: number; y: number; z: number }[] = [];
+
+  for (let i = 0; i < clampedCount; i++) {
+    // Distribute dividers uniformly: fraction goes from 1/(count+1) to count/(count+1)
+    const fraction = (i + 1) / (clampedCount + 1);
+
+    // Single face
+    const armDividerZ = offsets.arm.z - armSizeUnits * fraction + zOffset;
+    const singleRatio = (offsets.arm.z - armDividerZ) / armSizeUnits;
+    const singleDividerY = yPos + baseY + (armStopY - baseY) * singleRatio;
+
+    singles.push({
       x: offsets.arm_divider.x,
       y: singleDividerY,
       z: armDividerZ,
-    },
-    double: {
+    });
+
+    // Double face
+    const doubleArmDividerZ = offsets.arm.double_z + armSizeUnits * fraction - zOffset;
+    const doubleRatio = (doubleArmDividerZ - offsets.arm.double_z) / armSizeUnits;
+    const doubleDividerY = yPos + baseY + (armStopY - baseY) * doubleRatio;
+
+    doubles.push({
       x: doubleArmDividerX,
       y: doubleDividerY,
       z: doubleArmDividerZ,
-    }
-  };
+    });
+  }
+
+  return { singles, doubles };
 }
