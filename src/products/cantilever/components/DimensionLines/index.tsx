@@ -5,6 +5,8 @@ import * as THREE from "three";
 import { getBoundingBoxPoints } from "@/utils/boundingBox";
 import offsets from '../../data/offsets.json';
 import { useArmPositions } from "../../hooks/useArmPositions";
+import { useRackConfigStore } from '../../stores/configStore';
+import { useShelfParts } from '../../hooks/useShelfParts';
 import { DIM_CONFIG, labelStyle, detailLabelStyle } from './style';
 
 interface DimensionLineProps {
@@ -46,6 +48,13 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const invMatrix = useMemo(() => new THREE.Matrix4(), []);
 
     const { armPositions } = useArmPositions();
+
+    // Arm divider config for Z-axis detail
+    const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
+    const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
+    const armId = useRackConfigStore((s) => s.armId);
+    const { getPartSize } = useShelfParts();
+    const armSizeUnits = getPartSize(armId) / 100;
 
     // Continuously update the bounding box to react to user configuration changes or animations
     useFrame(() => {
@@ -111,6 +120,8 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     };
 
     // --- Z Axis (Depth) Coordinate Setup ---
+    // Elevate Z dimensions to the first arm level for better readability
+    const zDimY = armPositions.length > 0 ? armPositions[0] + 1.3 : startY;
     const zDimX = max.x + DIM_CONFIG.offset;
     const zData = {
         mainLine: [[zDimX, startY, min.z], [zDimX, startY, max.z]] as [number, number, number][],
@@ -121,6 +132,48 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
         labelPos: [zDimX + 0.3, startY, (min.z + max.z) / 2] as [number, number, number],
         value: `${depthZ} mm`
     };
+
+    // --- Z Axis Detail (Column depth + Arm Divider Spacing) ---
+    const zDetailX = max.x + DIM_CONFIG.totalOffset;
+
+    // Compute Z breakpoints when arm dividers are present
+    const zDividerSegments: { from: number; to: number; midZ: number; gapMm: string; index: number }[] = [];
+    if (showArmDividers && armDividerCount >= 1 && armSizeUnits > 0) {
+        // Compute the Z positions of each divider using the same fraction logic as computeArmDividerPositions
+        const dividerZPositions: number[] = [];
+        for (let i = 0; i < armDividerCount; i++) {
+            const fraction = (i + 1) / (armDividerCount + 1);
+            const dividerZ = 0.25 + offsets.arm.z - armSizeUnits * fraction + offsets.arm_divider.z;
+            dividerZPositions.push(dividerZ);
+        }
+
+        // Sort dividers from max.z (nearest column) toward min.z (arm tip)
+        dividerZPositions.sort((a, b) => b - a);
+
+        // The arm attachment Z position (where the arm meets the column)
+        const armStartZ = -2;
+        // The arm tip Z position (end of arm, toward negative Z)
+        const armEndZ = -2 - armSizeUnits;
+
+        // Build breakpoints: arm start (at column) -> each divider -> arm tip
+        const zBreakpoints = [armStartZ, ...dividerZPositions, armEndZ];
+
+        for (let i = 0; i < zBreakpoints.length - 1; i++) {
+            const from = zBreakpoints[i];   // higher Z (closer to column back)
+            const to = zBreakpoints[i + 1]; // lower Z (further out)
+            const gap = Math.abs(from - to);
+
+            if (gap >= 0.05) {
+                zDividerSegments.push({
+                    from,
+                    to,
+                    midZ: (from + to) / 2,
+                    gapMm: (gap * 100).toFixed(0),
+                    index: i,
+                });
+            }
+        }
+    }
 
     // --- Vertical Detailing (Arm Spacing Breakdown) ---
     const detailX = min.x - DIM_CONFIG.offset;
@@ -154,7 +207,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             <DimensionLine {...yData} />
             <DimensionLine {...zData} />
 
-            {/* Detailed Inner Dimensions for Arm Intervals */}
+            {/* Detailed Inner Dimensions for Arm Intervals (Y axis) */}
             {armSegments.map((seg) => (
                 <group key={`arm-seg-${seg.index}`}>
                     <Line points={[[detailX, seg.from, min.z], [detailX, seg.to, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
@@ -163,6 +216,24 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
                     <Line points={[[min.x, seg.from, min.z], [detailX, seg.from, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
                     <Line points={[[min.x, seg.to, min.z], [detailX, seg.to, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
                     <Html position={[detailX - 0.3, seg.midY, min.z]} center zIndexRange={[100, 0]}>
+                        <div style={detailLabelStyle}>{`${seg.gapMm} mm`}</div>
+                    </Html>
+                </group>
+            ))}
+
+            {/* Detailed Inner Dimensions for Arm Divider Spacing (Z axis) */}
+            {zDividerSegments.map((seg) => (
+                <group key={`z-seg-${seg.index}`}>
+                    {/* Vertical segment line along Z */}
+                    <Line points={[[zDetailX, zDimY, seg.from], [zDetailX, zDimY, seg.to]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                    {/* Tick marks at each breakpoint */}
+                    <Line points={[[zDetailX - DIM_CONFIG.tickSize, zDimY, seg.from], [zDetailX + DIM_CONFIG.tickSize, zDimY, seg.from]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                    <Line points={[[zDetailX - DIM_CONFIG.tickSize, zDimY, seg.to], [zDetailX + DIM_CONFIG.tickSize, zDimY, seg.to]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                    {/* Extension dashes from bounding box to detail line */}
+                    <Line points={[[max.x, zDimY, seg.from], [zDetailX, zDimY, seg.from]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                    <Line points={[[max.x, zDimY, seg.to], [zDetailX, zDimY, seg.to]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                    {/* Label */}
+                    <Html position={[zDetailX + 0.3, zDimY, seg.midZ]} center zIndexRange={[100, 0]}>
                         <div style={detailLabelStyle}>{`${seg.gapMm} mm`}</div>
                     </Html>
                 </group>
