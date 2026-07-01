@@ -30,7 +30,11 @@ interface ProductProviderProps {
  * `ProductDefinition` to all descendants.
  */
 export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
-  const { productId } = useParams<{ productId: string }>();
+  const params = useParams<{ productId: string }>();
+  /**
+   * TODO: Remove this temporary default value when we have a product selector
+   */
+  const productId = params.productId ?? 'cantilever';
 
   const product = useMemo(() => {
     if (!productId) return null;

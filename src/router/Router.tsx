@@ -8,7 +8,7 @@ const Router = () => {
 			 * TODO: Temporary redirec later "/" will be a product selector
 			 */
 			path: "/",
-			element: <Navigate to="/configurator/cantilever" replace />,
+			element: <Configurator />,
 		},
 		{
 			path: "/configurator/:productId",
