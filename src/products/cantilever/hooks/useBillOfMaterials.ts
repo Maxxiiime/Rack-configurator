@@ -24,6 +24,8 @@ export const useBillOfMaterials = () => {
   const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
   const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
+  const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
+  const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
   const activeLegId = useRackConfigStore(selectActiveLegId);
 
   const sectionIds = useRackSectionsStore((s) => s.sectionIds);
@@ -58,6 +60,10 @@ export const useBillOfMaterials = () => {
       if (showArmStops) {
         const armStopId = getPartData(armId)?.arm_stop_id ?? 'arm_stop';
         addPart(armStopId, totalArms);
+      }
+
+      if (showArmDividers && armDividerCount > 0) {
+        addPart('arm_divider', totalArms * armDividerCount);
       }
     }
 
@@ -125,7 +131,7 @@ export const useBillOfMaterials = () => {
     };
   }, [
     rackType, columnId, armId, braceId, sectionWidthOverrides,
-    removeFirstColumn, removeLastColumn, showArmStops, activeLegId,
+    removeFirstColumn, removeLastColumn, showArmStops, showArmDividers, armDividerCount, activeLegId,
     sectionIds, armPositions.length, getPartSize, findPartId, getPartData
   ]);
 };
