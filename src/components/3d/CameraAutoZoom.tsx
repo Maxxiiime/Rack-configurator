@@ -1,6 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo, useCallback } from "react";
 import * as THREE from "three";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 const MIN_DISTANCE = 30;
 const LERP_SPEED = 10;
@@ -18,14 +19,36 @@ export interface CameraAutoZoomProps {
 		centerX: number;
 		width: number;
 	} | null;
+	/** * ADDED: Optional fallback position when zooming out. 
+	 * This prevents hardcoding a specific vector that might not fit all scene sizes.
+	 */
+	defaultPosition?: THREE.Vector3;
 }
+
+/**
+ * ADDED: Extracted math logic into a utility function to keep the code DRY.
+ * Calculates the required distance to fit a given width/height within the camera's FOV.
+ */
+const calculateDistanceToFit = (width: number, height: number, camera: THREE.PerspectiveCamera) => {
+	const fovRad = (camera.fov * Math.PI) / 180;
+	const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * camera.aspect);
+
+	const distForWidth = (width * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
+	const distForHeight = (height * PADDING_VERTICAL) / (2 * Math.tan(fovRad / 2));
+
+	return Math.max(MIN_DISTANCE, distForWidth, distForHeight);
+};
 
 /**
  * A generic camera controller that automatically adjusts distance and target 
  * to fit the provided dimensions in view. It smoothly animates between states.
  */
-export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, totalWidth, focusTarget }) => {
-	const { camera, controls } = useThree();
+export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
+	maxHeight,
+	totalWidth,
+	focusTarget, defaultPosition = new THREE.Vector3(0, 5, -30)
+}) => {
+	const { camera, controls, gl, size } = useThree();
 
 	const isAnimating = useRef(false);
 	const targetDistance = useRef(MIN_DISTANCE);
@@ -36,41 +59,41 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, total
 	const useSpecificPosition = useRef(false);
 	const wasFocused = useRef(false);
 
-	// Compute default auto distance based on total width/height
-	const autoDistance = useMemo(() => {
-		const perspCamera = camera as THREE.PerspectiveCamera;
-		const fovRad = (perspCamera.fov * Math.PI) / 180;
-		const aspect = perspCamera.aspect;
-
-		const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
-		const distForWidth = (totalWidth * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
-		const distForHeight = (maxHeight * PADDING_VERTICAL) / (2 * Math.tan(fovRad / 2));
-
-		return Math.max(distForWidth, distForHeight);
-	}, [totalWidth, maxHeight, camera]);
+	// Cancel animation on user interaction (scroll, drag)
+	const cancelAnimation = useCallback(() => {
+		isAnimating.current = false;
+	}, []);
 
 	useEffect(() => {
+		const canvas = gl.domElement;
+		canvas.addEventListener("wheel", cancelAnimation, { passive: true });
+		canvas.addEventListener("pointerdown", cancelAnimation, { passive: true });
+		return () => {
+			canvas.removeEventListener("wheel", cancelAnimation);
+			canvas.removeEventListener("pointerdown", cancelAnimation);
+		};
+	}, [gl, cancelAnimation]);
+
+	// Compute default auto distance based on total width/height
+	const autoDistance = useMemo(() => {
+		return calculateDistanceToFit(totalWidth, maxHeight, camera as THREE.PerspectiveCamera);
+	}, [totalWidth, maxHeight, camera, size]);
+
+	useEffect(() => {
+		const perspCamera = camera as THREE.PerspectiveCamera;
+
 		if (focusTarget && focusTarget.width > 0) {
-			const perspCamera = camera as THREE.PerspectiveCamera;
-			const fovRad = (perspCamera.fov * Math.PI) / 180;
-			const aspect = perspCamera.aspect;
-			const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
-
-			const distForWidth = (focusTarget.width * PADDING_HORIZONTAL) / (2 * Math.tan(hFov / 2));
-			const distForHeight = (maxHeight * PADDING_VERTICAL) / (2 * Math.tan(fovRad / 2));
-
-			targetDistance.current = Math.max(MIN_DISTANCE, Math.max(distForWidth, distForHeight));
+			targetDistance.current = calculateDistanceToFit(focusTarget.width, maxHeight, perspCamera);
 			targetLookAt.current.set(focusTarget.centerX, 0, 0);
 			targetCameraPos.current.set(focusTarget.centerX, 0, -targetDistance.current);
 			useSpecificPosition.current = true;
 			wasFocused.current = true;
 		} else {
-			targetDistance.current = Math.max(MIN_DISTANCE, autoDistance);
+			targetDistance.current = autoDistance;
 			targetLookAt.current.set(0, 0, 0);
 
 			if (wasFocused.current) {
-				// Zoom back out smoothly
-				targetCameraPos.current.set(0, 5, -30).normalize().multiplyScalar(targetDistance.current);
+				targetCameraPos.current.copy(defaultPosition).normalize().multiplyScalar(targetDistance.current);
 				useSpecificPosition.current = true;
 				wasFocused.current = false;
 			} else {
@@ -79,12 +102,14 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, total
 		}
 
 		isAnimating.current = true;
-	}, [autoDistance, focusTarget, maxHeight, camera]);
+	}, [autoDistance, focusTarget, maxHeight, camera, defaultPosition, size]);
 
 	useFrame((_, delta) => {
 		if (!isAnimating.current) return;
-		if (controls) {
-			const orbitControls = controls as any;
+
+		const orbitControls = controls as unknown as OrbitControlsImpl | null;
+
+		if (orbitControls) {
 			orbitControls.target.lerp(targetLookAt.current, 1 - Math.exp(-LERP_SPEED * delta));
 			currentTarget.current.copy(orbitControls.target);
 		} else {
@@ -107,8 +132,8 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, total
 
 		camera.position.lerp(desiredCameraPos, 1 - Math.exp(-LERP_SPEED * delta));
 
-		if (controls) {
-			(controls as any).update();
+		if (orbitControls) {
+			orbitControls.update();
 		}
 
 		const distToPos = camera.position.distanceTo(desiredCameraPos);
@@ -116,9 +141,9 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({ maxHeight, total
 
 		if (distToPos < ARRIVAL_THRESHOLD && distToTarget < ARRIVAL_THRESHOLD) {
 			camera.position.copy(desiredCameraPos);
-			if (controls) {
-				(controls as any).target.copy(targetLookAt.current);
-				(controls as any).update();
+			if (orbitControls) {
+				orbitControls.target.copy(targetLookAt.current);
+				orbitControls.update();
 			}
 			isAnimating.current = false;
 		}
