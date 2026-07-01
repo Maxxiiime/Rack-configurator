@@ -8,7 +8,7 @@ import { useShelfParts } from './useShelfParts';
 export const useCameraFocus = () => {
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
 	const selectedArm = useEditorStore((s) => s.selectedArm);
-	const rackIds = useRackSectionsStore((s) => s.rackIds);
+	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const columnId = useRackConfigStore((s) => s.columnId);
 	
 	const { getColumnHeight } = useShelfParts();
@@ -19,7 +19,7 @@ export const useCameraFocus = () => {
 
 		let focusTarget = null;
 		if (selectedRackId) {
-			const index = rackIds.indexOf(selectedRackId);
+			const index = sectionIds.indexOf(selectedRackId);
 			if (index !== -1) {
 				const leftCol = columnPositionsX[index];
 				const rightCol = columnPositionsX[index + 1];
@@ -42,5 +42,5 @@ export const useCameraFocus = () => {
 			totalWidth,
 			focusTarget
 		};
-	}, [columnId, getColumnHeight, selectedRackId, selectedArm, rackIds, columnPositionsX, rackWidths, centerX, totalWidth]);
+	}, [columnId, getColumnHeight, selectedRackId, selectedArm, sectionIds, columnPositionsX, rackWidths, centerX, totalWidth]);
 };

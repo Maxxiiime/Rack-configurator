@@ -24,7 +24,7 @@ export const usePricing = () => {
   // Selector for derived state
   const activeLegId = useRackConfigStore(selectActiveLegId);
 
-  const rackIds = useRackSectionsStore((s) => s.rackIds);
+  const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
   const { getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } = useShelfParts();
 
@@ -32,7 +32,7 @@ export const usePricing = () => {
     let totalPrice = 0;
 
     // 1. Calculate the number of items
-    const numSections = rackIds.length;
+    const numSections = sectionIds.length;
     let numColumns = numSections + 1;
     if (removeFirstColumn) numColumns -= 1;
     if (removeLastColumn) numColumns -= 1;
@@ -66,7 +66,7 @@ export const usePricing = () => {
 
     const defaultBraceSize = getPartSize(braceId);
 
-    rackIds.forEach((rackId, index) => {
+    sectionIds.forEach((rackId, index) => {
       const currentBraceSize = sectionWidthOverrides[rackId] ?? defaultBraceSize;
       const hBraceId = findPartId('h_brace', currentBraceSize) || '';
       const xBraceId = findPartId('x_brace', currentBraceSize) || '';
@@ -74,7 +74,7 @@ export const usePricing = () => {
       const hBracePrice = getPartData(hBraceId)?.price || 0;
       const xBracePrice = getPartData(xBraceId)?.price || 0;
 
-      const hasXBrace = (rackIds.length - 1 - index) % 3 === 0;
+      const hasXBrace = (sectionIds.length - 1 - index) % 3 === 0;
 
       layout.forEach((element) => {
         if (element.type === 'h_brace') {
@@ -99,6 +99,6 @@ export const usePricing = () => {
     rackType, columnId, armId, braceId, activeLegId,
     sectionWidthOverrides, armCount, armSpacing, showArmStops, showArmDividers, armDividerCount,
     removeFirstColumn, removeLastColumn,
-    rackIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
+    sectionIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
   ]);
 };

@@ -25,10 +25,10 @@ export const RackSystem: React.FC = () => {
 	const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
 
-	const rackIds = useRackSectionsStore((s) => s.rackIds);
-	const addRackLeft = useRackSectionsStore((s) => s.addRackLeft);
-	const addRackRight = useRackSectionsStore((s) => s.addRackRight);
-	const removeRack = useRackSectionsStore((s) => s.removeRack);
+	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
+	const addSectionLeft = useRackSectionsStore((s) => s.addSectionLeft);
+	const addSectionRight = useRackSectionsStore((s) => s.addSectionRight);
+	const removeSection = useRackSectionsStore((s) => s.removeSection);
 
 	const currentStep = useEditorStore((s) => s.currentStep);
 	const showDimensions = useEditorStore((s) => s.showDimensions);
@@ -63,8 +63,8 @@ export const RackSystem: React.FC = () => {
 						if (removeLastColumn && index === 0) return null;
 						if (removeFirstColumn && index === columnPositionsX.length - 1) return null;
 
-						const leftSectionId = index > 0 ? rackIds[index - 1] : null;
-						const rightSectionId = index < rackIds.length ? rackIds[index] : null;
+						const leftSectionId = index > 0 ? sectionIds[index - 1] : null;
+						const rightSectionId = index < sectionIds.length ? sectionIds[index] : null;
 						const isSelected = selectedRackId !== null && (selectedRackId === leftSectionId || selectedRackId === rightSectionId);
 
 						let iconDirection: 1 | -1 = 1;
@@ -89,7 +89,7 @@ export const RackSystem: React.FC = () => {
 						);
 					})}
 
-					{rackIds.map((rackId, index) => {
+					{sectionIds.map((rackId, index) => {
 						const posX = columnPositionsX[index];
 						const currentBraceSize = sectionWidthOverrides[rackId] ?? braceSize;
 
@@ -98,20 +98,20 @@ export const RackSystem: React.FC = () => {
 								<BraceAssembly
 									braceSize={currentBraceSize}
 									columnId={columnId}
-									hasXBrace={(rackIds.length - 1 - index) % 3 === 0}
+									hasXBrace={(sectionIds.length - 1 - index) % 3 === 0}
 									selectedMode={selectedRackId === rackId}
 									isFirst={index === 0}
-									isLast={index === rackIds.length - 1}
+									isLast={index === sectionIds.length - 1}
 									removeLeftColumn={removeLastColumn}
 									removeRightColumn={removeFirstColumn}
 								/>
 
 								{/* Step 1: Delete buttons */}
-								{currentStep === 1 && rackIds.length > 1 && rackId !== "initial-rack" && (
+								{currentStep === 1 && sectionIds.length > 1 && rackId !== "initial-section" && (
 									<Button3D
 										type="delete"
 										position={[rackWidths[index] / 2, 1.0, 0]}
-										onClick={() => removeRack(rackId)}
+										onClick={() => removeSection(rackId)}
 									/>
 								)}
 
@@ -139,12 +139,12 @@ export const RackSystem: React.FC = () => {
 						<Button3D
 							type="plus"
 							position={[columnPositionsX[0] - 5, 10.0, 0]}
-							onClick={addRackLeft}
+							onClick={addSectionLeft}
 						/>
 						<Button3D
 							type="plus"
 							position={[columnPositionsX[columnPositionsX.length - 1] + 5, 10.0, 0]}
-							onClick={addRackRight}
+							onClick={addSectionRight}
 						/>
 					</>
 				)}

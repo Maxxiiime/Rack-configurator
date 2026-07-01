@@ -47,9 +47,9 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const armId = useRackConfigStore((s: any) => s.armId);
     const removeFirstColumn = useRackConfigStore((s: any) => s.removeFirstColumn);
     const removeLastColumn = useRackConfigStore((s: any) => s.removeLastColumn);
-    const rackIds = useRackSectionsStore((s: any) => s.rackIds);
+    const sectionIds = useRackSectionsStore((s: any) => s.sectionIds);
 
-    const { getColumnHeight, getColumnMaxWeightForArm, getPartData } = useShelfParts();
+    const { getColumnMaxWeightForArm, getPartData } = useShelfParts();
     const { columnPositionsX } = useRackPositions();
 
     const { armPositions } = useArmPositions();
@@ -90,12 +90,12 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     return (
         <group>
             {/* Total Weight Label on Top between columns (per section) */}
-            {rackIds.map((rackId: string, index: number) => {
+            {sectionIds.map((rackId: string, index: number) => {
                 const startX = columnPositionsX[index];
                 const endX = columnPositionsX[index + 1];
 
                 if (removeLastColumn && index === 0) return null;
-                if (removeFirstColumn && index === rackIds.length - 1) return null;
+                if (removeFirstColumn && index === sectionIds.length - 1) return null;
 
                 const midX = (startX + endX) / 2;
 

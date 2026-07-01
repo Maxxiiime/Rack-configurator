@@ -16,12 +16,12 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
   const setSectionWidthOverride = useRackConfigStore((s) => s.setSectionWidthOverride);
   const removeSectionWidthOverride = useRackConfigStore((s) => s.removeSectionWidthOverride);
 
-  const rackIds = useRackSectionsStore((s) => s.rackIds);
+  const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
   const { getPartSize } = useShelfParts();
   const defaultWidth = getPartSize(braceId) || 1000;
 
-  const rackIndex = rackIds.indexOf(rackId);
+  const rackIndex = sectionIds.indexOf(rackId);
   const currentWidth = sectionWidthOverrides[rackId] ?? defaultWidth;
   const isOverridden = sectionWidthOverrides[rackId] !== undefined;
 

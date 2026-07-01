@@ -26,7 +26,7 @@ export const useBillOfMaterials = () => {
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
   const activeLegId = useRackConfigStore(selectActiveLegId);
 
-  const rackIds = useRackSectionsStore((s) => s.rackIds);
+  const sectionIds = useRackSectionsStore((s) => s.sectionIds);
   const { getPartSize, findPartId, getPartData } = useShelfParts();
   const { armPositions } = useArmPositions();
 
@@ -39,7 +39,7 @@ export const useBillOfMaterials = () => {
     };
 
     // 1. Columns & Legs
-    let columnCount = rackIds.length + 1;
+    let columnCount = sectionIds.length + 1;
     if (removeFirstColumn) columnCount--;
     if (removeLastColumn) columnCount--;
 
@@ -66,14 +66,14 @@ export const useBillOfMaterials = () => {
     const columnSizeMm = getPartSize(columnId);
     const layout = (braceLayouts as any)[String(columnSizeMm)] || [];
 
-    rackIds.forEach((rackId, index) => {
+    sectionIds.forEach((rackId, index) => {
       const currentBraceSize = sectionWidthOverrides[rackId] ?? defaultBraceSize;
       const hBraceId = findPartId('h_brace', currentBraceSize);
       const xBraceId = findPartId('x_brace', currentBraceSize);
       
-      const hasXBrace = (rackIds.length - 1 - index) % 3 === 0;
+      const hasXBrace = (sectionIds.length - 1 - index) % 3 === 0;
       const isFirst = index === 0;
-      const isLast = index === rackIds.length - 1;
+      const isLast = index === sectionIds.length - 1;
 
       layout.forEach((element: any) => {
         const isHBrace = element.type === 'h_brace';
@@ -126,6 +126,6 @@ export const useBillOfMaterials = () => {
   }, [
     rackType, columnId, armId, braceId, sectionWidthOverrides,
     removeFirstColumn, removeLastColumn, showArmStops, activeLegId,
-    rackIds, armPositions.length, getPartSize, findPartId, getPartData
+    sectionIds, armPositions.length, getPartSize, findPartId, getPartData
   ]);
 };
