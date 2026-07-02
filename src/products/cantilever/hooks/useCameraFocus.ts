@@ -10,12 +10,20 @@ export const useCameraFocus = () => {
 	const selectedArm = useEditorStore((s) => s.selectedArm);
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const columnId = useRackConfigStore((s) => s.columnId);
-	
+	const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
+
 	const { getColumnHeight } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX, totalWidth } = useRackPositions();
 
 	return useMemo(() => {
-		const maxHeight = getColumnHeight(columnId);
+		let maxColHeight = getColumnHeight(columnId);
+		for (const id of Object.values(sectionHeightOverrides)) {
+			const height = getColumnHeight(id as string);
+			if (height > maxColHeight) {
+				maxColHeight = height;
+			}
+		}
+		const maxHeight = maxColHeight;
 
 		let focusTarget = null;
 		if (selectedRackId) {
@@ -42,5 +50,5 @@ export const useCameraFocus = () => {
 			totalWidth,
 			focusTarget
 		};
-	}, [columnId, getColumnHeight, selectedRackId, selectedArm, sectionIds, columnPositionsX, rackWidths, centerX, totalWidth]);
+	}, [columnId, sectionHeightOverrides, getColumnHeight, selectedRackId, selectedArm, sectionIds, columnPositionsX, rackWidths, centerX, totalWidth]);
 };
