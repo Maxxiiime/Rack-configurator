@@ -45,6 +45,7 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
 
     const columnId = useRackConfigStore((s: any) => s.columnId);
     const armId = useRackConfigStore((s: any) => s.armId);
+    const rackType = useRackConfigStore((s: any) => s.rackType);
     const removeFirstColumn = useRackConfigStore((s: any) => s.removeFirstColumn);
     const removeLastColumn = useRackConfigStore((s: any) => s.removeLastColumn);
     const sectionIds = useRackSectionsStore((s: any) => s.sectionIds);
@@ -87,7 +88,8 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const baseArmMaxWeight = armData?.max_weight ?? 0;
     
     // Calculate effective max weight per arm based on the column's capacity and number of arms
-    const numberOfArms = sortedArmPositions.length || 1;
+    const sideCount = rackType === 'double' ? 2 : 1;
+    const numberOfArms = (sortedArmPositions.length || 1) * sideCount;
     const capacityPerArm = displayMaxWeight > 0 ? Math.floor(displayMaxWeight / numberOfArms) : baseArmMaxWeight;
     const armMaxWeight = Math.min(baseArmMaxWeight, capacityPerArm);
 
@@ -111,12 +113,24 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
             {sortedArmPositions.map((yPos, index) => {
                 const actualY = yPos + 1.3;
                 const rightX = max.x + WEIGHT_CONFIG.offset;
+
                 return (
                     <group key={`weight-arm-${index}`}>
+                        {/* Front Label (min.z) */}
                         <Line points={[[max.x, actualY, min.z], [rightX, actualY, min.z]]} color={WEIGHT_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
                         <Html position={[rightX + 0.3, actualY, min.z]} center zIndexRange={[100, 0]}>
                             <div style={detailLabelStyle}>{`${armMaxWeight} kg`}</div>
                         </Html>
+
+                        {/* Back Label (max.z) for double racks */}
+                        {rackType === 'double' && (
+                            <>
+                                <Line points={[[max.x, actualY, max.z], [rightX, actualY, max.z]]} color={WEIGHT_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                                <Html position={[rightX + 0.3, actualY, max.z]} center zIndexRange={[100, 0]}>
+                                    <div style={detailLabelStyle}>{`${armMaxWeight} kg`}</div>
+                                </Html>
+                            </>
+                        )}
                     </group>
                 );
             })}
