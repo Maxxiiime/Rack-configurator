@@ -95,18 +95,13 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
 
     return (
         <group>
-            {/* Total Weight Label on Top between columns (per section) */}
-            {sectionIds.map((rackId: string, index: number) => {
-                const startX = columnPositionsX[index];
-                const endX = columnPositionsX[index + 1];
-
-                if (removeLastColumn && index === 0) return null;
-                if (removeFirstColumn && index === sectionIds.length - 1) return null;
-
-                const midX = (startX + endX) / 2;
+            {/* Total Weight Label on Top of each column */}
+            {columnPositionsX.map((xPos: number, index: number) => {
+                if (removeFirstColumn && index === 0) return null;
+                if (removeLastColumn && index === columnPositionsX.length - 1) return null;
 
                 return (
-                    <Html key={`weight-section-${rackId}`} position={[midX, topY, (min.z + max.z) / 2]} center zIndexRange={[100, 0]}>
+                    <Html key={`weight-column-${index}`} position={[xPos, topY, (min.z + max.z) / 2]} center zIndexRange={[100, 0]}>
                         <div style={labelStyle}>{`${displayMaxWeight} kg`}</div>
                     </Html>
                 );
