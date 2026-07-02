@@ -89,7 +89,7 @@ export function Step2({ onBack }: Step2Props) {
         </Button>
       </Box>
 
-      {/* ── Finish button ───────────────────────────────────────── */}
+      {/* ── Next button ───────────────────────────────────────── */}
       <Box pt={4}>
         <Button
           w="full"
@@ -102,7 +102,7 @@ export function Step2({ onBack }: Step2Props) {
           _active={{ bg: "gray.800" }}
           onClick={() => setCurrentStep(3)}
         >
-          Finish
+          Next
         </Button>
       </Box>
 

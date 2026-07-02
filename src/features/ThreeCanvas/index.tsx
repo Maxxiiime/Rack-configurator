@@ -7,7 +7,7 @@ import { useActiveProduct } from "@/products";
 import { useAppStore } from "@/stores/appStore";
 import Sidepanel from "../Sidepanel";
 
-const SIDEPANEL_WIDTH = 300;
+const SIDEPANEL_WIDTH = 400;
 
 const ThreeCanvas = () => {
 	const activeProduct = useActiveProduct();

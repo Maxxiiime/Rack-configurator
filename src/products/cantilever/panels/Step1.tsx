@@ -265,7 +265,7 @@ export function Step1({ onNext }: Step1Props) {
           _active={{ bg: "gray.800" }}
           onClick={onNext}
         >
-          Advanced Options
+          Next
         </Button>
       </Box>
 
