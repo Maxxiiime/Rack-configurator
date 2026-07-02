@@ -96,10 +96,11 @@ export function Step1({ onNext }: Step1Props) {
   useEffect(() => {
     if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId || armCount === 99) {
       prevRef.current = { columnId, armId };
-      // Default to max arms with max spacing
-      const maxSpacing = getMaxAllowedSpacing(offsets.arm.start_y, columnHeightUnits, absoluteMaxArms);
-      setArmCount(absoluteMaxArms);
-      setArmSpacing(maxSpacing);
+      // Default to spacing of 5 (500mm)
+      const defaultSpacing = 5;
+      const initialArmCount = getMaxArmCount(offsets.arm.start_y, columnHeightUnits, defaultSpacing);
+      setArmCount(initialArmCount);
+      setArmSpacing(defaultSpacing);
     }
   }, [columnId, armId, armCount, absoluteMaxArms, columnHeightUnits, offsets.arm.start_y, setArmCount, setArmSpacing]);
 
