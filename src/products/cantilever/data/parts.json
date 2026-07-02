@@ -3,7 +3,7 @@
         "shelving_system_id": "arm_350",
         "category": "arm",
         "size_mm": 350,
-        "name": "Arm 350 (900 kg)",
+        "name": "Arm 350 (1000 kg)",
         "path": "/model/arms/Armen_350.glb",
         "arm_stop_y": 0.8,
         "price": 9.97,
