@@ -2,12 +2,18 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useMemo, useCallback } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { OrbitControls } from "@react-three/drei";
 
 const MIN_DISTANCE = 30;
 const LERP_SPEED = 10;
 const ARRIVAL_THRESHOLD = 0.05;
-const PADDING_HORIZONTAL = 1.6;
+const PADDING_HORIZONTAL = 1.7;
 const PADDING_VERTICAL = 1.8;
+
+const MIN_MAX_DISTANCE = 30;
+const MAX_DISTANCE_MULTIPLIER = 1.2;
+const MIN_MIN_DISTANCE = 10;
+const MIN_DISTANCE_MULTIPLIER = 0.4;
 
 export interface CameraAutoZoomProps {
 	/** Maximum height of the entire scene (used for default fit) */
@@ -49,6 +55,7 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 	focusTarget, defaultPosition = new THREE.Vector3(0, 5, -30)
 }) => {
 	const { camera, controls, gl, size } = useThree();
+	const orbitControlsRef = useRef<OrbitControlsImpl>(null);
 
 	const isAnimating = useRef(false);
 	const targetDistance = useRef(MIN_DISTANCE);
@@ -104,10 +111,13 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 		isAnimating.current = true;
 	}, [autoDistance, focusTarget, maxHeight, camera, defaultPosition, size]);
 
+	const maxDistance = Math.max(MIN_MAX_DISTANCE, autoDistance * MAX_DISTANCE_MULTIPLIER);
+	const minDistance = Math.max(MIN_MIN_DISTANCE, autoDistance * MIN_DISTANCE_MULTIPLIER);
+
 	useFrame((_, delta) => {
 		if (!isAnimating.current) return;
 
-		const orbitControls = controls as unknown as OrbitControlsImpl | null;
+		const orbitControls = orbitControlsRef.current || (controls as unknown as OrbitControlsImpl | null);
 
 		if (orbitControls) {
 			orbitControls.target.lerp(targetLookAt.current, 1 - Math.exp(-LERP_SPEED * delta));
@@ -149,5 +159,14 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 		}
 	});
 
-	return null;
+	return (
+		<OrbitControls
+			ref={orbitControlsRef}
+			makeDefault
+			maxPolarAngle={Math.PI / 2}
+			maxDistance={maxDistance}
+			minDistance={minDistance}
+			dampingFactor={0.2}
+		/>
+	);
 };
