@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useShelfParts } from "./useShelfParts";
 import { useRackConfigStore } from "../stores/configStore";
+import { useRackSectionsStore } from "../stores/sectionsStore";
 import { computeArmPositions } from "../utils/armPositions";
 
 export const useArmPositions = (columnIndex?: number) => {
@@ -8,11 +9,28 @@ export const useArmPositions = (columnIndex?: number) => {
     const armCount = useRackConfigStore((s) => s.armCount);
     const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
     const columnId = useRackConfigStore((s) => s.columnId);
+    const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
+    const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
-    const { getColumnHeight, offsets } = useShelfParts();
+    const { getColumnHeight, getPartSize, offsets } = useShelfParts();
 
     return useMemo(() => {
-        const columnHeightUnits = getColumnHeight(columnId);
+        let currentColumnId = columnId;
+        if (columnIndex !== undefined) {
+            const leftSectionId = columnIndex > 0 ? sectionIds[columnIndex - 1] : null;
+            const rightSectionId = columnIndex < sectionIds.length ? sectionIds[columnIndex] : null;
+
+            if (leftSectionId || rightSectionId) {
+                const leftHeightId = leftSectionId ? (sectionHeightOverrides[leftSectionId] ?? columnId) : columnId;
+                const rightHeightId = rightSectionId ? (sectionHeightOverrides[rightSectionId] ?? columnId) : columnId;
+                
+                const leftHeight = getPartSize(leftHeightId);
+                const rightHeight = getPartSize(rightHeightId);
+                currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
+            }
+        }
+
+        const columnHeightUnits = getColumnHeight(currentColumnId);
         const startY = offsets.arm.start_y;
 
         const basePositions = computeArmPositions(
@@ -35,5 +53,5 @@ export const useArmPositions = (columnIndex?: number) => {
             startY,
             columnHeightUnits
         };
-    }, [armSpacing, armCount, armYOverrides, columnId, getColumnHeight, offsets.arm.start_y, columnIndex]);
+    }, [armSpacing, armCount, armYOverrides, columnId, sectionHeightOverrides, sectionIds, getColumnHeight, getPartSize, offsets.arm.start_y, columnIndex]);
 };

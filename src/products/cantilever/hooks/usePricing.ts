@@ -13,6 +13,7 @@ export const usePricing = () => {
   const armId = useRackConfigStore((s) => s.armId);
   const braceId = useRackConfigStore((s) => s.braceId);
   const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
+  const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
   const armCount = useRackConfigStore((s) => s.armCount);
   const armSpacing = useRackConfigStore((s) => s.armSpacing);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
@@ -31,25 +32,51 @@ export const usePricing = () => {
   return useMemo(() => {
     let totalPrice = 0;
 
-    // 1. Calculate the number of items
+    // 1. Calculate columns, legs, and their prices
+    let columnsTotalPrice = 0;
+    let legsTotalPrice = 0;
+    
     const numSections = sectionIds.length;
-    let numColumns = numSections + 1;
-    if (removeFirstColumn) numColumns -= 1;
-    if (removeLastColumn) numColumns -= 1;
+    const columnCountTotal = numSections + 1;
+    let actualColumnCount = 0;
 
-    const totalSides = numColumns * (rackType === 'double' ? 2 : 1);
+    for (let index = 0; index < columnCountTotal; index++) {
+      if (removeLastColumn && index === 0) continue;
+      if (removeFirstColumn && index === columnCountTotal - 1) continue;
+
+      actualColumnCount++;
+
+      const leftSectionId = index > 0 ? sectionIds[index - 1] : null;
+      const rightSectionId = index < numSections ? sectionIds[index] : null;
+
+      let currentColumnId = columnId;
+      if (leftSectionId || rightSectionId) {
+        const leftHeightId = leftSectionId ? (sectionHeightOverrides[leftSectionId] ?? columnId) : columnId;
+        const rightHeightId = rightSectionId ? (sectionHeightOverrides[rightSectionId] ?? columnId) : columnId;
+        
+        const leftHeight = getPartSize(leftHeightId);
+        const rightHeight = getPartSize(rightHeightId);
+        currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
+      }
+
+      const currentColumnPrice = getPartData(currentColumnId)?.price || 0;
+      columnsTotalPrice += currentColumnPrice;
+      
+      const currentLegPrice = getPartData(activeLegId)?.price || 0;
+      legsTotalPrice += currentLegPrice;
+    }
+
+    const totalSides = actualColumnCount * (rackType === 'double' ? 2 : 1);
     const totalArms = armCount * totalSides;
 
     // 2. Fetch prices
-    const columnPrice = getPartData(columnId)?.price || 0;
-    const legPrice = getPartData(activeLegId)?.price || 0;
     const armPrice = getPartData(armId)?.price || 0;
     const armStopPrice = getPartData('arm_stop')?.price || 0;
     const armDividerPrice = getPartData('arm_divider')?.price || 0;
 
     // Add Columns & Legs
-    totalPrice += numColumns * columnPrice;
-    totalPrice += numColumns * legPrice;
+    totalPrice += columnsTotalPrice;
+    totalPrice += legsTotalPrice;
 
     // Add Arms & Arm Stops
     totalPrice += totalArms * armPrice;
@@ -61,12 +88,13 @@ export const usePricing = () => {
     }
 
     // 3. Add Braces
-    const columnSizeMm = getPartSize(columnId);
-    const layout = typedLayouts[String(columnSizeMm)] || [];
-
     const defaultBraceSize = getPartSize(braceId);
 
     sectionIds.forEach((rackId, index) => {
+      const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
+      const columnSizeMm = getPartSize(currentHeightId);
+      const layout = typedLayouts[String(columnSizeMm)] || [];
+
       const currentBraceSize = sectionWidthOverrides[rackId] ?? defaultBraceSize;
       const hBraceId = findPartId('h_brace', currentBraceSize) || '';
       const xBraceId = findPartId('x_brace', currentBraceSize) || '';
@@ -88,8 +116,8 @@ export const usePricing = () => {
     return {
       totalPrice,
       breakdown: {
-        columns: numColumns * columnPrice,
-        legs: numColumns * legPrice,
+        columns: columnsTotalPrice,
+        legs: legsTotalPrice,
         arms: totalArms * armPrice,
         armStops: showArmStops ? totalArms * armStopPrice : 0,
         armDividers: showArmDividers ? totalArms * armDividerCount * armDividerPrice : 0,
@@ -97,7 +125,7 @@ export const usePricing = () => {
     };
   }, [
     rackType, columnId, armId, braceId, activeLegId,
-    sectionWidthOverrides, armCount, armSpacing, showArmStops, showArmDividers, armDividerCount,
+    sectionWidthOverrides, sectionHeightOverrides, armCount, armSpacing, showArmStops, showArmDividers, armDividerCount,
     removeFirstColumn, removeLastColumn,
     sectionIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
   ]);

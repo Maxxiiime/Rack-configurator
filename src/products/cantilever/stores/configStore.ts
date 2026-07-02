@@ -33,6 +33,7 @@ export interface RackConfigState {
   armCount: number;
   armYOverrides: Record<string, number>; // key: `${columnIndex}-${armIndex}`
   sectionWidthOverrides: Record<string, number>;
+  sectionHeightOverrides: Record<string, string>;
   showArmStops: boolean;
   showArmDividers: boolean;
   armDividerCount: number;
@@ -52,6 +53,9 @@ export interface RackConfigState {
   setSectionWidthOverride: (id: string, width: number) => void;
   removeSectionWidthOverride: (id: string) => void;
   clearSectionWidthOverrides: () => void;
+  setSectionHeightOverride: (id: string, columnId: string) => void;
+  removeSectionHeightOverride: (id: string) => void;
+  clearSectionHeightOverrides: () => void;
   toggleShowArmStops: () => void;
   toggleShowArmDividers: () => void;
   setArmDividerCount: (count: number) => void;
@@ -72,6 +76,7 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   armCount: 99,
   armYOverrides: {},
   sectionWidthOverrides: {},
+  sectionHeightOverrides: {},
   showArmStops: false,
   showArmDividers: false,
   armDividerCount: 1,
@@ -136,6 +141,20 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
 
   clearSectionWidthOverrides: () => {
     set({ sectionWidthOverrides: {} });
+    useEditorStore.getState().setSelectedRackId(null);
+  },
+
+  setSectionHeightOverride: (id, columnId) => set((state) => ({
+    sectionHeightOverrides: { ...state.sectionHeightOverrides, [id]: columnId },
+  })),
+
+  removeSectionHeightOverride: (id) => set((state) => {
+    const { [id]: _, ...rest } = state.sectionHeightOverrides;
+    return { sectionHeightOverrides: rest };
+  }),
+
+  clearSectionHeightOverrides: () => {
+    set({ sectionHeightOverrides: {} });
     useEditorStore.getState().setSelectedRackId(null);
   },
 

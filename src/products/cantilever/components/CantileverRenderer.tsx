@@ -21,6 +21,7 @@ export const RackSystem: React.FC = () => {
 	const armId = useRackConfigStore((s) => s.armId);
 	const braceId = useRackConfigStore((s) => s.braceId);
 	const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
+	const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
 	const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
 	const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
 	const activeLegId = useRackConfigStore(selectActiveLegId);
@@ -74,10 +75,20 @@ export const RackSystem: React.FC = () => {
 							iconDirection = -1;
 						}
 
+						let currentColumnId = columnId;
+						if (leftSectionId || rightSectionId) {
+							const leftHeightId = leftSectionId ? (sectionHeightOverrides[leftSectionId] ?? columnId) : columnId;
+							const rightHeightId = rightSectionId ? (sectionHeightOverrides[rightSectionId] ?? columnId) : columnId;
+							
+							const leftHeight = getPartSize(leftHeightId);
+							const rightHeight = getPartSize(rightHeightId);
+							currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
+						}
+
 						return (
 							<ColumnAssembly
 								key={`column-${index}`}
-								columnId={columnId}
+								columnId={currentColumnId}
 								legId={activeLegId}
 								armId={armId}
 								rackType={rackType}
@@ -92,12 +103,13 @@ export const RackSystem: React.FC = () => {
 					{sectionIds.map((rackId, index) => {
 						const posX = columnPositionsX[index];
 						const currentBraceSize = sectionWidthOverrides[rackId] ?? braceSize;
+						const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
 
 						return (
 							<group key={rackId} position={[posX, 0, 0]}>
 								<BraceAssembly
 									braceSize={currentBraceSize}
-									columnId={columnId}
+									columnId={currentHeightId}
 									hasXBrace={(sectionIds.length - 1 - index) % 3 === 0}
 									selectedMode={selectedRackId === rackId}
 									isFirst={index === 0}

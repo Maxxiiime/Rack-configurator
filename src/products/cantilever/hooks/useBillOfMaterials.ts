@@ -21,6 +21,7 @@ export const useBillOfMaterials = () => {
   const armId = useRackConfigStore((s) => s.armId);
   const braceId = useRackConfigStore((s) => s.braceId);
   const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
+  const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
   const removeFirstColumn = useRackConfigStore((s) => s.removeFirstColumn);
   const removeLastColumn = useRackConfigStore((s) => s.removeLastColumn);
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
@@ -41,18 +42,35 @@ export const useBillOfMaterials = () => {
     };
 
     // 1. Columns & Legs
-    let columnCount = sectionIds.length + 1;
-    if (removeFirstColumn) columnCount--;
-    if (removeLastColumn) columnCount--;
+    const columnCountTotal = sectionIds.length + 1;
+    let actualColumnCount = 0;
 
-    if (columnCount > 0) {
-      addPart(columnId, columnCount);
-      addPart(activeLegId, columnCount);
+    for (let index = 0; index < columnCountTotal; index++) {
+      if (removeLastColumn && index === 0) continue;
+      if (removeFirstColumn && index === columnCountTotal - 1) continue;
+
+      actualColumnCount++;
+
+      const leftSectionId = index > 0 ? sectionIds[index - 1] : null;
+      const rightSectionId = index < sectionIds.length ? sectionIds[index] : null;
+
+      let currentColumnId = columnId;
+      if (leftSectionId || rightSectionId) {
+        const leftHeightId = leftSectionId ? (sectionHeightOverrides[leftSectionId] ?? columnId) : columnId;
+        const rightHeightId = rightSectionId ? (sectionHeightOverrides[rightSectionId] ?? columnId) : columnId;
+        
+        const leftHeight = getPartSize(leftHeightId);
+        const rightHeight = getPartSize(rightHeightId);
+        currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
+      }
+
+      addPart(currentColumnId, 1);
+      addPart(activeLegId, 1);
     }
 
     // 2. Arms & Arm Stops
     const armsPerColumn = armPositions.length * (rackType === 'double' ? 2 : 1);
-    const totalArms = columnCount * armsPerColumn;
+    const totalArms = actualColumnCount * armsPerColumn;
     
     if (totalArms > 0) {
       addPart(armId, totalArms);
@@ -69,10 +87,12 @@ export const useBillOfMaterials = () => {
 
     // 3. Braces & Bolts
     const defaultBraceSize = getPartSize(braceId);
-    const columnSizeMm = getPartSize(columnId);
-    const layout = (braceLayouts as any)[String(columnSizeMm)] || [];
 
     sectionIds.forEach((rackId, index) => {
+      const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
+      const columnSizeMm = getPartSize(currentHeightId);
+      const layout = (braceLayouts as any)[String(columnSizeMm)] || [];
+
       const currentBraceSize = sectionWidthOverrides[rackId] ?? defaultBraceSize;
       const hBraceId = findPartId('h_brace', currentBraceSize);
       const xBraceId = findPartId('x_brace', currentBraceSize);
@@ -130,7 +150,7 @@ export const useBillOfMaterials = () => {
       totalPrice
     };
   }, [
-    rackType, columnId, armId, braceId, sectionWidthOverrides,
+    rackType, columnId, armId, braceId, sectionWidthOverrides, sectionHeightOverrides,
     removeFirstColumn, removeLastColumn, showArmStops, showArmDividers, armDividerCount, activeLegId,
     sectionIds, armPositions.length, getPartSize, findPartId, getPartData
   ]);
