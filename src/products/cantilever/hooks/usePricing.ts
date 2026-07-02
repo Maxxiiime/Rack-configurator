@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useShelfParts } from './useShelfParts';
+import { getMaxArmCount } from '../utils/armPositions';
 import braceLayouts from '../data/brace_layouts.json';
 import type { BraceElement } from '../types';
 
@@ -40,6 +41,8 @@ export const usePricing = () => {
     const columnCountTotal = numSections + 1;
     let actualColumnCount = 0;
 
+    let totalArms = 0;
+
     for (let index = 0; index < columnCountTotal; index++) {
       if (removeLastColumn && index === 0) continue;
       if (removeFirstColumn && index === columnCountTotal - 1) continue;
@@ -64,10 +67,14 @@ export const usePricing = () => {
       
       const currentLegPrice = getPartData(activeLegId)?.price || 0;
       legsTotalPrice += currentLegPrice;
-    }
 
-    const totalSides = actualColumnCount * (rackType === 'double' ? 2 : 1);
-    const totalArms = armCount * totalSides;
+      const currentColumnHeightUnits = getColumnHeight(currentColumnId);
+      let currentArmCount = armCount;
+      if (currentColumnId !== columnId) {
+        currentArmCount = getMaxArmCount(offsets.arm.start_y, currentColumnHeightUnits, armSpacing);
+      }
+      totalArms += currentArmCount * (rackType === 'double' ? 2 : 1);
+    }
 
     // 2. Fetch prices
     const armPrice = getPartData(armId)?.price || 0;

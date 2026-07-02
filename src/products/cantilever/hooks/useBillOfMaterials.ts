@@ -3,6 +3,7 @@ import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useShelfParts } from './useShelfParts';
 import { useArmPositions } from './useArmPositions';
+import { getMaxArmCount } from '../utils/armPositions';
 import braceLayouts from '../data/brace_layouts.json';
 import partsData from '../data/parts.json';
 
@@ -30,7 +31,7 @@ export const useBillOfMaterials = () => {
   const activeLegId = useRackConfigStore(selectActiveLegId);
 
   const sectionIds = useRackSectionsStore((s) => s.sectionIds);
-  const { getPartSize, findPartId, getPartData } = useShelfParts();
+  const { getPartSize, findPartId, getPartData, getColumnHeight, offsets } = useShelfParts();
   const { armPositions } = useArmPositions();
 
   return useMemo(() => {
@@ -44,6 +45,7 @@ export const useBillOfMaterials = () => {
     // 1. Columns & Legs
     const columnCountTotal = sectionIds.length + 1;
     let actualColumnCount = 0;
+    let totalArms = 0;
 
     for (let index = 0; index < columnCountTotal; index++) {
       if (removeLastColumn && index === 0) continue;
@@ -66,12 +68,18 @@ export const useBillOfMaterials = () => {
 
       addPart(currentColumnId, 1);
       addPart(activeLegId, 1);
+
+      // Compute arms for this specific column
+      const currentColumnHeightUnits = getColumnHeight(currentColumnId);
+      let currentArmCount = armPositions.length; // Base arm count from the global default
+      if (currentColumnId !== columnId) {
+        const armSpacing = useRackConfigStore.getState().armSpacing;
+        currentArmCount = getMaxArmCount(offsets.arm.start_y, currentColumnHeightUnits, armSpacing);
+      }
+      totalArms += currentArmCount * (rackType === 'double' ? 2 : 1);
     }
 
     // 2. Arms & Arm Stops
-    const armsPerColumn = armPositions.length * (rackType === 'double' ? 2 : 1);
-    const totalArms = actualColumnCount * armsPerColumn;
-    
     if (totalArms > 0) {
       addPart(armId, totalArms);
       
@@ -152,6 +160,6 @@ export const useBillOfMaterials = () => {
   }, [
     rackType, columnId, armId, braceId, sectionWidthOverrides, sectionHeightOverrides,
     removeFirstColumn, removeLastColumn, showArmStops, showArmDividers, armDividerCount, activeLegId,
-    sectionIds, armPositions.length, getPartSize, findPartId, getPartData
+    sectionIds, armPositions.length, getPartSize, findPartId, getPartData, getColumnHeight, offsets.arm.start_y
   ]);
 };

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useShelfParts } from "./useShelfParts";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
-import { computeArmPositions } from "../utils/armPositions";
+import { computeArmPositions, getMaxArmCount } from "../utils/armPositions";
 
 export const useArmPositions = (columnIndex?: number) => {
     const armSpacing = useRackConfigStore((s) => s.armSpacing);
@@ -33,11 +33,16 @@ export const useArmPositions = (columnIndex?: number) => {
         const columnHeightUnits = getColumnHeight(currentColumnId);
         const startY = offsets.arm.start_y;
 
+        let currentArmCount = armCount;
+        if (currentColumnId !== columnId) {
+            currentArmCount = getMaxArmCount(startY, columnHeightUnits, armSpacing);
+        }
+
         const basePositions = computeArmPositions(
             startY,
             columnHeightUnits,
             armSpacing,
-            armCount
+            currentArmCount
         );
 
         const armPositions = basePositions.map((y, i) => {
