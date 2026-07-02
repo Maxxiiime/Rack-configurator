@@ -27,8 +27,8 @@ export const CantileverPart: React.FC<CantileverPartProps> = ({ id, ...props }) 
   }
   
   let materialName = 'Blue';
-  if (data.category === 'arm' || data.category === 'arm_stop') materialName = 'Red';
-  else if (data.category === 'arm_divider' || data.category === 'x_brace') materialName = 'Grey';
+  if (data.category === 'arm') materialName = 'Red';
+  else if (data.category === 'arm_divider' || data.category === 'x_brace' || data.category === 'arm_stop') materialName = 'Grey';
 
   return <BasePart path={data.path} materialName={materialName} {...props} />;
 };
