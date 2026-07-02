@@ -49,7 +49,7 @@ export function Step1({ onNext }: Step1Props) {
   const toggleShowArmDividers = useRackConfigStore((s) => s.toggleShowArmDividers);
   const setArmDividerCount = useRackConfigStore((s) => s.setArmDividerCount);
 
-  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } =
+  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
     useShelfParts();
 
   /* ── Options ───────────────────────────────────────────────── */
@@ -78,17 +78,9 @@ export function Step1({ onNext }: Step1Props) {
 
   /* ── Arm count constraints ─────────────────────────────────── */
   const columnHeightUnits = getColumnHeight(columnId);
-  const weightMaxArms = useMemo(
-    () => getMaxArmsByWeight(columnId, armId),
-    [columnId, armId, getMaxArmsByWeight]
-  );
-  const physicalMaxArms = useMemo(
+  const absoluteMaxArms = useMemo(
     () => getMaxArmCount(offsets.arm.start_y, columnHeightUnits, 2),
     [columnHeightUnits, offsets.arm.start_y]
-  );
-  const absoluteMaxArms = useMemo(
-    () => Math.min(physicalMaxArms, weightMaxArms === Infinity ? physicalMaxArms : weightMaxArms),
-    [physicalMaxArms, weightMaxArms]
   );
   const currentMaxArms = useMemo(
     () => Math.min(

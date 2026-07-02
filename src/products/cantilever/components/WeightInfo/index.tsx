@@ -84,7 +84,13 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const displayMaxWeight = columnMaxWeight === Infinity ? 0 : columnMaxWeight;
 
     const armData = getPartData(armId);
-    const armMaxWeight = armData?.max_weight ?? 0;
+    const baseArmMaxWeight = armData?.max_weight ?? 0;
+    
+    // Calculate effective max weight per arm based on the column's capacity and number of arms
+    const numberOfArms = sortedArmPositions.length || 1;
+    const capacityPerArm = displayMaxWeight > 0 ? Math.floor(displayMaxWeight / numberOfArms) : baseArmMaxWeight;
+    const armMaxWeight = Math.min(baseArmMaxWeight, capacityPerArm);
+
     const topY = max.y + 0.5;
 
     return (
