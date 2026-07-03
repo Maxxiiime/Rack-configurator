@@ -59,6 +59,7 @@ export const RackSystem: React.FC = () => {
 				maxHeight={maxHeight}
 				totalWidth={totalWidth}
 				focusTarget={focusTarget}
+				preserveZSignOnUnfocus={rackType === 'double'}
 			/>
 			<group position={[-centerX, 0, 0]}>
 				<group ref={rackGroupRef}>

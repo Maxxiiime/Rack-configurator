@@ -24,11 +24,14 @@ export interface CameraAutoZoomProps {
 	focusTarget?: {
 		centerX: number;
 		width: number;
+		zDirection?: number;
 	} | null;
 	/** * ADDED: Optional fallback position when zooming out. 
 	 * This prevents hardcoding a specific vector that might not fit all scene sizes.
 	 */
 	defaultPosition?: THREE.Vector3;
+	/** Whether to preserve the current Z sign when zooming out (useful for double-sided objects) */
+	preserveZSignOnUnfocus?: boolean;
 }
 
 /**
@@ -52,7 +55,8 @@ const calculateDistanceToFit = (width: number, height: number, camera: THREE.Per
 export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 	maxHeight,
 	totalWidth,
-	focusTarget, defaultPosition = new THREE.Vector3(0, 5, -30)
+	focusTarget, defaultPosition = new THREE.Vector3(0, 5, -30),
+	preserveZSignOnUnfocus = false
 }) => {
 	const { camera, controls, gl, size } = useThree();
 	const orbitControlsRef = useRef<OrbitControlsImpl>(null);
@@ -92,7 +96,8 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 		if (focusTarget && focusTarget.width > 0) {
 			targetDistance.current = calculateDistanceToFit(focusTarget.width, maxHeight, perspCamera);
 			targetLookAt.current.set(focusTarget.centerX, 0, 0);
-			targetCameraPos.current.set(focusTarget.centerX, 0, -targetDistance.current);
+			const zSign = focusTarget.zDirection !== undefined ? focusTarget.zDirection : -1;
+			targetCameraPos.current.set(focusTarget.centerX, 0, zSign * targetDistance.current);
 			useSpecificPosition.current = true;
 			wasFocused.current = true;
 		} else {
@@ -100,7 +105,15 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 			targetLookAt.current.set(0, 0, 0);
 
 			if (wasFocused.current) {
-				targetCameraPos.current.copy(defaultPosition).normalize().multiplyScalar(targetDistance.current);
+				const targetPos = defaultPosition.clone();
+				if (preserveZSignOnUnfocus) {
+					const currentZSign = camera.position.z >= 0 ? 1 : -1;
+					const defaultZSign = targetPos.z >= 0 ? 1 : -1;
+					if (currentZSign !== defaultZSign) {
+						targetPos.z *= -1;
+					}
+				}
+				targetCameraPos.current.copy(targetPos).normalize().multiplyScalar(targetDistance.current);
 				useSpecificPosition.current = true;
 				wasFocused.current = false;
 			} else {
@@ -109,7 +122,7 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 		}
 
 		isAnimating.current = true;
-	}, [autoDistance, focusTarget, maxHeight, camera, defaultPosition, size]);
+	}, [autoDistance, focusTarget, maxHeight, camera, defaultPosition, preserveZSignOnUnfocus, size]);
 
 	const maxDistance = Math.max(MIN_MAX_DISTANCE, autoDistance * MAX_DISTANCE_MULTIPLIER);
 	const minDistance = Math.max(MIN_MIN_DISTANCE, autoDistance * MIN_DISTANCE_MULTIPLIER);
