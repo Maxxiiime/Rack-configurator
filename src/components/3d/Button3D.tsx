@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useRef, useMemo } from "react";
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { Box } from "@chakra-ui/react";
 import DimensionIcon from "@/assets/svgs/DimensionIcon";
@@ -11,6 +13,7 @@ interface Button3DProps {
     position: [number, number, number];
     onClick: () => void;
     isActive?: boolean;
+    normal?: [number, number, number];
 }
 
 const ICON_CONFIG = {
@@ -40,13 +43,35 @@ const ICON_CONFIG = {
     },
 };
 
-export const Button3D: React.FC<Button3DProps> = ({ type, position, onClick, isActive = false }) => {
+export const Button3D: React.FC<Button3DProps> = ({ type, position, normal, onClick, isActive = false }) => {
     // Récupère les configurations liées au type
     const { component, color, activeColor, size } = ICON_CONFIG[type];
 
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const vec = useMemo(() => new THREE.Vector3(...position), [position]);
+    const normalVec = useMemo(() => normal ? new THREE.Vector3(...normal).normalize() : null, [normal]);
+
+    useFrame(({ camera }) => {
+        if (!buttonRef.current || !normalVec) return;
+        const camToBtn = new THREE.Vector3().subVectors(vec, camera.position).normalize();
+        const dot = camToBtn.dot(normalVec);
+        
+        // When dot > 0, camera is behind the button's normal
+        const factor = Math.max(0, Math.min((dot + 0.1) / 0.5, 1));
+        
+        if (factor > 0) {
+            // Interpolate from 255 (white) to 235 (light gray)
+            const v = Math.round(255 - factor * 20);
+            buttonRef.current.style.setProperty('--btn-bg', `rgb(${v}, ${v}, ${v})`);
+        } else {
+            buttonRef.current.style.removeProperty('--btn-bg');
+        }
+    });
+
     return (
-        <Html position={position} center transform={false} zIndexRange={[20, 0]}>
+        <Html position={position} center transform={false} zIndexRange={[1000, 0]}>
             <Box
+                ref={buttonRef}
                 as="button"
                 type="button"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -65,7 +90,7 @@ export const Button3D: React.FC<Button3DProps> = ({ type, position, onClick, isA
                 transition="all 140ms ease"
                 outline="none"
                 pointerEvents="auto"
-                bg={isActive ? activeColor : "white"}
+                bg={isActive ? activeColor : "var(--btn-bg, white)"}
                 color={isActive ? "white" : color}
                 boxShadow={isActive
                     ? `0 0.5rem 1.25rem rgba(0, 0, 0, 0.35), 0 0 0 3px ${activeColor}40`

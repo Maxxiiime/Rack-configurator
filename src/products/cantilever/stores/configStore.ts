@@ -31,7 +31,7 @@ export interface RackConfigState {
   braceId: string;
   armSpacing: number;
   armCount: number;
-  armYOverrides: Record<string, number>; // key: `${columnIndex}-${armIndex}`
+  armYOverrides: Record<string, number>; // key: `${columnIndex}-${side}-${armIndex}` or `row-${side}-${armIndex}`
   sectionWidthOverrides: Record<string, number>;
   sectionHeightOverrides: Record<string, string>;
   showArmStops: boolean;
@@ -47,8 +47,8 @@ export interface RackConfigState {
   setBraceId: (id: string) => void;
   setArmSpacing: (spacing: number) => void;
   setArmCount: (count: number) => void;
-  setArmYOverride: (armIndex: number, y: number, columnIndex?: number) => void;
-  removeArmYOverride: (armIndex: number, columnIndex?: number) => void;
+  setArmYOverride: (armIndex: number, y: number, columnIndex?: number, side?: 'front' | 'back') => void;
+  removeArmYOverride: (armIndex: number, columnIndex?: number, side?: 'front' | 'back') => void;
   clearArmYOverrides: () => void;
   setSectionWidthOverride: (id: string, width: number) => void;
   removeSectionWidthOverride: (id: string) => void;
@@ -102,13 +102,13 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
     useEditorStore.getState().setSelectedArm(null);
   },
 
-  setArmYOverride: (armIndex, y, columnIndex) => set((state) => {
-    const key = columnIndex !== undefined ? `${columnIndex}-${armIndex}` : `row-${armIndex}`;
+  setArmYOverride: (armIndex, y, columnIndex, side = 'front') => set((state) => {
+    const key = columnIndex !== undefined ? `${columnIndex}-${side}-${armIndex}` : `row-${side}-${armIndex}`;
 
     let newOverrides = { ...state.armYOverrides };
     if (columnIndex === undefined) {
       Object.keys(newOverrides).forEach(k => {
-        if (k.endsWith(`-${armIndex}`)) {
+        if (k.endsWith(`-${side}-${armIndex}`)) {
           delete newOverrides[k];
         }
       });
@@ -119,8 +119,8 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
     };
   }),
 
-  removeArmYOverride: (armIndex, columnIndex) => set((state) => {
-    const key = columnIndex !== undefined ? `${columnIndex}-${armIndex}` : `row-${armIndex}`;
+  removeArmYOverride: (armIndex, columnIndex, side = 'front') => set((state) => {
+    const key = columnIndex !== undefined ? `${columnIndex}-${side}-${armIndex}` : `row-${side}-${armIndex}`;
     const { [key]: _, ...rest } = state.armYOverrides;
     return { armYOverrides: rest };
   }),

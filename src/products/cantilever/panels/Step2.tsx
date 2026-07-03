@@ -40,7 +40,7 @@ export function Step2({ onBack }: Step2Props) {
       {selectedRackId && <RackEditor rackId={selectedRackId} />}
 
       {/* ── Dynamic: Selected Arm ─────────────────────────── */}
-      {selectedArm !== null && <ArmRowEditor armIndex={selectedArm.armIndex} columnIndex={selectedArm.columnIndex} />}
+      {selectedArm !== null && <ArmRowEditor armIndex={selectedArm.armIndex} columnIndex={selectedArm.columnIndex} side={selectedArm.side} />}
 
       {/* ── No selection hint ─────────────────────────────────── */}
       {!hasSelection && (

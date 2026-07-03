@@ -48,7 +48,8 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const armStopId = getPartData(armId)?.arm_stop_id ?? 'arm_stop';
 
 
-  const { armPositions } = useArmPositions(columnIndex);
+  const { armPositions: armPositionsFront } = useArmPositions(columnIndex, 'front');
+  const { armPositions: armPositionsBack } = useArmPositions(columnIndex, 'back');
   const currentStep = useEditorStore((s) => s.currentStep);
   const selectedArm = useEditorStore((s) => s.selectedArm);
   const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
@@ -70,14 +71,17 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
       />
 
       {/* ARMS */}
-      {armPositions.map((yPos, i) => {
-        const isArmSelected = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i;
+      {armPositionsFront.map((yPosFront, i) => {
+        const yPosBack = armPositionsBack[i] ?? yPosFront;
+        const isArmSelectedFront = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i && (selectedArm?.side === 'front' || selectedArm?.side === undefined);
+        const isArmSelectedBack = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i && selectedArm?.side === 'back';
 
         return (
           <group key={`arm-group-${i}`}>
             <ArmAssembly
               index={i}
-              yPos={yPos}
+              yPosFront={yPosFront}
+              yPosBack={yPosBack}
               armId={armId}
               rackType={rackType}
               offsets={offsets}
@@ -91,16 +95,30 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               columnIndex={columnIndex}
               armSizeUnits={armSizeUnits}
             />
-            {/* Edit button for this specific arm */}
-            {currentStep === 2 && (selectedMode || isArmSelected) && (() => {
+            {/* Edit button for front arm */}
+            {currentStep === 2 && (selectedMode || isArmSelectedFront) && (() => {
               const buttonX = buttonDirection === 1 ? offsets.arm.x + 3 : offsets.arm.x - 3;
-
               return (
                 <Button3D
                   type="ruler"
-                  position={[buttonX, yPos + 1, offsets.arm.z + 2]}
-                  onClick={() => setSelectedArm(isArmSelected ? null : { columnIndex, armIndex: i })}
-                  isActive={isArmSelected}
+                  position={[buttonX, yPosFront + 1, offsets.arm.z - armSizeUnits - 0.2]}
+                  normal={[0, 0, -1]}
+                  onClick={() => setSelectedArm(isArmSelectedFront ? null : { columnIndex, armIndex: i, side: 'front' })}
+                  isActive={isArmSelectedFront}
+                />
+              );
+            })()}
+
+            {/* Edit button for back arm (if double) */}
+            {currentStep === 2 && rackType === 'double' && (selectedMode || isArmSelectedBack) && (() => {
+              const buttonX = buttonDirection === 1 ? offsets.arm.double_x + 3 : offsets.arm.double_x - 3;
+              return (
+                <Button3D
+                  type="ruler"
+                  position={[buttonX, yPosBack + 1, offsets.arm.double_z + armSizeUnits + 0.2]}
+                  normal={[0, 0, 1]}
+                  onClick={() => setSelectedArm(isArmSelectedBack ? null : { columnIndex, armIndex: i, side: 'back' })}
+                  isActive={isArmSelectedBack}
                 />
               );
             })()}

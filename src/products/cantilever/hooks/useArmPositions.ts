@@ -4,7 +4,7 @@ import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
 import { computeArmPositions, getMaxArmCount } from "../utils/armPositions";
 
-export const useArmPositions = (columnIndex?: number) => {
+export const useArmPositions = (columnIndex?: number, side: 'front' | 'back' = 'front') => {
     const armSpacing = useRackConfigStore((s) => s.armSpacing);
     const armCount = useRackConfigStore((s) => s.armCount);
     const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
@@ -47,9 +47,9 @@ export const useArmPositions = (columnIndex?: number) => {
 
         const armPositions = basePositions.map((y, i) => {
             if (columnIndex !== undefined) {
-                return armYOverrides[`${columnIndex}-${i}`] ?? armYOverrides[`row-${i}`] ?? y;
+                return armYOverrides[`${columnIndex}-${side}-${i}`] ?? armYOverrides[`row-${side}-${i}`] ?? y;
             }
-            return armYOverrides[`row-${i}`] ?? y;
+            return armYOverrides[`row-${side}-${i}`] ?? y;
         });
 
         return {
@@ -58,5 +58,6 @@ export const useArmPositions = (columnIndex?: number) => {
             startY,
             columnHeightUnits
         };
-    }, [armSpacing, armCount, armYOverrides, columnId, sectionHeightOverrides, sectionIds, getColumnHeight, getPartSize, offsets.arm.start_y, columnIndex]);
+    }, [armSpacing, armCount, armYOverrides, columnId, sectionHeightOverrides, sectionIds, getColumnHeight, getPartSize, offsets.arm.start_y, columnIndex, side]);
 };
+

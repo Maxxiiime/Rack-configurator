@@ -6,13 +6,13 @@ import type { BaseEditorState } from '@/products/types';
 
 export interface CantileverEditorState extends BaseEditorState {
   currentStep: 1 | 2 | 3;
-  selectedArm: { armIndex: number; columnIndex?: number } | null;
+  selectedArm: { armIndex: number; columnIndex?: number; side?: 'front' | 'back' } | null;
   selectedRackId: string | null;
   showDimensions: boolean;
   showWeightInfo: boolean;
 
   setCurrentStep: (step: number) => void;
-  setSelectedArm: (arm: { armIndex: number; columnIndex?: number } | null) => void;
+  setSelectedArm: (arm: { armIndex: number; columnIndex?: number; side?: 'front' | 'back' } | null) => void;
   setSelectedRackId: (id: string | null) => void;
   setShowDimensions: (showDimensions: boolean) => void;
   setShowWeightInfo: (showWeightInfo: boolean) => void;

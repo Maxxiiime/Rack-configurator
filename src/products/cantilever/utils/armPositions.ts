@@ -82,7 +82,8 @@ export function applyArmYOverrides(
  */
 export function computeArmDividerPositions(
   armSizeUnits: number,
-  yPos: number,
+  yPosFront: number,
+  yPosBack: number,
   armStopY: number,
   offsets: Record<string, any>,
   count: number = 1
@@ -102,7 +103,7 @@ export function computeArmDividerPositions(
     // Single face
     const armDividerZ = offsets.arm.z - armSizeUnits * fraction + zOffset;
     const singleRatio = (offsets.arm.z - armDividerZ) / armSizeUnits;
-    const singleDividerY = yPos + baseY + (armStopY - baseY) * singleRatio;
+    const singleDividerY = yPosFront + baseY + (armStopY - baseY) * singleRatio;
 
     singles.push({
       x: offsets.arm_divider.x,
@@ -113,7 +114,7 @@ export function computeArmDividerPositions(
     // Double face
     const doubleArmDividerZ = offsets.arm.double_z + armSizeUnits * fraction - zOffset;
     const doubleRatio = (doubleArmDividerZ - offsets.arm.double_z) / armSizeUnits;
-    const doubleDividerY = yPos + baseY + (armStopY - baseY) * doubleRatio;
+    const doubleDividerY = yPosBack + baseY + (armStopY - baseY) * doubleRatio;
 
     doubles.push({
       x: doubleArmDividerX,
