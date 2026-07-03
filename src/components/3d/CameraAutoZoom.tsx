@@ -153,7 +153,31 @@ export const CameraAutoZoom: React.FC<CameraAutoZoomProps> = ({
 			);
 		}
 
-		camera.position.lerp(desiredCameraPos, 1 - Math.exp(-LERP_SPEED * delta));
+		const t = 1 - Math.exp(-LERP_SPEED * delta);
+
+		// Compute spherical offsets relative to the final look-at target to form an arc
+		const currentOffset = new THREE.Vector3().subVectors(camera.position, targetLookAt.current);
+		const desiredOffset = new THREE.Vector3().subVectors(desiredCameraPos, targetLookAt.current);
+
+		// Prevent zero vectors from causing NaN in Spherical
+		if (currentOffset.lengthSq() < 0.001) currentOffset.set(0, 0, 0.001);
+		if (desiredOffset.lengthSq() < 0.001) desiredOffset.set(0, 0, 0.001);
+
+		const sphericalCurrent = new THREE.Spherical().setFromVector3(currentOffset);
+		const sphericalTarget = new THREE.Spherical().setFromVector3(desiredOffset);
+
+		// Interpolate spherical coords safely
+		sphericalCurrent.radius = THREE.MathUtils.lerp(sphericalCurrent.radius, sphericalTarget.radius, t);
+		sphericalCurrent.phi = THREE.MathUtils.lerp(sphericalCurrent.phi, sphericalTarget.phi, t);
+
+		// Shortest angular path for theta
+		let thetaDiff = sphericalTarget.theta - sphericalCurrent.theta;
+		thetaDiff = Math.atan2(Math.sin(thetaDiff), Math.cos(thetaDiff));
+		sphericalCurrent.theta += thetaDiff * t;
+
+		// Apply new position
+		const nextCameraPos = new THREE.Vector3().setFromSpherical(sphericalCurrent).add(targetLookAt.current);
+		camera.position.copy(nextCameraPos);
 
 		if (orbitControls) {
 			orbitControls.update();
