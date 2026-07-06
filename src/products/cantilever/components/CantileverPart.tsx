@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGLTF } from '@react-three/drei';
 import { BasePart } from '@/components/3d/BasePart';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { getPartData } from '../utils/shelfParts';
 import partsData from '../data/parts.json';
 
 // Preload all cantilever models
@@ -18,7 +18,6 @@ interface CantileverPartProps {
 }
 
 export const CantileverPart: React.FC<CantileverPartProps> = ({ id, ...props }) => {
-  const { getPartData } = useShelfParts();
   const data = getPartData(id);
 
   if (!data) {

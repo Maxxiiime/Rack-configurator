@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
-import { useShelfParts } from './useShelfParts';
+import { getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } from '../utils/shelfParts';
 import { getMaxArmCount } from '../utils/armPositions';
 import braceLayouts from '../data/brace_layouts.json';
 import type { BraceElement } from '../types';
@@ -28,7 +28,6 @@ export const usePricing = () => {
 
   const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
-  const { getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets } = useShelfParts();
 
   return useMemo(() => {
     let totalPrice = 0;

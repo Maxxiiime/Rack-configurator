@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useShelfParts } from "./useShelfParts";
+import { getPartSize } from "../utils/shelfParts";
 import { useRackSectionsStore } from "../stores/sectionsStore";
 import { useRackConfigStore } from "../stores/configStore";
 
@@ -7,7 +7,6 @@ export const useRackPositions = () => {
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const braceId = useRackConfigStore((s) => s.braceId);
 	const sectionWidthOverrides = useRackConfigStore((s) => s.sectionWidthOverrides);
-	const { getPartSize } = useShelfParts();
 
 	return useMemo(() => {
 		const defaultBraceWidth = getPartSize(braceId) / 100;

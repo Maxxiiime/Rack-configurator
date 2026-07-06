@@ -3,7 +3,7 @@ import { Button3D } from '@/components/3d/Button3D';
 import { useRackConfigStore } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { getPartSize, offsets } from '../utils/shelfParts';
 import { useRackPositions } from '../hooks/useRackPositions';
 import { useArmPositions } from '../hooks/useArmPositions';
 
@@ -25,7 +25,6 @@ export const ButtonRenderer: React.FC = () => {
 	const rackType = useRackConfigStore((s) => s.rackType);
 	const armId = useRackConfigStore((s) => s.armId);
 
-	const { getPartSize, offsets } = useShelfParts();
 	const armSizeUnits = getPartSize(armId) / 100;
 	
 	const { columnPositionsX, rackWidths } = useRackPositions();

@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { getBoundingBoxPoints } from "@/utils/boundingBox";
 import { useRackConfigStore } from '../../stores/configStore';
 import { useRackSectionsStore } from '../../stores/sectionsStore';
-import { useShelfParts } from '../../hooks/useShelfParts';
+import { getColumnMaxWeightForArm, getPartData } from '../../utils/shelfParts';
 import { useRackPositions } from '../../hooks/useRackPositions';
 import { useArmPositions } from "../../hooks/useArmPositions";
 import { baseLabelStyle } from '../DimensionLines/style';
@@ -50,7 +50,6 @@ export const WeightInfo: React.FC<WeightInfoProps> = ({ rackGroupRef }) => {
     const removeLastColumn = useRackConfigStore((s: any) => s.removeLastColumn);
     const sectionIds = useRackSectionsStore((s: any) => s.sectionIds);
 
-    const { getColumnMaxWeightForArm, getPartData } = useShelfParts();
     const { columnPositionsX } = useRackPositions();
 
     const { armPositions } = useArmPositions();

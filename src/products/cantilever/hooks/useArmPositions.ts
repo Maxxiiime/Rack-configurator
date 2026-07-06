@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useShelfParts } from "./useShelfParts";
+import { getColumnHeight, getPartSize, offsets } from "../utils/shelfParts";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
 import { computeArmPositions, getMaxArmCount } from "../utils/armPositions";
@@ -12,7 +12,6 @@ export const useArmPositions = (columnIndex?: number, side: 'front' | 'back' = '
     const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
     const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
-    const { getColumnHeight, getPartSize, offsets } = useShelfParts();
 
     return useMemo(() => {
         let currentColumnId = columnId;

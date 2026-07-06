@@ -5,7 +5,7 @@ import {
 import { sectionBoxStyle, sliderTrackStyle, sliderThumbStyle } from "@/features/Sidepanel/styles";
 import { Stepper } from "@/components/ui/Shared";
 import { useRackConfigStore } from "../stores/configStore";
-import { useShelfParts } from "../hooks/useShelfParts";
+import { getColumnHeight, offsets } from "../utils/shelfParts";
 import { getMaxAllowedSpacing } from "../utils/armPositions";
 
 export const GlobalSettings = () => {
@@ -18,7 +18,6 @@ export const GlobalSettings = () => {
   const toggleRemoveFirstColumn = useRackConfigStore((s) => s.toggleRemoveFirstColumn);
   const toggleRemoveLastColumn = useRackConfigStore((s) => s.toggleRemoveLastColumn);
 
-  const { getColumnHeight, offsets } = useShelfParts();
   const columnHeightUnits = getColumnHeight(columnId);
   const startY = offsets.arm.start_y;
   const maxSpacing = getMaxAllowedSpacing(startY, columnHeightUnits, armCount);

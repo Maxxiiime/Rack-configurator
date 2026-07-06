@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { useRackConfigStore, RackType } from "../stores/configStore";
-import { useShelfParts } from "../hooks/useShelfParts";
+import { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } from "../utils/shelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing } from "../utils/armPositions";
 import {
   sectionBoxStyle,
@@ -49,8 +49,6 @@ export function Step1({ onNext }: Step1Props) {
   const toggleShowArmDividers = useRackConfigStore((s) => s.toggleShowArmDividers);
   const setArmDividerCount = useRackConfigStore((s) => s.setArmDividerCount);
 
-  const { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } =
-    useShelfParts();
 
   /* ── Options ───────────────────────────────────────────────── */
   const columnOpts = useMemo(() => {

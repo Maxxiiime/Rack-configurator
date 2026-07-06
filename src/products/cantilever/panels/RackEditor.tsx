@@ -4,7 +4,7 @@ import { sectionBoxStyle, selectStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
-import { useShelfParts } from "../hooks/useShelfParts";
+import { getPartSize, getColumnsOptions } from "../utils/shelfParts";
 
 interface RackEditorProps {
   rackId: string;
@@ -23,7 +23,6 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
 
   const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 
-  const { getPartSize, getColumnsOptions } = useShelfParts();
   const defaultWidth = getPartSize(braceId) || 1000;
 
   const rackIndex = sectionIds.indexOf(rackId);

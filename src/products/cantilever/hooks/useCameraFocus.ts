@@ -3,7 +3,7 @@ import { useEditorStore } from '../stores/editorStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useRackConfigStore } from '../stores/configStore';
 import { useRackPositions } from './useRackPositions';
-import { useShelfParts } from './useShelfParts';
+import { getColumnHeight } from '../utils/shelfParts';
 import { useThree } from '@react-three/fiber';
 
 export const useCameraFocus = () => {
@@ -14,7 +14,6 @@ export const useCameraFocus = () => {
 	const rackType = useRackConfigStore((s) => s.rackType);
 	const sectionHeightOverrides = useRackConfigStore((s) => s.sectionHeightOverrides);
 
-	const { getColumnHeight } = useShelfParts();
 	const { columnPositionsX, rackWidths, centerX, totalWidth } = useRackPositions();
 	const { camera } = useThree();
 

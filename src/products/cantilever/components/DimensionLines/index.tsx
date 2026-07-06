@@ -6,7 +6,7 @@ import { getBoundingBoxPoints } from "@/utils/boundingBox";
 import offsets from '../../data/offsets.json';
 import { useArmPositions } from "../../hooks/useArmPositions";
 import { useRackConfigStore } from '../../stores/configStore';
-import { useShelfParts } from '../../hooks/useShelfParts';
+import { getPartSize } from '../../utils/shelfParts';
 import { DIM_CONFIG, labelStyle, detailLabelStyle } from './style';
 
 interface DimensionLineProps {
@@ -51,7 +51,6 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
     const armId = useRackConfigStore((s) => s.armId);
     const rackType = useRackConfigStore((s) => s.rackType);
-    const { getPartSize } = useShelfParts();
     const armSizeUnits = getPartSize(armId) / 100;
 
     // Continuously update the bounding box to react to user configuration changes or animations

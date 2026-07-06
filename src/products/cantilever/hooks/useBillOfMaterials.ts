@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
-import { useShelfParts } from './useShelfParts';
+import { getPartSize, findPartId, getPartData, getColumnHeight, offsets } from '../utils/shelfParts';
 import { useArmPositions } from './useArmPositions';
 import { getMaxArmCount } from '../utils/armPositions';
 import braceLayouts from '../data/brace_layouts.json';
@@ -31,7 +31,6 @@ export const useBillOfMaterials = () => {
   const activeLegId = useRackConfigStore(selectActiveLegId);
 
   const sectionIds = useRackSectionsStore((s) => s.sectionIds);
-  const { getPartSize, findPartId, getPartData, getColumnHeight, offsets } = useShelfParts();
   const { armPositions } = useArmPositions();
 
   return useMemo(() => {

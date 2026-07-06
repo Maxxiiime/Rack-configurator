@@ -1,6 +1,6 @@
 import React from 'react';
 import { CantileverPart as BasePart } from './CantileverPart';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { findPartId, getPartSize, offsets } from '../utils/shelfParts';
 import braceLayouts from '../data/brace_layouts.json';
 import type { BraceElement } from '../types';
 
@@ -18,7 +18,6 @@ interface BraceAssemblyProps {
 }
 
 export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false }) => {
-  const { findPartId, getPartSize, offsets } = useShelfParts();
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
   const xBraceId = findPartId('x_brace', braceSize) ?? '';

@@ -3,7 +3,7 @@ import { CantileverPart as BasePart } from './CantileverPart';
 import { ArmAssembly } from './ArmAssembly';
 import { Button3D } from '@/components/3d/Button3D';
 import { useEditorStore } from '../stores/editorStore';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { getPartSize, getPartData, offsets } from '../utils/shelfParts';
 import { useRackConfigStore, RackType } from '../stores/configStore';
 import { useArmPositions } from "../hooks/useArmPositions";
 import { ArmLocalDimension } from './DimensionLines/ArmLocalDimension';
@@ -29,7 +29,6 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   columnIndex,
   iconDirection = 1,
 }) => {
-  const { getPartSize, getPartData, offsets } = useShelfParts();
 
   const [buttonDirection, setButtonDirection] = useState<1 | -1>(iconDirection);
   useEffect(() => {

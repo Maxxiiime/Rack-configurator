@@ -3,7 +3,7 @@ import { BraceAssembly } from './BraceAssembly';
 import { useRackConfigStore } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { getPartSize } from '../utils/shelfParts';
 import { useRackPositions } from '../hooks/useRackPositions';
 
 export const SectionRenderer: React.FC = () => {
@@ -17,7 +17,6 @@ export const SectionRenderer: React.FC = () => {
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
 
-	const { getPartSize } = useShelfParts();
 	const braceSize = getPartSize(braceId);
 	const { columnPositionsX } = useRackPositions();
 

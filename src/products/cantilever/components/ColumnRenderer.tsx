@@ -3,7 +3,7 @@ import { ColumnAssembly } from './ColumnAssembly';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
-import { useShelfParts } from '../hooks/useShelfParts';
+import { getPartSize } from '../utils/shelfParts';
 import { useRackPositions } from '../hooks/useRackPositions';
 
 export const ColumnRenderer: React.FC = () => {
@@ -18,7 +18,6 @@ export const ColumnRenderer: React.FC = () => {
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
 
-	const { getPartSize } = useShelfParts();
 	const { columnPositionsX } = useRackPositions();
 
 	return (
