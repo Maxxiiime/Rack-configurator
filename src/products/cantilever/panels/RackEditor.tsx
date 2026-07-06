@@ -1,10 +1,9 @@
-import { useMemo } from "react";
 import { Box, Flex, Text, Select } from "@chakra-ui/react";
 import { sectionBoxStyle, selectStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
-import { getPartSize, getColumnsOptions, getWidthOptions } from "../utils/shelfParts";
+import { getPartSize, columnOptions, widthOptions } from "../utils/shelfParts";
 
 interface RackEditorProps {
   rackId: string;
@@ -32,15 +31,7 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
   const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
   const isHeightOverridden = sectionHeightOverrides[rackId] !== undefined;
 
-  const widthOpts = useMemo(() => getWidthOptions(), []);
 
-  const columnOpts = useMemo(() => {
-    const raw = getColumnsOptions();
-    return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Column ", ""),
-      value,
-    }));
-  }, [getColumnsOptions]);
 
   if (rackIndex < 0) return null;
 
@@ -76,7 +67,7 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
             value={currentWidth}
             onChange={(e) => setSectionWidthOverride(rackId, Number(e.target.value))}
           >
-            {widthOpts.map((o) => (
+            {widthOptions.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </Select>
@@ -105,7 +96,7 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
             value={currentHeightId}
             onChange={(e) => setSectionHeightOverride(rackId, e.target.value)}
           >
-            {columnOpts.map((o) => (
+            {columnOptions.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </Select>

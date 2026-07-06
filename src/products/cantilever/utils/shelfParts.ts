@@ -5,34 +5,40 @@ import type { ShelvingPart, ShelvingOffsets } from '../types';
 export const partsData = partsDataJson as ShelvingPart[];
 export const offsets = offsetsData as ShelvingOffsets;
 
-export const getColumnsOptions = (): Record<string, string> => {
-  return partsData
+export const columnOptions = Object.entries(
+  partsData
     .filter((p) => p.category === 'column')
     .reduce<Record<string, string>>(
       (acc, p) => ({ ...acc, [p.name]: p.shelving_system_id }),
       {}
-    );
-};
+    )
+).map(([label, value]) => ({
+  label: label.replace("Column ", ""),
+  value,
+}));
 
-export const getArmsOptions = (): Record<string, string> => {
-  return partsData
+export const armsOptions = Object.entries(
+  partsData
     .filter((p) => p.category === 'arm')
     .reduce<Record<string, string>>(
       (acc, p) => ({ ...acc, [p.name]: p.shelving_system_id }),
       {}
-    );
-};
+    )
+).map(([label, value]) => ({
+  label: label.replace("Arm ", ""),
+  value,
+}));
 
-export const getWidthOptions = (): { label: string; value: number }[] => {
-  const widths = partsData
-    .filter((p) => p.category === 'x_brace' || p.category === 'h_brace')
-    .map((p) => p.size_mm)
-    .filter((size): size is number => size !== undefined);
-  
-  const uniqueWidths = Array.from(new Set(widths)).sort((a, b) => a - b);
-  
-  return uniqueWidths.map((v) => ({ label: String(v), value: v }));
-};
+export const widthOptions = Array.from(
+  new Set(
+    partsData
+      .filter((p) => p.category === 'x_brace' || p.category === 'h_brace')
+      .map((p) => p.size_mm)
+      .filter((size): size is number => size !== undefined)
+  )
+)
+  .sort((a, b) => a - b)
+  .map((v) => ({ label: String(v), value: v }));
 
 export const getColumnHeight = (columnId: string): number => {
   const part = partsData.find((p) => p.shelving_system_id === columnId);

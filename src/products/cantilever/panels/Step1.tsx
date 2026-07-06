@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { useRackConfigStore, RackType } from "../stores/configStore";
-import { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets, getWidthOptions } from "../utils/shelfParts";
+import { columnOptions, armsOptions, widthOptions, getPartSize, findPartId, getColumnHeight, offsets } from "../utils/shelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing } from "../utils/armPositions";
 import {
   sectionBoxStyle,
@@ -50,24 +50,9 @@ export function Step1({ onNext }: Step1Props) {
   const setArmDividerCount = useRackConfigStore((s) => s.setArmDividerCount);
 
 
-  /* ── Options ───────────────────────────────────────────────── */
-  const columnOpts = useMemo(() => {
-    const raw = getColumnsOptions();
-    return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Column ", ""),
-      value,
-    }));
-  }, [getColumnsOptions]);
 
-  const armsOpts = useMemo(() => {
-    const raw = getArmsOptions();
-    return Object.entries(raw).map(([label, value]) => ({
-      label: label.replace("Arm ", ""),
-      value,
-    }));
-  }, [getArmsOptions]);
 
-  const widthOpts = useMemo(() => getWidthOptions(), []);
+
 
   const currentWidth = getPartSize(braceId) || 1000;
 
@@ -127,7 +112,7 @@ export function Step1({ onNext }: Step1Props) {
         <VStack align="stretch" spacing={4}>
           <Row label="Height (mm)">
             <Select {...selectStyle} value={columnId} onChange={(e) => setColumnId(e.target.value)}>
-              {columnOpts.map((o) => (
+              {columnOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </Select>
@@ -143,7 +128,7 @@ export function Step1({ onNext }: Step1Props) {
                 if (newBraceId) setBraceId(newBraceId);
               }}
             >
-              {widthOpts.map((o) => (
+              {widthOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </Select>
@@ -159,7 +144,7 @@ export function Step1({ onNext }: Step1Props) {
 
           <Row label="Arms Length (mm)">
             <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
-              {armsOpts.map((o) => (
+              {armsOptions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </Select>

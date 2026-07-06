@@ -133,6 +133,6 @@ export const usePricing = () => {
     rackType, columnId, armId, braceId, activeLegId,
     sectionWidthOverrides, sectionHeightOverrides, armCount, armSpacing, showArmStops, showArmDividers, armDividerCount,
     removeFirstColumn, removeLastColumn,
-    sectionIds, getPartData, getPartSize, findPartId, getColumnHeight, getMaxArmsByWeight, offsets.arm.start_y
+    sectionIds, offsets.arm.start_y
   ]);
 };

@@ -159,6 +159,6 @@ export const useBillOfMaterials = () => {
   }, [
     rackType, columnId, armId, braceId, sectionWidthOverrides, sectionHeightOverrides,
     removeFirstColumn, removeLastColumn, showArmStops, showArmDividers, armDividerCount, activeLegId,
-    sectionIds, armPositions.length, getPartSize, findPartId, getPartData, getColumnHeight, offsets.arm.start_y
+    sectionIds, armPositions.length, offsets.arm.start_y
   ]);
 };
