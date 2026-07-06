@@ -1,31 +1,24 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useAppStore } from "@/stores/appStore";
-import { useEditorStore } from "@/stores/cantilever/editorStore";
-import { usePricing } from "@/hooks/usePricing";
+import { useActiveProduct } from "@/products";
 import { StyledBox } from "./styles";
 import ChevronLeft from "@/assets/svgs/ChevronLeft";
-import { Step1 } from "./components/Step1";
-import { Step2 } from "./components/Step2";
-import { Step3 } from "./components/Step3";
 
 /* ─── Step indicator ────────────────────────────────────────────── */
 
-const STEP_LABELS: Record<1 | 2 | 3, string> = {
-  1: "Global Layout",
-  2: "Advanced Options",
-  3: "Bill of Materials",
-};
-
 function StepDots({
   currentStep,
+  totalSteps,
   onStepClick,
 }: {
-  currentStep: 1 | 2 | 3;
-  onStepClick: (s: 1 | 2 | 3) => void;
+  currentStep: number;
+  totalSteps: number;
+  onStepClick: (s: number) => void;
 }) {
+  const stepsArray = Array.from({ length: totalSteps }, (_, i) => i + 1);
   return (
     <Flex align="center" justify="center" gap={2} mb={4}>
-      {([1, 2, 3] as const).map((s) => {
+      {stepsArray.map((s) => {
         const isActive = currentStep === s;
         const isPast = currentStep > s;
         return (
@@ -55,7 +48,7 @@ function StepDots({
                 {s}
               </Text>
             </Box>
-            {s < 3 && (
+            {s < totalSteps && (
               <Box
                 h="1px"
                 w="20px"
@@ -73,18 +66,27 @@ function StepDots({
 /* ─── Sidepanel ──────────────────────────────────────────────────── */
 
 const Sidepanel = ({ width = 300 }) => {
+  const activeProduct = useActiveProduct();
+  const useEditorStore = activeProduct.useEditorStore;
+  const usePricing = activeProduct.usePricing;
+
   const currentStep = useEditorStore((s) => s.currentStep);
   const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
-  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
-  const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
+  const clearSelection = useEditorStore((s) => s.clearSelection);
 
   const sidePanelOpen = useAppStore((s) => s.sidePanelOpen);
   const toggleSidePanel = useAppStore((s) => s.toggleSidePanel);
   const { totalPrice } = usePricing();
 
-  const goToStep1 = () => {
-    setSelectedArm(null);
-    setSelectedRackId(null);
+  const totalSteps = activeProduct.steps.length;
+  
+  // Safeguard: if step is out of bounds
+  const validStep = Math.max(1, Math.min(currentStep, totalSteps));
+  const activeStep = activeProduct.steps[validStep - 1];
+  const StepComponent = activeStep.Component;
+
+  const goToFirstStep = () => {
+    if (clearSelection) clearSelection();
     setCurrentStep(1);
   };
 
@@ -104,38 +106,49 @@ const Sidepanel = ({ width = 300 }) => {
             textTransform="uppercase"
             color="gray.800"
           >
-            vamm-rack
+            {activeProduct.name}
           </Text>
         </Box>
 
         {/* ── Step dots ──────────────────────────────────────── */}
         <StepDots
-          currentStep={currentStep}
+          currentStep={validStep}
+          totalSteps={totalSteps}
           onStepClick={(s) => {
-            if (s === 1) goToStep1();
-            else if (s === 2 && currentStep === 3) setCurrentStep(2);
+            if (s === 1) goToFirstStep();
+            else if (s < validStep) setCurrentStep(s);
           }}
         />
 
         {/* ── Step title ─────────────────────────────────────── */}
         <Flex align="center" gap={2} mb={8}>
-
           <Text
             fontSize="15px"
             fontWeight={700}
             color="gray.700"
           >
-            Step {currentStep} — {STEP_LABELS[currentStep]}
+            Step {validStep} — {activeStep.label}
           </Text>
         </Flex>
 
         {/* ── Step content ───────────────────────────────────── */}
-        {currentStep === 1 && <Step1 onNext={() => setCurrentStep(2)} />}
-        {currentStep === 2 && <Step2 onBack={goToStep1} />}
-        {currentStep === 3 && <Step3 onBack={() => setCurrentStep(2)} />}
+        <StepComponent
+          onNext={() => {
+            if (validStep < totalSteps) setCurrentStep(validStep + 1);
+          }}
+          onBack={() => {
+            if (validStep > 1) {
+              if (validStep === 2) {
+                goToFirstStep();
+              } else {
+                setCurrentStep(validStep - 1);
+              }
+            }
+          }}
+        />
 
         {/* ── Price footer ───────────────────────────────────── */}
-        {currentStep !== 3 && (
+        {validStep !== totalSteps && (
           <Box
             mt="auto"
             p={4}

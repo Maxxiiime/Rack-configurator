@@ -1,21 +1,13 @@
-import { OrbitControls, Stage } from "@react-three/drei";
-import { RackSystem } from "../RackSystem";
-import CameraAutoZoom from "./CameraAutoZoom";
+import { useRef } from "react";
+import { Stage } from "@react-three/drei";
+import { useActiveProduct } from "@/products";
 import FloorLogo from "./FloorLogo";
-import { useCameraDistance } from "@/hooks/useCameraDistance";
-import offsets from '@/data/shelving_offset.json';
-
-
-const MIN_MAX_DISTANCE = 50;
-const MAX_DISTANCE_MULTIPLIER = 1.4;
-const MIN_MIN_DISTANCE = 10;
-const MIN_DISTANCE_MULTIPLIER = 0.4;
+import type { Group } from "three";
 
 const Scene = () => {
-    const { autoDistance } = useCameraDistance();
-
-    const maxDistance = Math.max(MIN_MAX_DISTANCE, autoDistance * MAX_DISTANCE_MULTIPLIER);
-    const minDistance = Math.max(MIN_MIN_DISTANCE, autoDistance * MIN_DISTANCE_MULTIPLIER);
+    const activeProduct = useActiveProduct();
+    const Renderer = activeProduct.Renderer;
+    const sceneRef = useRef<Group>(null);
 
     return (
         <>
@@ -28,23 +20,15 @@ const Scene = () => {
                     opacity: 1,
                     blur: 0.25,
                     resolution: 1024,
-                    offset: -offsets.bottom_bolt.y
+                    offset: activeProduct.shadowOffset ?? 0,
                 }}
             >
-                <RackSystem />
+                <group ref={sceneRef}>
+                    <Renderer />
+                </group>
             </Stage>
             <FloorLogo />
 
-
-            <OrbitControls
-                makeDefault
-                maxPolarAngle={Math.PI / 2}
-                maxDistance={maxDistance}
-                minDistance={minDistance}
-                dampingFactor={0.2}
-            />
-
-            <CameraAutoZoom />
         </>
     );
 };

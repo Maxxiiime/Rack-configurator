@@ -17,6 +17,8 @@
 			"@/pages/*": ["src/router/pages/*"],
 			"@/helpers/*": ["src/helpers/*"],
 			"@/stores/*": ["src/stores/*"],
+			"@/products": ["src/products/index.ts"],
+			"@/products/*": ["src/products/*"],
 			"@/data/*": ["src/data/*"],
 			"@/theme/*": ["src/theme/*"],
 			"@/layouts/*": ["src/layouts/*"],

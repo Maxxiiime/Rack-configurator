@@ -1,11 +1,22 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import Configurator from "./pages/Configurator";
 
 const Router = () => {
 	const router = createBrowserRouter([
 		{
+			/**
+			 * TODO: Temporary redirec later "/" will be a product selector
+			 */
 			path: "/",
-			element: <Home />,
+			element: <Configurator />,
+		},
+		{
+			path: "/configurator/:productId",
+			element: <Configurator />,
+		},
+		{
+			path: "/configurator",
+			element: <Navigate to="/configurator/cantilever" replace />,
 		},
 	]);
 
