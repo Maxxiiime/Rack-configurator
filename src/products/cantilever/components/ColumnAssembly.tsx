@@ -6,6 +6,7 @@ import { useEditorStore } from '../stores/editorStore';
 import { useShelfParts } from '../hooks/useShelfParts';
 import { useRackConfigStore, RackType } from '../stores/configStore';
 import { useArmPositions } from "../hooks/useArmPositions";
+import { ArmLocalDimension } from './DimensionLines/ArmLocalDimension';
 
 interface ColumnAssemblyProps {
   columnId: string;
@@ -53,6 +54,22 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const currentStep = useEditorStore((s) => s.currentStep);
   const selectedArm = useEditorStore((s) => s.selectedArm);
   const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
+  const showDimensions = useEditorStore((s) => s.showDimensions);
+  const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
+
+  const hasOverrideFront = Object.keys(armYOverrides).some(k => k.startsWith(`${columnIndex}-front-`));
+  const hasOverrideBack = Object.keys(armYOverrides).some(k => k.startsWith(`${columnIndex}-back-`));
+
+  const isEditingThisFront = currentStep === 2 && selectedArm !== null && 
+    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) && 
+    (selectedArm.side === 'front' || selectedArm.side === undefined);
+    
+  const isEditingThisBack = currentStep === 2 && selectedArm !== null && 
+    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) && 
+    selectedArm.side === 'back';
+
+  const shouldShowFrontDim = isEditingThisFront || (showDimensions && hasOverrideFront);
+  const shouldShowBackDim = rackType === 'double' && (isEditingThisBack || (showDimensions && hasOverrideBack));
 
   return (
     <group position={position}>
@@ -109,7 +126,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               );
             })()}
 
-            {/* Edit button for back arm (if double) */}
+      {/* Edit button for back arm (if double) */}
             {currentStep === 2 && rackType === 'double' && (selectedMode || isArmSelectedBack) && (() => {
               const buttonX = buttonDirection === 1 ? offsets.arm.double_x + 3 : offsets.arm.double_x - 3;
               return (
@@ -125,6 +142,30 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
           </group>
         );
       })}
+
+      {/* Local dimensions when editing an arm or when showDimensions is active */}
+      {(shouldShowFrontDim || shouldShowBackDim) && (
+        <>
+          {shouldShowFrontDim && (
+            <ArmLocalDimension
+              armPositions={armPositionsFront}
+              columnHeightY={getPartSize(columnId) / 100}
+              startY={offsets.bottom_bolt.y}
+              zPos={offsets.arm.z - armSizeUnits}
+              xPos={offsets.arm.x - 2}
+            />
+          )}
+          {shouldShowBackDim && (
+            <ArmLocalDimension
+              armPositions={armPositionsBack}
+              columnHeightY={getPartSize(columnId) / 100}
+              startY={offsets.bottom_bolt.y}
+              zPos={offsets.arm.double_z + armSizeUnits}
+              xPos={offsets.arm.double_x + 2}
+            />
+          )}
+        </>
+      )}
     </group>
   );
 };

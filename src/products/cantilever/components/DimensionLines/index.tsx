@@ -41,10 +41,7 @@ interface DimensionLinesProps {
 }
 
 export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) => {
-    // State to store the bounding box boundaries of the rack structure
     const [box, setBox] = useState<THREE.Box3 | null>(null);
-
-    // Memoize the matrix to prevent high garbage collection overhead during the 60fps useFrame loop
     const invMatrix = useMemo(() => new THREE.Matrix4(), []);
 
     const { armPositions } = useArmPositions();
@@ -53,6 +50,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
     const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
     const armId = useRackConfigStore((s) => s.armId);
+    const rackType = useRackConfigStore((s) => s.rackType);
     const { getPartSize } = useShelfParts();
     const armSizeUnits = getPartSize(armId) / 100;
 
@@ -66,9 +64,6 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             invMatrix.copy(rackGroupRef.current.parent.matrixWorld).invert();
             currentBox.applyMatrix4(invMatrix);
         }
-
-        // Performance optimization: Only trigger a React state update if the bounding box has changed 
-        // significantly (tolerance of 1mm) to avoid useless re-renders.
         if (
             !box ||
             Math.abs(currentBox.min.x - box.min.x) > 0.001 ||
@@ -82,7 +77,6 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
         }
     });
 
-    // Suspend rendering until the initial bounding box is calculated
     if (!box) return null;
 
     const { min, max } = box;
@@ -90,10 +84,16 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     // Base starting elevation for vertical measurements (accounting for bottom offset like bolts/feet)
     const startY = min.y + offsets.bottom_bolt.y;
 
+    // Helper to format dimensions in mm, rounded to nearest 5mm to hide 3D model inaccuracies
+    const formatDim = (valueInUnits: number) => {
+        const rawMm = valueInUnits * 100;
+        return (Math.round(rawMm / 5) * 5).toFixed(0);
+    };
+
     // Calculate overall dimensions in real-world millimeters
-    const lengthX = ((max.x - min.x) * 100).toFixed(0);
-    const heightY = ((max.y - min.y - offsets.bottom_bolt.y) * 100).toFixed(0);
-    const depthZ = ((max.z - min.z) * 100).toFixed(0);
+    const lengthX = formatDim(max.x - min.x);
+    const heightY = formatDim(max.y - min.y - offsets.bottom_bolt.y);
+    const depthZ = formatDim(max.z - min.z);
 
     // --- X Axis (Length) Coordinate Setup ---
     const xDimZ = min.z - DIM_CONFIG.offset;
@@ -109,15 +109,19 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
 
     // --- Y Axis (Height) Coordinate Setup ---
     const yDimX = min.x - DIM_CONFIG.totalOffset;
-    const yData = {
-        mainLine: [[yDimX, startY, min.z], [yDimX, max.y, min.z]] as [number, number, number][],
-        ext1: [[min.x, startY, min.z], [yDimX, startY, min.z]] as [number, number, number][],
-        ext2: [[min.x, max.y, min.z], [yDimX, max.y, min.z]] as [number, number, number][],
-        tick1: [[yDimX - DIM_CONFIG.tickSize, startY - DIM_CONFIG.tickSize, min.z], [yDimX + DIM_CONFIG.tickSize, startY + DIM_CONFIG.tickSize, min.z]] as [number, number, number][],
-        tick2: [[yDimX - DIM_CONFIG.tickSize, max.y - DIM_CONFIG.tickSize, min.z], [yDimX + DIM_CONFIG.tickSize, max.y + DIM_CONFIG.tickSize, min.z]] as [number, number, number][],
-        labelPos: [yDimX, (startY + max.y) / 2, min.z + 0.3] as [number, number, number],
+
+    const createYData = (zPos: number) => ({
+        mainLine: [[yDimX, startY, zPos], [yDimX, max.y, zPos]] as [number, number, number][],
+        ext1: [[min.x, startY, zPos], [yDimX, startY, zPos]] as [number, number, number][],
+        ext2: [[min.x, max.y, zPos], [yDimX, max.y, zPos]] as [number, number, number][],
+        tick1: [[yDimX - DIM_CONFIG.tickSize, startY - DIM_CONFIG.tickSize, zPos], [yDimX + DIM_CONFIG.tickSize, startY + DIM_CONFIG.tickSize, zPos]] as [number, number, number][],
+        tick2: [[yDimX - DIM_CONFIG.tickSize, max.y - DIM_CONFIG.tickSize, zPos], [yDimX + DIM_CONFIG.tickSize, max.y + DIM_CONFIG.tickSize, zPos]] as [number, number, number][],
+        labelPos: [yDimX, (startY + max.y) / 2, zPos + 0.3] as [number, number, number],
         value: `${heightY} mm`
-    };
+    });
+
+    const yDataMinZ = createYData(min.z);
+    const yDataMaxZ = rackType === 'double' ? createYData(max.z) : null;
 
     // --- Z Axis (Depth) Coordinate Setup ---
     // Elevate Z dimensions to the first arm level for better readability
@@ -168,7 +172,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
                     from,
                     to,
                     midZ: (from + to) / 2,
-                    gapMm: (gap * 100).toFixed(0),
+                    gapMm: formatDim(gap),
                     index: i,
                 });
             }
@@ -182,7 +186,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const breakpoints = [startY, ...armPositions.map(y => y + 1.3), max.y];
 
     // Generate segments between consecutive breakpoints to display interval gaps
-    const armSegments = [];
+    const armSegments: { from: number; to: number; midY: number; gapMm: string; index: number }[] = [];
     for (let i = 0; i < breakpoints.length - 1; i++) {
         const from = breakpoints[i];
         const to = breakpoints[i + 1];
@@ -194,30 +198,37 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
                 from,
                 to,
                 midY: (from + to) / 2,
-                gapMm: (gap * 100).toFixed(0),
+                gapMm: formatDim(gap),
                 index: i,
             });
         }
     }
 
+    const zPositions = rackType === 'double' ? [min.z, max.z] : [min.z];
+
     return (
         <group>
             {/* Global Outward Dimensions */}
             <DimensionLine {...xData} />
-            <DimensionLine {...yData} />
+            <DimensionLine {...yDataMinZ} />
+            {yDataMaxZ && <DimensionLine {...yDataMaxZ} />}
             <DimensionLine {...zData} />
 
             {/* Detailed Inner Dimensions for Arm Intervals (Y axis) */}
-            {armSegments.map((seg) => (
-                <group key={`arm-seg-${seg.index}`}>
-                    <Line points={[[detailX, seg.from, min.z], [detailX, seg.to, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
-                    <Line points={[[detailX - DIM_CONFIG.tickSize, seg.from, min.z], [detailX + DIM_CONFIG.tickSize, seg.from, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
-                    <Line points={[[detailX - DIM_CONFIG.tickSize, seg.to, min.z], [detailX + DIM_CONFIG.tickSize, seg.to, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
-                    <Line points={[[min.x, seg.from, min.z], [detailX, seg.from, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
-                    <Line points={[[min.x, seg.to, min.z], [detailX, seg.to, min.z]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
-                    <Html position={[detailX - 0.3, seg.midY, min.z]} center zIndexRange={[100, 0]}>
-                        <div style={detailLabelStyle}>{`${seg.gapMm} mm`}</div>
-                    </Html>
+            {zPositions.map(zPos => (
+                <group key={`arm-intervals-${zPos}`}>
+                    {armSegments.map((seg) => (
+                        <group key={`arm-seg-${seg.index}-${zPos}`}>
+                            <Line points={[[detailX, seg.from, zPos], [detailX, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                            <Line points={[[detailX - DIM_CONFIG.tickSize, seg.from, zPos], [detailX + DIM_CONFIG.tickSize, seg.from, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                            <Line points={[[detailX - DIM_CONFIG.tickSize, seg.to, zPos], [detailX + DIM_CONFIG.tickSize, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
+                            <Line points={[[min.x, seg.from, zPos], [detailX, seg.from, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                            <Line points={[[min.x, seg.to, zPos], [detailX, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                            <Html position={[detailX - 0.3, seg.midY, zPos]} center zIndexRange={[100, 0]}>
+                                <div style={detailLabelStyle}>{`${seg.gapMm} mm`}</div>
+                            </Html>
+                        </group>
+                    ))}
                 </group>
             ))}
 
