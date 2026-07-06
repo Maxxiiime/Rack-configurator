@@ -23,6 +23,17 @@ export const getArmsOptions = (): Record<string, string> => {
     );
 };
 
+export const getWidthOptions = (): { label: string; value: number }[] => {
+  const widths = partsData
+    .filter((p) => p.category === 'x_brace' || p.category === 'h_brace')
+    .map((p) => p.size_mm)
+    .filter((size): size is number => size !== undefined);
+  
+  const uniqueWidths = Array.from(new Set(widths)).sort((a, b) => a - b);
+  
+  return uniqueWidths.map((v) => ({ label: String(v), value: v }));
+};
+
 export const getColumnHeight = (columnId: string): number => {
   const part = partsData.find((p) => p.shelving_system_id === columnId);
   return (part?.size_mm ?? 2000) / 100;

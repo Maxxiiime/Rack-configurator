@@ -4,7 +4,7 @@ import { sectionBoxStyle, selectStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
-import { getPartSize, getColumnsOptions } from "../utils/shelfParts";
+import { getPartSize, getColumnsOptions, getWidthOptions } from "../utils/shelfParts";
 
 interface RackEditorProps {
   rackId: string;
@@ -32,10 +32,7 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
   const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
   const isHeightOverridden = sectionHeightOverrides[rackId] !== undefined;
 
-  const widthOpts = useMemo(
-    () => [750, 1000, 1250, 1500, 1750, 2000].map((v) => ({ label: String(v), value: v })),
-    []
-  );
+  const widthOpts = useMemo(() => getWidthOptions(), []);
 
   const columnOpts = useMemo(() => {
     const raw = getColumnsOptions();

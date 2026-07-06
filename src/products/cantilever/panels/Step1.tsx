@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { useRackConfigStore, RackType } from "../stores/configStore";
-import { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets } from "../utils/shelfParts";
+import { getColumnsOptions, getArmsOptions, getPartSize, findPartId, getColumnHeight, offsets, getWidthOptions } from "../utils/shelfParts";
 import { getMaxArmCount, getMaxAllowedSpacing } from "../utils/armPositions";
 import {
   sectionBoxStyle,
@@ -67,10 +67,7 @@ export function Step1({ onNext }: Step1Props) {
     }));
   }, [getArmsOptions]);
 
-  const widthOpts = useMemo(
-    () => [750, 1000, 1250, 1500, 1750, 2000].map((v) => ({ label: String(v), value: v })),
-    []
-  );
+  const widthOpts = useMemo(() => getWidthOptions(), []);
 
   const currentWidth = getPartSize(braceId) || 1000;
 
