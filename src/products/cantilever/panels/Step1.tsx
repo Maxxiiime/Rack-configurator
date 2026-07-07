@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   Text,
-  Button,
   VStack,
   Select,
   Slider,
@@ -24,11 +23,7 @@ import {
 } from "@/features/Sidepanel/styles";
 import { PillGroup, Row, Stepper } from "@/components/ui/Shared";
 
-interface Step1Props {
-  onNext?: () => void;
-}
-
-export function Step1({ onNext }: Step1Props) {
+export function Step1() {
   const rackType = useRackConfigStore((s) => s.rackType);
   const columnId = useRackConfigStore((s) => s.columnId);
   const armId = useRackConfigStore((s) => s.armId);
@@ -223,23 +218,6 @@ export function Step1({ onNext }: Step1Props) {
           )}
 
         </VStack>
-      </Box>
-
-      {/* ── Next step ─────────────────────────────────────────── */}
-      <Box pt={5} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" mt={6}>
-        <Button
-          w="full"
-          bg="gray.900"
-          color="white"
-          fontSize="12px"
-          fontWeight={600}
-          borderRadius="lg"
-          _hover={{ bg: "gray.700" }}
-          _active={{ bg: "gray.800" }}
-          onClick={onNext}
-        >
-          Next
-        </Button>
       </Box>
 
     </VStack>

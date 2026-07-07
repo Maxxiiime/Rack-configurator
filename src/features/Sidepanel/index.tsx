@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, VStack } from "@chakra-ui/react";
 import { useAppStore } from "@/stores/appStore";
 import { useActiveProduct } from "@/products";
 import { StyledBox } from "./styles";
@@ -85,6 +85,9 @@ const Sidepanel = ({ width = 300 }) => {
   const activeStep = activeProduct.steps[validStep - 1];
   const StepComponent = activeStep.Component;
 
+  const showNext = activeStep.showNext ?? validStep < totalSteps;
+  const showBack = activeStep.showBack ?? validStep > 1;
+
   const goToFirstStep = () => {
     if (clearSelection) clearSelection();
     setCurrentStep(1);
@@ -131,37 +134,70 @@ const Sidepanel = ({ width = 300 }) => {
           </Text>
         </Flex>
 
-        {/* ── Step content ───────────────────────────────────── */}
-        <StepComponent
-          onNext={() => {
-            if (validStep < totalSteps) setCurrentStep(validStep + 1);
-          }}
-          onBack={() => {
-            if (validStep > 1) {
-              if (validStep === 2) {
-                goToFirstStep();
-              } else {
-                setCurrentStep(validStep - 1);
-              }
-            }
-          }}
-        />
+        <StepComponent />
 
-        {/* ── Price footer ───────────────────────────────────── */}
-        {validStep !== totalSteps && (
-          <Box
-            mt="auto"
-            p={4}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text fontSize="18px" fontWeight={600} color="gray.600">Total Price:</Text>
-            <Text fontSize="20px" fontWeight={800} color="gray.800">
-              {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-            </Text>
-          </Box>
-        )}
+        {/* ── Bottom Section (Nav & Price) ───────────────────── */}
+        <Box mt="auto" pt={5}>
+          {(showNext || showBack) && (
+            <VStack spacing={3} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={5}>
+              {showNext && (
+                <Button
+                  w="full"
+                  bg="gray.900"
+                  color="white"
+                  fontSize="12px"
+                  fontWeight={600}
+                  borderRadius="lg"
+                  _hover={{ bg: "gray.700" }}
+                  _active={{ bg: "gray.800" }}
+                  onClick={() => setCurrentStep(validStep + 1)}
+                >
+                  Next
+                </Button>
+              )}
+              {showBack && (
+                <Button
+                  w="full"
+                  bg="white"
+                  border="1px solid"
+                  borderColor="gray.200"
+                  fontSize="12px"
+                  fontWeight={600}
+                  color="gray.700"
+                  borderRadius="lg"
+                  _hover={{ bg: "gray.50", borderColor: "gray.300" }}
+                  _active={{ bg: "gray.100" }}
+                  onClick={() => {
+                    if (validStep === 2) goToFirstStep();
+                    else setCurrentStep(validStep - 1);
+                  }}
+                >
+                  Back
+                </Button>
+              )}
+            </VStack>
+          )}
+
+          {/* ── Price footer ───────────────────────────────────── */}
+          {validStep !== totalSteps && (
+            <Box
+              p={4}
+              mt={4}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              bg="gray.50"
+              borderRadius="lg"
+              border="1px solid"
+              borderColor="gray.200"
+            >
+              <Text fontSize="15px" fontWeight={600} color="gray.600">Total:</Text>
+              <Text fontSize="18px" fontWeight={800} color="gray.800">
+                {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+              </Text>
+            </Box>
+          )}
+        </Box>
       </div>
     </StyledBox>
   );

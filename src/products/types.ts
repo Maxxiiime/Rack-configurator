@@ -71,7 +71,11 @@ export interface BOMResult {
 export interface ProductStep {
   label: string;
   /** The React component rendered for this step. */
-  Component: React.ComponentType<{ onNext?: () => void; onBack?: () => void }>;
+  Component: React.ComponentType;
+  /** Force show/hide the Next button. If undefined, defaults to step < totalSteps */
+  showNext?: boolean;
+  /** Force show/hide the Back button. If undefined, defaults to step > 1 */
+  showBack?: boolean;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */

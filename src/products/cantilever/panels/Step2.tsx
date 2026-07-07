@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, VStack, Box, Button } from "@chakra-ui/react";
+import { Text, VStack, Box } from "@chakra-ui/react";
 import { useEditorStore } from "../stores/editorStore";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { GlobalSettings } from "./GlobalSettings";
@@ -7,18 +7,13 @@ import { RackEditor } from "./RackEditor";
 import { ArmRowEditor } from "./ArmRowEditor";
 import RulerIcon from "@/assets/svgs/RulerIcon";
 
-interface Step2Props {
-  onBack?: () => void;
-}
-
 /* ── Step2 ─────────────────────────────────────────────────────────── */
 
-export function Step2({ onBack }: Step2Props) {
+export function Step2() {
   const [globalOpen, setGlobalOpen] = useState(true);
 
   const selectedRackId = useEditorStore((s) => s.selectedRackId);
   const selectedArm = useEditorStore((s) => s.selectedArm);
-  const setCurrentStep = useEditorStore((s) => s.setCurrentStep);
 
   const hasSelection = selectedRackId !== null || selectedArm !== null;
 
@@ -69,42 +64,6 @@ export function Step2({ onBack }: Step2Props) {
           </Text>
         </Box>
       )}
-
-      {/* ── Back button ───────────────────────────────────────── */}
-      <Box pt={5} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" mt={4}>
-        <Button
-          w="full"
-          bg="white"
-          border="1px solid"
-          borderColor="gray.200"
-          fontSize="12px"
-          fontWeight={600}
-          color="gray.700"
-          borderRadius="lg"
-          _hover={{ bg: "gray.50", borderColor: "gray.300" }}
-          _active={{ bg: "gray.100" }}
-          onClick={onBack}
-        >
-          Back
-        </Button>
-      </Box>
-
-      {/* ── Next button ───────────────────────────────────────── */}
-      <Box pt={4}>
-        <Button
-          w="full"
-          bg="gray.900"
-          color="white"
-          fontSize="12px"
-          fontWeight={600}
-          borderRadius="lg"
-          _hover={{ bg: "gray.700" }}
-          _active={{ bg: "gray.800" }}
-          onClick={() => setCurrentStep(3)}
-        >
-          Next
-        </Button>
-      </Box>
 
     </VStack>
   );

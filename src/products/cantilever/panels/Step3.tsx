@@ -1,11 +1,7 @@
-import { VStack, Box, Text, Button, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Flex } from "@chakra-ui/react";
+import { VStack, Text, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Flex } from "@chakra-ui/react";
 import { useBillOfMaterials } from "../hooks/useBillOfMaterials";
 
-interface Step3Props {
-  onBack?: () => void;
-}
-
-export function Step3({ onBack }: Step3Props) {
+export function Step3() {
   const bom = useBillOfMaterials();
 
   return (
@@ -48,23 +44,6 @@ export function Step3({ onBack }: Step3Props) {
         <Text fontSize="18px" fontWeight="bold" color="blue.600">€{bom.totalPrice.toFixed(2)}</Text>
       </Flex>
 
-      <Box pt={5} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)">
-        <Button
-          w="full"
-          bg="white"
-          border="1px solid"
-          borderColor="gray.200"
-          fontSize="14px"
-          fontWeight={600}
-          color="gray.700"
-          borderRadius="lg"
-          _hover={{ bg: "gray.50", borderColor: "gray.300" }}
-          _active={{ bg: "gray.100" }}
-          onClick={onBack}
-        >
-          Back
-        </Button>
-      </Box>
     </VStack>
   );
 }
