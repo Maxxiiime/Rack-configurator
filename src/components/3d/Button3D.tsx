@@ -14,6 +14,7 @@ interface Button3DProps {
     onClick: () => void;
     isActive?: boolean;
     normal?: [number, number, number];
+    scale?: number;
 }
 
 const ICON_CONFIG = {
@@ -43,7 +44,7 @@ const ICON_CONFIG = {
     },
 };
 
-export const Button3D: React.FC<Button3DProps> = ({ type, position, normal, onClick, isActive = false }) => {
+export const Button3D: React.FC<Button3DProps> = ({ type, position, normal, onClick, isActive = false, scale = 1 }) => {
     // Récupère les configurations liées au type
     const { component, color, activeColor, size } = ICON_CONFIG[type];
 
@@ -55,10 +56,10 @@ export const Button3D: React.FC<Button3DProps> = ({ type, position, normal, onCl
         if (!buttonRef.current || !normalVec) return;
         const camToBtn = new THREE.Vector3().subVectors(vec, camera.position).normalize();
         const dot = camToBtn.dot(normalVec);
-        
+
         // When dot > 0, camera is behind the button's normal
         const factor = Math.max(0, Math.min((dot + 0.1) / 0.5, 1));
-        
+
         if (factor > 0) {
             // Interpolate from 255 (white) to 235 (light gray)
             const v = Math.round(255 - factor * 20);
@@ -90,6 +91,7 @@ export const Button3D: React.FC<Button3DProps> = ({ type, position, normal, onCl
                 transition="all 140ms ease"
                 outline="none"
                 pointerEvents="auto"
+                transform={`scale(${scale})`}
                 bg={isActive ? activeColor : "var(--btn-bg, white)"}
                 color={isActive ? "white" : color}
                 boxShadow={isActive
