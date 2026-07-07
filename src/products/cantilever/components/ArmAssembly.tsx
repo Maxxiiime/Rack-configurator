@@ -40,6 +40,8 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
   armSizeUnits,
 }) => {
   const selectedArm = useEditorStore((s) => s.selectedArm);
+  const currentStep = useEditorStore((s) => s.currentStep);
+  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
   const isSelectedFront = selectedArm?.armIndex === index &&
     (selectedArm.columnIndex === columnIndex || selectedArm.columnIndex === undefined) &&
     (selectedArm.side === 'front' || selectedArm.side === undefined);
@@ -56,6 +58,36 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
     armDividerCount
   );
 
+  const isStrictlySelectedFront = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === index && (selectedArm?.side === 'front' || selectedArm?.side === undefined);
+  const isStrictlySelectedBack = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === index && selectedArm?.side === 'back';
+
+  const handlePointerOver = (e: any) => {
+    if (currentStep === 2) {
+      e.stopPropagation();
+      document.body.style.cursor = 'pointer';
+    }
+  };
+
+  const handlePointerOut = (e: any) => {
+    if (currentStep === 2) {
+      document.body.style.cursor = 'auto';
+    }
+  };
+
+  const handleFrontClick = (e: any) => {
+    if (currentStep === 2) {
+      e.stopPropagation();
+      setSelectedArm(isStrictlySelectedFront ? null : { columnIndex, armIndex: index, side: 'front' });
+    }
+  };
+
+  const handleBackClick = (e: any) => {
+    if (currentStep === 2) {
+      e.stopPropagation();
+      setSelectedArm(isStrictlySelectedBack ? null : { columnIndex, armIndex: index, side: 'back' });
+    }
+  };
+
   return (
     <group>
       {/* ARM - Single Face */}
@@ -63,6 +95,9 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
         id={armId}
         position={[offsets.arm.x, yPosFront, offsets.arm.z]}
         selectedMode={isSelectedFront}
+        onClick={handleFrontClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
       />
 
       {/* ARM STOP - Single Face */}
@@ -93,6 +128,9 @@ export const ArmAssembly: React.FC<ArmAssemblyProps> = ({
             position={[offsets.arm.double_x, yPosBack, offsets.arm.double_z]}
             rotation={[0, Math.PI, 0]}
             selectedMode={isSelectedBack}
+            onClick={handleBackClick}
+            onPointerOver={handlePointerOver}
+            onPointerOut={handlePointerOut}
           />
 
           {/* ARM STOP - Double Face */}

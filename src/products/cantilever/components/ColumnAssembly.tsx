@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
 import { CantileverPart as BasePart } from './CantileverPart';
 import { ArmAssembly } from './ArmAssembly';
-import { Button3D } from '@/components/3d/Button3D';
+
 import { useEditorStore } from '../stores/editorStore';
 import { getPartSize, getPartData, offsets } from '../utils/shelfParts';
 import { useRackConfigStore, RackType } from '../stores/configStore';
@@ -27,15 +26,9 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   position = [0, 0, 0],
   selectedMode = false,
   columnIndex,
-  iconDirection = 1,
 }) => {
 
-  const [buttonDirection, setButtonDirection] = useState<1 | -1>(iconDirection);
-  useEffect(() => {
-    if (selectedMode) {
-      setButtonDirection(iconDirection);
-    }
-  }, [selectedMode, iconDirection]);
+
 
   const showArmStops = useRackConfigStore((s) => s.showArmStops);
   const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
@@ -52,19 +45,18 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   const { armPositions: armPositionsBack } = useArmPositions(columnIndex, 'back');
   const currentStep = useEditorStore((s) => s.currentStep);
   const selectedArm = useEditorStore((s) => s.selectedArm);
-  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
   const showDimensions = useEditorStore((s) => s.showDimensions);
   const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
 
   const hasOverrideFront = Object.keys(armYOverrides).some(k => k.startsWith(`${columnIndex}-front-`));
   const hasOverrideBack = Object.keys(armYOverrides).some(k => k.startsWith(`${columnIndex}-back-`));
 
-  const isEditingThisFront = currentStep === 2 && selectedArm !== null && 
-    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) && 
+  const isEditingThisFront = currentStep === 2 && selectedArm !== null &&
+    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) &&
     (selectedArm.side === 'front' || selectedArm.side === undefined);
-    
-  const isEditingThisBack = currentStep === 2 && selectedArm !== null && 
-    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) && 
+
+  const isEditingThisBack = currentStep === 2 && selectedArm !== null &&
+    (selectedArm.columnIndex === columnIndex || (selectedArm.columnIndex === undefined && columnIndex === 0)) &&
     selectedArm.side === 'back';
 
   const shouldShowFrontDim = isEditingThisFront || (showDimensions && hasOverrideFront);
@@ -111,33 +103,6 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
               columnIndex={columnIndex}
               armSizeUnits={armSizeUnits}
             />
-            {/* Edit button for front arm */}
-            {currentStep === 2 && (selectedMode || isArmSelectedFront) && (() => {
-              const buttonX = buttonDirection === 1 ? offsets.arm.x + 3 : offsets.arm.x - 3;
-              return (
-                <Button3D
-                  type="ruler"
-                  position={[buttonX, yPosFront + 1, offsets.arm.z - armSizeUnits - 0.2]}
-                  normal={[0, 0, -1]}
-                  onClick={() => setSelectedArm(isArmSelectedFront ? null : { columnIndex, armIndex: i, side: 'front' })}
-                  isActive={isArmSelectedFront}
-                />
-              );
-            })()}
-
-      {/* Edit button for back arm (if double) */}
-            {currentStep === 2 && rackType === 'double' && (selectedMode || isArmSelectedBack) && (() => {
-              const buttonX = buttonDirection === 1 ? offsets.arm.double_x + 3 : offsets.arm.double_x - 3;
-              return (
-                <Button3D
-                  type="ruler"
-                  position={[buttonX, yPosBack + 1, offsets.arm.double_z + armSizeUnits + 0.2]}
-                  normal={[0, 0, 1]}
-                  onClick={() => setSelectedArm(isArmSelectedBack ? null : { columnIndex, armIndex: i, side: 'back' })}
-                  isActive={isArmSelectedBack}
-                />
-              );
-            })()}
           </group>
         );
       })}

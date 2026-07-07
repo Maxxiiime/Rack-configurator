@@ -11,9 +11,12 @@ interface PartProps {
   rotation?: [number, number, number];
   scale?: [number, number, number];
   selectedMode?: boolean;
+  onClick?: (e: any) => void;
+  onPointerOver?: (e: any) => void;
+  onPointerOut?: (e: any) => void;
 }
 
-export const BasePart: React.FC<PartProps> = ({ path, materialName = 'Blue', position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1], selectedMode }) => {
+export const BasePart: React.FC<PartProps> = ({ path, materialName = 'Blue', position = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1], selectedMode, ...restProps }) => {
   const { getMetalMaterial } = useMaterial();
 
   const gltf = useGLTF(path) as any;
@@ -25,6 +28,7 @@ export const BasePart: React.FC<PartProps> = ({ path, materialName = 'Blue', pos
       position={position}
       rotation={rotation}
       scale={scale}
+      {...restProps}
     >
       <MetalMaterial scene={clonedScene} settings={getMetalMaterial(materialName)?.settings} boltSettings={getMetalMaterial('Grey')?.settings} />
       <SelectedMaterial scene={clonedScene} selectedMode={selectedMode} />

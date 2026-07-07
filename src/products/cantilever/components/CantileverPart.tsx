@@ -15,6 +15,9 @@ interface CantileverPartProps {
   rotation?: [number, number, number];
   scale?: [number, number, number];
   selectedMode?: boolean;
+  onClick?: (e: any) => void;
+  onPointerOver?: (e: any) => void;
+  onPointerOut?: (e: any) => void;
 }
 
 export const CantileverPart: React.FC<CantileverPartProps> = ({ id, ...props }) => {

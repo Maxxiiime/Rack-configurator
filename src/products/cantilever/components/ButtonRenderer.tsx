@@ -9,7 +9,7 @@ import { useArmPositions } from '../hooks/useArmPositions';
 
 export const ButtonRenderer: React.FC = () => {
 	const currentStep = useEditorStore((s) => s.currentStep);
-	
+
 	// Step 1: Controls & Section Deletion
 	const addSectionLeft = useRackSectionsStore((s) => s.addSectionLeft);
 	const addSectionRight = useRackSectionsStore((s) => s.addSectionRight);
@@ -26,7 +26,7 @@ export const ButtonRenderer: React.FC = () => {
 	const armId = useRackConfigStore((s) => s.armId);
 
 	const armSizeUnits = getPartSize(armId) / 100;
-	
+
 	const { columnPositionsX, rackWidths } = useRackPositions();
 	const { armPositions: armPositionsFront } = useArmPositions(undefined, 'front');
 	const { armPositions: armPositionsBack } = useArmPositions(undefined, 'back');
@@ -87,12 +87,12 @@ export const ButtonRenderer: React.FC = () => {
 						const yPosBack = armPositionsBack[i] ?? yPosFront;
 						const isRowSelectedFront = selectedArm?.armIndex === i && selectedArm?.columnIndex === undefined && (selectedArm?.side === 'front' || selectedArm?.side === undefined);
 						const isRowSelectedBack = selectedArm?.armIndex === i && selectedArm?.columnIndex === undefined && selectedArm?.side === 'back';
-						
+
 						return (
 							<group key={`arm-row-ruler-${i}`}>
 								<Button3D
 									type="ruler"
-									position={[rightmostColumnX + 6, yPosFront, offsets.arm.z - armSizeUnits - 0.2]}
+									position={[rightmostColumnX + 3, yPosFront, offsets.arm.z - armSizeUnits - 0.2]}
 									normal={[0, 0, -1]}
 									onClick={() => setSelectedArm(isRowSelectedFront ? null : { armIndex: i, side: 'front' })}
 									isActive={isRowSelectedFront}
@@ -100,7 +100,7 @@ export const ButtonRenderer: React.FC = () => {
 								{rackType === 'double' && (
 									<Button3D
 										type="ruler"
-										position={[rightmostColumnX + 6, yPosBack, offsets.arm.double_z + armSizeUnits + 0.2]}
+										position={[rightmostColumnX + 3, yPosBack, offsets.arm.double_z + armSizeUnits + 0.2]}
 										normal={[0, 0, 1]}
 										onClick={() => setSelectedArm(isRowSelectedBack ? null : { armIndex: i, side: 'back' })}
 										isActive={isRowSelectedBack}
