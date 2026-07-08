@@ -52,13 +52,16 @@ export const usePricing = () => {
       const rightSectionId = index < numSections ? sectionIds[index] : null;
 
       let currentColumnId = columnId;
-      if (leftSectionId || rightSectionId) {
-        const leftHeightId = leftSectionId ? (sectionHeightOverrides[leftSectionId] ?? columnId) : columnId;
-        const rightHeightId = rightSectionId ? (sectionHeightOverrides[rightSectionId] ?? columnId) : columnId;
-        
+      if (leftSectionId && rightSectionId) {
+        const leftHeightId = sectionHeightOverrides[leftSectionId] ?? columnId;
+        const rightHeightId = sectionHeightOverrides[rightSectionId] ?? columnId;
         const leftHeight = getPartSize(leftHeightId);
         const rightHeight = getPartSize(rightHeightId);
         currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
+      } else if (leftSectionId) {
+        currentColumnId = sectionHeightOverrides[leftSectionId] ?? columnId;
+      } else if (rightSectionId) {
+        currentColumnId = sectionHeightOverrides[rightSectionId] ?? columnId;
       }
 
       const currentColumnPrice = getPartData(currentColumnId)?.price || 0;
