@@ -81,8 +81,6 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
       {/* ARMS */}
       {armPositionsFront.map((yPosFront, i) => {
         const yPosBack = armPositionsBack[i] ?? yPosFront;
-        const isArmSelectedFront = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i && (selectedArm?.side === 'front' || selectedArm?.side === undefined);
-        const isArmSelectedBack = selectedArm?.columnIndex === columnIndex && selectedArm?.armIndex === i && selectedArm?.side === 'back';
 
         return (
           <group key={`arm-group-${i}`}>
@@ -114,7 +112,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             <ArmLocalDimension
               armPositions={armPositionsFront}
               columnHeightY={getPartSize(columnId) / 100}
-              startY={offsets.bottom_bolt.y}
+              startY={0}
               zPos={offsets.arm.z - armSizeUnits}
               xPos={offsets.arm.x - 2}
             />
@@ -123,7 +121,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             <ArmLocalDimension
               armPositions={armPositionsBack}
               columnHeightY={getPartSize(columnId) / 100}
-              startY={offsets.bottom_bolt.y}
+              startY={0}
               zPos={offsets.arm.double_z + armSizeUnits}
               xPos={offsets.arm.double_x + 2}
             />
