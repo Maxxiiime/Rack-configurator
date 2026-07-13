@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { getColumnHeight, getPartSize, offsets } from "../utils/shelfParts";
+import { resolveEffectiveColumnId } from "../utils/resolveColumn";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
 import { computeArmPositions, getMaxArmCount } from "../utils/armPositions";
@@ -16,20 +17,7 @@ export const useArmPositions = (columnIndex?: number, side: 'front' | 'back' = '
     return useMemo(() => {
         let currentColumnId = columnId;
         if (columnIndex !== undefined) {
-            const leftSectionId = columnIndex > 0 ? sectionIds[columnIndex - 1] : null;
-            const rightSectionId = columnIndex < sectionIds.length ? sectionIds[columnIndex] : null;
-
-            if (leftSectionId && rightSectionId) {
-                const leftHeightId = sectionHeightOverrides[leftSectionId] ?? columnId;
-                const rightHeightId = sectionHeightOverrides[rightSectionId] ?? columnId;
-                const leftHeight = getPartSize(leftHeightId);
-                const rightHeight = getPartSize(rightHeightId);
-                currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
-            } else if (leftSectionId) {
-                currentColumnId = sectionHeightOverrides[leftSectionId] ?? columnId;
-            } else if (rightSectionId) {
-                currentColumnId = sectionHeightOverrides[rightSectionId] ?? columnId;
-            }
+            currentColumnId = resolveEffectiveColumnId(columnIndex, sectionIds, columnId, sectionHeightOverrides);
         }
 
         const columnHeightUnits = getColumnHeight(currentColumnId);

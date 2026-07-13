@@ -4,6 +4,7 @@ import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
 import { getPartSize } from '../utils/shelfParts';
+import { resolveEffectiveColumnId } from '../utils/resolveColumn';
 import { useRackPositions } from '../hooks/useRackPositions';
 
 export const ColumnRenderer: React.FC = () => {
@@ -37,18 +38,7 @@ export const ColumnRenderer: React.FC = () => {
 					iconDirection = -1;
 				}
 
-				let currentColumnId = columnId;
-				if (leftSectionId && rightSectionId) {
-					const leftHeightId = sectionHeightOverrides[leftSectionId] ?? columnId;
-					const rightHeightId = sectionHeightOverrides[rightSectionId] ?? columnId;
-					const leftHeight = getPartSize(leftHeightId);
-					const rightHeight = getPartSize(rightHeightId);
-					currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
-				} else if (leftSectionId) {
-					currentColumnId = sectionHeightOverrides[leftSectionId] ?? columnId;
-				} else if (rightSectionId) {
-					currentColumnId = sectionHeightOverrides[rightSectionId] ?? columnId;
-				}
+				const currentColumnId = resolveEffectiveColumnId(index, sectionIds, columnId, sectionHeightOverrides);
 
 				return (
 					<ColumnAssembly

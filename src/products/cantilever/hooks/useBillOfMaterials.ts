@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { getPartSize, findPartId, getPartData, getColumnHeight, offsets } from '../utils/shelfParts';
+import { resolveEffectiveColumnId } from '../utils/resolveColumn';
 import { useArmPositions } from './useArmPositions';
 import { getMaxArmCount } from '../utils/armPositions';
 import braceLayouts from '../data/brace_layouts.json';
@@ -52,21 +53,7 @@ export const useBillOfMaterials = () => {
 
       actualColumnCount++;
 
-      const leftSectionId = index > 0 ? sectionIds[index - 1] : null;
-      const rightSectionId = index < sectionIds.length ? sectionIds[index] : null;
-
-      let currentColumnId = columnId;
-      if (leftSectionId && rightSectionId) {
-        const leftHeightId = sectionHeightOverrides[leftSectionId] ?? columnId;
-        const rightHeightId = sectionHeightOverrides[rightSectionId] ?? columnId;
-        const leftHeight = getPartSize(leftHeightId);
-        const rightHeight = getPartSize(rightHeightId);
-        currentColumnId = leftHeight > rightHeight ? leftHeightId : rightHeightId;
-      } else if (leftSectionId) {
-        currentColumnId = sectionHeightOverrides[leftSectionId] ?? columnId;
-      } else if (rightSectionId) {
-        currentColumnId = sectionHeightOverrides[rightSectionId] ?? columnId;
-      }
+      const currentColumnId = resolveEffectiveColumnId(index, sectionIds, columnId, sectionHeightOverrides);
 
       addPart(currentColumnId, 1);
       addPart(activeLegId, 1);
