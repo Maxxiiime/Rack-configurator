@@ -7,6 +7,7 @@ import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu
 import { Stepper } from "@/components/ui/Shared";
 import { useRackConfigStore } from "../stores/configStore";
 import { useArmPositions } from "../hooks/useArmPositions";
+import offsets from "../data/offsets.json";
 
 interface ArmRowEditorProps {
   armIndex: number;
@@ -58,9 +59,11 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
 
   const currentY = getArmY(armIndex);
   const bounds = getArmBounds(armIndex);
-  const isOverridden = columnIndex !== undefined 
-    ? armYOverrides[`${columnIndex}-${activeSide}-${armIndex}`] !== undefined 
+  const isOverridden = columnIndex !== undefined
+    ? armYOverrides[`${columnIndex}-${activeSide}-${armIndex}`] !== undefined
     : armYOverrides[`row-${activeSide}-${armIndex}`] !== undefined;
+
+  const displayOffset = offsets.arm.start_y_display * 100;
 
   return (
     <Box mb={4}>
@@ -91,19 +94,19 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
           </Flex>
           <Flex align="center" gap={2}>
             <Stepper
-              value={Math.round(currentY * 100)}
-              min={Math.round(bounds.min * 100)}
-              max={Math.round(bounds.max * 100)}
+              value={Math.round(currentY * 100) - displayOffset}
+              min={Math.round(bounds.min * 100) - displayOffset}
+              max={Math.round(bounds.max * 100) - displayOffset}
               step={100}
-              onChange={(v: number) => handleYOverride(armIndex, v)}
+              onChange={(v: number) => handleYOverride(armIndex, v + displayOffset)}
             />
             <Box flex={1} minW={0} px={2}>
               <Slider
-                min={Math.round(bounds.min * 100)}
-                max={Math.round(bounds.max * 100)}
+                min={Math.round(bounds.min * 100) - displayOffset}
+                max={Math.round(bounds.max * 100) - displayOffset}
                 step={100}
-                value={Math.round(currentY * 100)}
-                onChange={(v: number) => handleYOverride(armIndex, v)}
+                value={Math.round(currentY * 100) - displayOffset}
+                onChange={(v: number) => handleYOverride(armIndex, v + displayOffset)}
                 focusThumbOnChange={false}
               >
                 <SliderTrack {...sliderTrackStyle}>
