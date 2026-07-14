@@ -181,8 +181,13 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     // --- Vertical Detailing (Arm Spacing Breakdown) ---
     const detailX = min.x - DIM_CONFIG.offset;
 
-    // Create an array of all relevant heights: base start -> arms (adjusted for elevation offset) -> column top
-    const breakpoints = [startY, ...armPositions.map(y => y + 1.3), max.y];
+    // Create an array of all relevant heights: base start -> foot height -> arms (adjusted for elevation offset) -> column top
+    const breakpoints = Array.from(new Set([
+        startY,
+        2,
+        ...armPositions.map(y => y + 1.3),
+        max.y
+    ])).sort((a, b) => a - b);
 
     // Generate segments between consecutive breakpoints to display interval gaps
     const armSegments: { from: number; to: number; midY: number; gapMm: string; index: number }[] = [];

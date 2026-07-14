@@ -24,8 +24,13 @@ export const ArmLocalDimension: React.FC<ArmLocalDimensionProps> = ({
     xPos,
     tickSize = DIM_CONFIG.tickSize
 }) => {
-    // Create an array of all relevant heights: base start -> arms (adjusted for elevation offset) -> column top
-    const breakpoints = [startY, ...armPositions.map(y => y + 1.3), columnHeightY];
+    // Create an array of all relevant heights: base start -> foot height -> arms (adjusted for elevation offset) -> column top
+    const breakpoints = Array.from(new Set([
+        startY,
+        2,
+        ...armPositions.map(y => y + 1.3),
+        columnHeightY
+    ])).sort((a, b) => a - b);
 
     // Generate segments between consecutive breakpoints to display interval gaps
     const armSegments = [];
