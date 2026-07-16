@@ -132,27 +132,26 @@ export const SpacingSettings = () => {
         </Flex>
       </Box>
 
-      {/* ── Arm Stops ──────────────────────────────────────── */}
-      <Checkbox
-        mt={4}
-        isChecked={showArmStops}
-        onChange={toggleShowArmStops}
-        size="lg"
-        colorScheme="gray"
-      >
-        <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Stops</Text>
-      </Checkbox>
+      {/* ── Arm Stops & Dividers ───────────────────────────── */}
+      <Flex mt={4} gap={6} align="center">
+        <Checkbox
+          isChecked={showArmStops}
+          onChange={toggleShowArmStops}
+          size="lg"
+          colorScheme="gray"
+        >
+          <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Stops</Text>
+        </Checkbox>
 
-      {/* ── Arm Dividers ───────────────────────────────────── */}
-      <Checkbox
-        mt={3}
-        isChecked={showArmDividers}
-        onChange={toggleShowArmDividers}
-        size="lg"
-        colorScheme="gray"
-      >
-        <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Dividers</Text>
-      </Checkbox>
+        <Checkbox
+          isChecked={showArmDividers}
+          onChange={toggleShowArmDividers}
+          size="lg"
+          colorScheme="gray"
+        >
+          <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Dividers</Text>
+        </Checkbox>
+      </Flex>
 
       {showArmDividers && (
         <Box pl={7} mt={2}>
