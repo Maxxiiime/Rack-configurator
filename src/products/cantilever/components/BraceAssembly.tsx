@@ -15,9 +15,10 @@ interface BraceAssemblyProps {
   isLast?: boolean;
   removeLeftColumn?: boolean;
   removeRightColumn?: boolean;
+  onClick?: (e: any) => void;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false, onClick }) => {
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
   const xBraceId = findPartId('x_brace', braceSize) ?? '';
@@ -27,7 +28,11 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
   const layout: BraceElement[] = typedLayouts[String(columnSizeMm)] ?? [];
 
   return (
-    <group>
+    <group
+      onClick={onClick ? (e) => { e.stopPropagation(); onClick(e); } : undefined}
+      onPointerOver={onClick ? (e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; } : undefined}
+      onPointerOut={onClick ? () => { document.body.style.cursor = 'auto'; } : undefined}
+    >
       {layout.map((element, i) => {
         const isHBrace = element.type === 'h_brace';
         if (!hasXBrace && !isHBrace) return null;
