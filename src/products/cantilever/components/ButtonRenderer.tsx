@@ -16,9 +16,7 @@ export const ButtonRenderer: React.FC = () => {
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const removeSection = useRackSectionsStore((s) => s.removeSection);
 
-	// Step 2: Rulers
-	const selectedRackId = useEditorStore((s) => s.selectedRackId);
-	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
+	// Step 2: Arm Rulers
 	const selectedArm = useEditorStore((s) => s.selectedArm);
 	const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
 
@@ -64,26 +62,11 @@ export const ButtonRenderer: React.FC = () => {
 				</>
 			)}
 
-			{/* ====== STEP 2: ADVANCED OPTIONS ====== */}
+			{/* ====== STEP 2: ARMS ====== */}
 			{currentStep === 2 && (
 				<>
-					{/* Section Rulers */}
-					{sectionIds.map((rackId, index) => {
-						if (selectedRackId !== null && selectedRackId !== rackId) return null;
-						const posX = columnPositionsX[index];
-						return (
-							<Button3D
-								key={`ruler-section-${rackId}`}
-								type="ruler"
-								position={[posX + rackWidths[index] / 2, -0.5, 0]}
-								onClick={() => setSelectedRackId(selectedRackId === rackId ? null : rackId)}
-								isActive={selectedRackId === rackId}
-							/>
-						);
-					})}
-
 					{/* Arm Rulers */}
-					{selectedRackId === null && (selectedArm === null || selectedArm.columnIndex === undefined) && armPositionsFront.map((yPosFront, i) => {
+					{(selectedArm === null || selectedArm.columnIndex === undefined) && armPositionsFront.map((yPosFront, i) => {
 						const yPosBack = armPositionsBack[i] ?? yPosFront;
 						const isRowSelectedFront = selectedArm?.armIndex === i && selectedArm?.columnIndex === undefined && (selectedArm?.side === 'front' || selectedArm?.side === undefined);
 						const isRowSelectedBack = selectedArm?.armIndex === i && selectedArm?.columnIndex === undefined && selectedArm?.side === 'back';

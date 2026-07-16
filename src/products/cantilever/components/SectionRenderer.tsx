@@ -16,6 +16,8 @@ export const SectionRenderer: React.FC = () => {
 
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
+	const currentStep = useEditorStore((s) => s.currentStep);
+	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
 	const braceSize = getPartSize(braceId);
 	const { columnPositionsX } = useRackPositions();
@@ -26,6 +28,10 @@ export const SectionRenderer: React.FC = () => {
 				const posX = columnPositionsX[index];
 				const currentBraceSize = sectionWidthOverrides[rackId] ?? braceSize;
 				const currentHeightId = sectionHeightOverrides[rackId] ?? columnId;
+
+				const handleClick = currentStep === 1
+					? () => setSelectedRackId(selectedRackId === rackId ? null : rackId)
+					: undefined;
 
 				return (
 					<group key={rackId} position={[posX, 0, 0]}>
@@ -38,6 +44,7 @@ export const SectionRenderer: React.FC = () => {
 							isLast={index === sectionIds.length - 1}
 							removeLeftColumn={removeLastColumn}
 							removeRightColumn={removeFirstColumn}
+							onClick={handleClick}
 						/>
 					</group>
 				);
@@ -45,3 +52,4 @@ export const SectionRenderer: React.FC = () => {
 		</>
 	);
 };
+

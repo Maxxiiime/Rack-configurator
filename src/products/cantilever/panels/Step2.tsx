@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Text, VStack, Box } from "@chakra-ui/react";
 import { useEditorStore } from "../stores/editorStore";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
-import { GlobalSettings } from "./GlobalSettings";
-import { RackEditor } from "./RackEditor";
+import { SpacingSettings } from "./SpacingSettings";
 import { ArmRowEditor } from "./ArmRowEditor";
 import RulerIcon from "@/assets/svgs/RulerIcon";
 
@@ -12,10 +11,7 @@ import RulerIcon from "@/assets/svgs/RulerIcon";
 export function Step2() {
   const [globalOpen, setGlobalOpen] = useState(true);
 
-  const selectedRackId = useEditorStore((s) => s.selectedRackId);
   const selectedArm = useEditorStore((s) => s.selectedArm);
-
-  const hasSelection = selectedRackId !== null || selectedArm !== null;
 
   return (
     <VStack align="stretch" spacing={0} flex={1}>
@@ -27,18 +23,15 @@ export function Step2() {
           isOpen={globalOpen}
           onToggle={() => setGlobalOpen((v) => !v)}
         >
-          <GlobalSettings />
-        </  CollapsibleMenu>
+          <SpacingSettings />
+        </CollapsibleMenu>
       </Box>
-
-      {/* ── Dynamic: Selected Rack ────────────────────────────── */}
-      {selectedRackId && <RackEditor rackId={selectedRackId} />}
 
       {/* ── Dynamic: Selected Arm ─────────────────────────── */}
       {selectedArm !== null && <ArmRowEditor armIndex={selectedArm.armIndex} columnIndex={selectedArm.columnIndex} side={selectedArm.side} />}
 
       {/* ── No selection hint ─────────────────────────────────── */}
-      {!hasSelection && (
+      {selectedArm === null && (
         <>
           <Box
             mb={3}
@@ -61,7 +54,7 @@ export function Step2() {
               >
                 <RulerIcon width="100%" height="100%" />
               </Box>{' '}
-              to edit a specific rack or arm row.
+              to edit a specific arm row.
             </Text>
           </Box>
           <Box
@@ -73,7 +66,7 @@ export function Step2() {
             borderColor="orange.200"
           >
             <Text fontSize="11px" color="orange.600" lineHeight="1.4">
-              Click directly on an specific arm to edit it individually.
+              Click directly on a specific arm to edit it individually.
             </Text>
           </Box>
         </>

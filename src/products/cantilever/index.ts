@@ -33,9 +33,9 @@ export const cantileverProduct: ProductDefinition<RackConfigState, CantileverEdi
 
   // Configuration steps
   steps: [
-    { label: 'Global Layout', Component: Step1, showNext: true, showBack: false },
-    { label: 'Advanced Options', Component: Step2, showNext: true, showBack: true },
-    { label: 'Bill of Materials', Component: Step3, showNext: false, showBack: true },
+    { label: 'Dimensions', Component: Step1, showNext: true, showBack: false },
+    { label: 'Arms', Component: Step2, showNext: true, showBack: true },
+    { label: 'BOM', Component: Step3, showNext: false, showBack: true },
   ],
 
   shadowOffset: -offsets.bottom_bolt.y,
