@@ -1,11 +1,12 @@
 import {
-  Box, Flex, Text,
+  Box, Flex, Text, Checkbox,
   Slider, SliderTrack, SliderFilledTrack, SliderThumb,
 } from "@chakra-ui/react";
-import { sectionBoxStyle, sliderTrackStyle, sliderThumbStyle } from "@/features/Sidepanel/styles";
+import { sliderTrackStyle, sliderThumbStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { Stepper } from "@/components/ui/Shared";
 import { useRackConfigStore } from "../stores/configStore";
+import { useEditorStore } from "../stores/editorStore";
 import { useArmPositions } from "../hooks/useArmPositions";
 import offsets from "../data/offsets.json";
 
@@ -21,9 +22,22 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
   const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
   const setArmYOverride = useRackConfigStore((s) => s.setArmYOverride);
   const removeArmYOverride = useRackConfigStore((s) => s.removeArmYOverride);
+  const setSelectedArm = useEditorStore((s) => s.setSelectedArm);
 
+  const isEditingRow = columnIndex === undefined;
   const activeSide = side ?? 'front';
   const { basePositions, startY, columnHeightUnits } = useArmPositions(columnIndex, activeSide);
+
+  // ── Toggle between individual arm and row editing ──
+  const handleToggleEditRow = () => {
+    if (isEditingRow) {
+      // Switch back to individual — but we lost columnIndex, so just deselect
+      setSelectedArm(null);
+    } else {
+      // Switch to row editing: remove columnIndex
+      setSelectedArm({ armIndex, side: activeSide });
+    }
+  };
 
   // ── Arm Y helpers ──
   const globalMinY = startY;
@@ -65,16 +79,34 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
 
   const displayOffset = offsets.arm.start_y_display * 100;
 
+  const label = isEditingRow
+    ? `Arm Row ${armIndex + 1} - ${activeSide}`
+    : `Arm ${armIndex + 1} (Col ${columnIndex! + 1}) - ${activeSide}`;
+
   return (
     <Box mb={4}>
       <CollapsibleMenu
-        label={columnIndex !== undefined ? `Arm ${armIndex + 1} (Col ${columnIndex + 1}) - ${activeSide}` : `Arm Row ${armIndex + 1} - ${activeSide}`}
+        label={label}
         isOpen
         onToggle={() => { }}
         withTopBorder
         accentColor="orange.400"
       >
-        <Box {...sectionBoxStyle}>
+        {/* ── Edit Row toggle ──────────────────────────────── */}
+        <Box mb={3}>
+          <Checkbox
+            isChecked={isEditingRow}
+            onChange={handleToggleEditRow}
+            size="md"
+            colorScheme="gray"
+          >
+            <Text fontSize="12px" fontWeight={500} color="gray.600">
+              Edit row
+            </Text>
+          </Checkbox>
+        </Box>
+
+        <Box>
           <Flex align="center" justify="space-between" mb={2}>
             <Text fontSize="12px" fontWeight={500} color="gray.500">
               Position Y (mm)
