@@ -23,6 +23,7 @@
 		"@chakra-ui/react": "^2.8.0",
 		"@emotion/react": "^11.10.5",
 		"@emotion/styled": "^11.10.5",
+		"@fontsource/roboto": "^5.2.10",
 		"@react-three/drei": "^9.122.0",
 		"@react-three/fiber": "^8.18.0",
 		"framer-motion": "^9.0.4",
