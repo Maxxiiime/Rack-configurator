@@ -14,6 +14,7 @@ interface ColumnAssemblyProps {
   rackType: RackType;
   position?: [number, number, number];
   selectedMode?: boolean;
+  hoveredMode?: boolean;
   columnIndex: number;
   iconDirection?: 1 | -1;
 }
@@ -25,6 +26,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   rackType,
   position = [0, 0, 0],
   selectedMode = false,
+  hoveredMode = false,
   columnIndex,
 }) => {
 
@@ -65,7 +67,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
   return (
     <group position={position}>
       {/* COLUMN */}
-      <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} selectedMode={selectedMode} />
+      <BasePart id={columnId} position={[offsets.column.x, 0, offsets.column.z]} selectedMode={selectedMode} hoveredMode={hoveredMode} />
 
       {/* LEGS */}
       <BasePart
@@ -76,6 +78,7 @@ export const ColumnAssembly: React.FC<ColumnAssemblyProps> = ({
             : [offsets.leg.x, offsets.leg.y, offsets.leg.z]
         }
         selectedMode={selectedMode}
+        hoveredMode={hoveredMode}
       />
 
       {/* ARMS */}

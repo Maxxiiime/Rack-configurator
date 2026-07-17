@@ -1,7 +1,8 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { useRackConfigStore } from "../stores/configStore";
 import { useEditorStore } from "../stores/editorStore";
+import { useHoverStore } from "@/stores/hoverStore";
 import { useRackPositions } from "../hooks/useRackPositions";
 import { DimensionLines } from "./DimensionLines/index";
 import { WeightInfo } from "./WeightInfo/index";
@@ -16,6 +17,13 @@ export const RackSystem: React.FC = () => {
 	const rackType = useRackConfigStore((s) => s.rackType);
 	const showDimensions = useEditorStore((s) => s.showDimensions);
 	const showWeightInfo = useEditorStore((s) => s.showWeightInfo);
+	const currentStep = useEditorStore((s) => s.currentStep);
+	const setHoveredId = useHoverStore((s) => s.setHoveredId);
+
+	// Clear hover highlight when switching steps
+	useEffect(() => {
+		setHoveredId(null);
+	}, [currentStep, setHoveredId]);
 
 	const { centerX } = useRackPositions();
 	const { maxHeight, totalWidth, focusTarget } = useCameraFocus();

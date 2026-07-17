@@ -15,12 +15,13 @@ interface CantileverPartProps {
   rotation?: [number, number, number];
   scale?: [number, number, number];
   selectedMode?: boolean;
+  hoveredMode?: boolean;
   onClick?: (e: any) => void;
   onPointerOver?: (e: any) => void;
   onPointerOut?: (e: any) => void;
 }
 
-export const CantileverPart: React.FC<CantileverPartProps> = ({ id, ...props }) => {
+export const CantileverPart: React.FC<CantileverPartProps> = ({ id, hoveredMode, ...props }) => {
   const data = getPartData(id);
 
   if (!data) {
@@ -32,5 +33,5 @@ export const CantileverPart: React.FC<CantileverPartProps> = ({ id, ...props }) 
   if (data.category === 'arm') materialName = 'Red';
   else if (data.category === 'arm_divider' || data.category === 'x_brace' || data.category === 'arm_stop') materialName = 'Grey';
 
-  return <BasePart path={data.path} materialName={materialName} {...props} />;
+  return <BasePart path={data.path} materialName={materialName} hoveredMode={hoveredMode} {...props} />;
 };

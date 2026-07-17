@@ -11,14 +11,17 @@ interface BraceAssemblyProps {
   columnId: string;
   hasXBrace: boolean;
   selectedMode?: boolean;
+  hoveredMode?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
   removeLeftColumn?: boolean;
   removeRightColumn?: boolean;
   onClick?: (e: any) => void;
+  onPointerOver?: () => void;
+  onPointerOut?: () => void;
 }
 
-export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false, onClick }) => {
+export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnId, hasXBrace, selectedMode, hoveredMode, isFirst = false, isLast = false, removeLeftColumn = false, removeRightColumn = false, onClick, onPointerOver, onPointerOut }) => {
 
   const hBraceId = findPartId('h_brace', braceSize) ?? '';
   const xBraceId = findPartId('x_brace', braceSize) ?? '';
@@ -27,11 +30,13 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
   const columnSizeMm = getPartSize(columnId);
   const layout: BraceElement[] = typedLayouts[String(columnSizeMm)] ?? [];
 
+  const hasInteraction = onClick || onPointerOver;
+
   return (
     <group
       onClick={onClick ? (e) => { e.stopPropagation(); onClick(e); } : undefined}
-      onPointerOver={onClick ? (e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; } : undefined}
-      onPointerOut={onClick ? () => { document.body.style.cursor = 'auto'; } : undefined}
+      onPointerOver={hasInteraction ? (e) => { e.stopPropagation(); if (onClick) document.body.style.cursor = 'pointer'; onPointerOver?.(); } : undefined}
+      onPointerOut={hasInteraction ? () => { if (onClick) document.body.style.cursor = 'auto'; onPointerOut?.(); } : undefined}
     >
       {layout.map((element, i) => {
         const isHBrace = element.type === 'h_brace';
@@ -45,7 +50,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
 
         return (
           <group key={`${element.type}-${i}`}>
-            <BasePart id={id} position={position} selectedMode={selectedMode} />
+            <BasePart id={id} position={position} selectedMode={selectedMode} hoveredMode={hoveredMode} />
 
             {isHBrace && (() => {
               const braceSizeUnits = braceSize / 100;
@@ -58,6 +63,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
                       rotation={[0, Math.PI, 0]}
                       position={[offsets.brace_bolt.first_x, y, offsets.brace_bolt.z]}
                       selectedMode={selectedMode}
+                      hoveredMode={hoveredMode}
                     />
                   )}
                   {isLast && !removeRightColumn && (
@@ -65,6 +71,7 @@ export const BraceAssembly: React.FC<BraceAssemblyProps> = ({ braceSize, columnI
                       id="bolts"
                       position={[gap, y, offsets.brace_bolt.z]}
                       selectedMode={selectedMode}
+                      hoveredMode={hoveredMode}
                     />
                   )}
                 </>

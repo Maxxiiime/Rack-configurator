@@ -3,7 +3,7 @@ import { ColumnAssembly } from './ColumnAssembly';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
-import { getPartSize } from '../utils/shelfParts';
+import { useHoverStore } from '@/stores/hoverStore';
 import { resolveEffectiveColumnId } from '../utils/resolveColumn';
 import { useRackPositions } from '../hooks/useRackPositions';
 
@@ -18,6 +18,9 @@ export const ColumnRenderer: React.FC = () => {
 
 	const sectionIds = useRackSectionsStore((s) => s.sectionIds);
 	const selectedRackId = useEditorStore((s) => s.selectedRackId);
+	const currentStep = useEditorStore((s) => s.currentStep);
+
+	const hoveredId = useHoverStore((s) => s.hoveredId);
 
 	const { columnPositionsX } = useRackPositions();
 
@@ -30,6 +33,7 @@ export const ColumnRenderer: React.FC = () => {
 				const leftSectionId = index > 0 ? sectionIds[index - 1] : null;
 				const rightSectionId = index < sectionIds.length ? sectionIds[index] : null;
 				const isSelected = selectedRackId !== null && (selectedRackId === leftSectionId || selectedRackId === rightSectionId);
+				const isHovered = currentStep === 1 && hoveredId !== null && (hoveredId === leftSectionId || hoveredId === rightSectionId);
 
 				let iconDirection: 1 | -1 = 1;
 				if (selectedRackId === leftSectionId) {
@@ -49,6 +53,7 @@ export const ColumnRenderer: React.FC = () => {
 						rackType={rackType}
 						position={[posX, 0, 0]}
 						selectedMode={isSelected}
+						hoveredMode={isHovered}
 						columnIndex={index}
 						iconDirection={iconDirection}
 					/>

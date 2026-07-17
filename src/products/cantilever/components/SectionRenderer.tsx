@@ -3,6 +3,7 @@ import { BraceAssembly } from './BraceAssembly';
 import { useRackConfigStore } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
 import { useEditorStore } from '../stores/editorStore';
+import { useHoverStore } from '@/stores/hoverStore';
 import { getPartSize } from '../utils/shelfParts';
 import { useRackPositions } from '../hooks/useRackPositions';
 
@@ -19,6 +20,9 @@ export const SectionRenderer: React.FC = () => {
 	const currentStep = useEditorStore((s) => s.currentStep);
 	const setSelectedRackId = useEditorStore((s) => s.setSelectedRackId);
 
+	const hoveredId = useHoverStore((s) => s.hoveredId);
+	const setHoveredId = useHoverStore((s) => s.setHoveredId);
+
 	const braceSize = getPartSize(braceId);
 	const { columnPositionsX } = useRackPositions();
 
@@ -33,6 +37,8 @@ export const SectionRenderer: React.FC = () => {
 					? () => setSelectedRackId(selectedRackId === rackId ? null : rackId)
 					: undefined;
 
+				const isHovered = currentStep === 1 && hoveredId === rackId;
+
 				return (
 					<group key={rackId} position={[posX, 0, 0]}>
 						<BraceAssembly
@@ -40,11 +46,14 @@ export const SectionRenderer: React.FC = () => {
 							columnId={currentHeightId}
 							hasXBrace={(sectionIds.length - 1 - index) % 3 === 0}
 							selectedMode={selectedRackId === rackId}
+							hoveredMode={isHovered}
 							isFirst={index === 0}
 							isLast={index === sectionIds.length - 1}
 							removeLeftColumn={removeLastColumn}
 							removeRightColumn={removeFirstColumn}
 							onClick={handleClick}
+							onPointerOver={currentStep === 1 ? () => setHoveredId(rackId) : undefined}
+							onPointerOut={currentStep === 1 ? () => setHoveredId(null) : undefined}
 						/>
 					</group>
 				);
