@@ -1,13 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import type {
-  BoxProps,
-  TextProps,
-  FlexProps,
-  CheckboxProps,
-  ButtonProps,
-  TableProps,
-  TableContainerProps,
-} from "@chakra-ui/react";
+
 import styled from "@emotion/styled";
 
 /* ─── Global Variables ─────────────────────────────────────────────── */
@@ -78,7 +70,7 @@ export const StyledBox = styled(Box) <{ open: boolean; width: number }>`
 
 /* ─── Section divider ────────────────────────────────────────────── */
 
-export const sectionBoxStyle: BoxProps = {
+export const sectionBoxStyle = {
   borderTop: "1px solid",
   borderColor: "rgba(0,0,0,0.08)",
   pt: 3,
@@ -204,7 +196,7 @@ export const sliderThumbStyle = {
 
 /* ─── Reusable Layout Boxes ──────────────────────────────────────── */
 
-export const hintBoxStyle: BoxProps = {
+export const hintBoxStyle = {
   p: 3,
   borderRadius: panelRadius,
   bg: "red.50",
@@ -212,7 +204,7 @@ export const hintBoxStyle: BoxProps = {
   borderColor: "red.200",
 };
 
-export const priceBoxStyle: BoxProps = {
+export const priceBoxStyle = {
   p: 4,
   bg: "gray.50",
   borderRadius: panelRadius,
@@ -222,19 +214,19 @@ export const priceBoxStyle: BoxProps = {
 
 /* ─── Typography & Shared Elements ───────────────────────────────── */
 
-export const baseLabelStyle: TextProps = {
+export const baseLabelStyle = {
   fontSize: "12px",
   fontWeight: 500,
   color: "black",
 };
 
-export const hintTextStyle: TextProps = {
+export const hintTextStyle = {
   fontSize: "11px",
   color: "red.600",
   lineHeight: "1.4",
 };
 
-export const resetButtonStyle: TextProps = {
+export const resetButtonStyle = {
   fontSize: "10px",
   fontWeight: 600,
   color: "red.500",
@@ -242,13 +234,13 @@ export const resetButtonStyle: TextProps = {
   _hover: { color: "red.700" },
 };
 
-export const flexSpaceBetweenStyle: FlexProps = {
+export const flexSpaceBetweenStyle = {
   align: "center",
   justify: "space-between",
   mb: 2,
 };
 
-export const checkboxStyle: CheckboxProps = {
+export const checkboxStyle = {
   size: "md",
   colorScheme: "gray",
 };
@@ -261,7 +253,7 @@ export const sliderFilledTrackStyle = {
 
 /* ─── Navigation Buttons ─────────────────────────────────────────── */
 
-export const nextButtonStyle: ButtonProps = {
+export const nextButtonStyle = {
   w: "full",
   bg: "black",
   color: "white",
@@ -272,7 +264,7 @@ export const nextButtonStyle: ButtonProps = {
   _active: { bg: "gray.900" },
 };
 
-export const backButtonStyle: ButtonProps = {
+export const backButtonStyle = {
   w: "full",
   bg: "white",
   border: "1px solid",
@@ -287,7 +279,7 @@ export const backButtonStyle: ButtonProps = {
 
 /* ─── Panel Header ───────────────────────────────────────────────── */
 
-export const panelHeaderTextStyle: TextProps = {
+export const panelHeaderTextStyle = {
   fontSize: "15px",
   fontWeight: 700,
   letterSpacing: "0.12em",
@@ -297,7 +289,7 @@ export const panelHeaderTextStyle: TextProps = {
 
 /* ─── Step Dots ──────────────────────────────────────────────────── */
 
-export function stepDotStyle(isActive: boolean, isPast: boolean): BoxProps {
+export function stepDotStyle(isActive: boolean, isPast: boolean) {
   return {
     display: "flex",
     alignItems: "center",
@@ -310,17 +302,17 @@ export function stepDotStyle(isActive: boolean, isPast: boolean): BoxProps {
     bg: isActive ? "red.600" : isPast ? "gray.200" : "white",
     cursor: isPast ? "pointer" : "default",
     transition: "all 0.15s ease",
-  } as BoxProps;
+  };
 }
 
-export const stepDotTextStyle = (isActive: boolean, isPast: boolean): TextProps => ({
+export const stepDotTextStyle = (isActive: boolean, isPast: boolean) => ({
   fontSize: "10px",
   fontWeight: 700,
   color: isActive ? "white" : isPast ? "black" : "gray.400",
   lineHeight: "1",
 });
 
-export const stepConnectorStyle: BoxProps = {
+export const stepConnectorStyle = {
   h: "1px",
   w: "20px",
   transition: "background 0.2s ease",
@@ -328,13 +320,13 @@ export const stepConnectorStyle: BoxProps = {
 
 /* ─── BOM Table ──────────────────────────────────────────────────── */
 
-export const tableContainerStyle: TableContainerProps = {
+export const tableContainerStyle = {
   border: "1px solid",
   borderColor: "red.200",
   borderRadius: panelRadius,
 };
 
-export const tableStyle: TableProps = {
+export const tableStyle = {
   variant: "simple",
   size: "sm",
 };
@@ -342,7 +334,7 @@ export const tableStyle: TableProps = {
 /** sx prop for Chakra Table to set all th/td border color */
 export const tableSxBorderColor = { "th, td": { borderColor: "red.200" } };
 
-export const tableTheadStyle: BoxProps = {
+export const tableTheadStyle = {
   bg: "red.50",
 };
 
@@ -358,24 +350,24 @@ export const tableTdStyle = {
   py: 3,
 };
 
-export const tableCellPrimaryStyle: TextProps = {
+export const tableCellPrimaryStyle = {
   fontWeight: 500,
   fontSize: "13px",
   color: "black",
 };
 
-export const tableCellSecondaryStyle: TextProps = {
+export const tableCellSecondaryStyle = {
   color: "black",
   fontSize: "11px",
 };
 
-export const tableCellPriceStyle: TextProps = {
+export const tableCellPriceStyle = {
   fontWeight: 600,
   fontSize: "13px",
   color: "black",
 };
 
-export const tableCellPriceSubStyle: TextProps = {
+export const tableCellPriceSubStyle = {
   color: "black",
   fontSize: "11px",
   fontWeight: "normal" as const,
@@ -383,7 +375,7 @@ export const tableCellPriceSubStyle: TextProps = {
 
 /* ─── Price Total Footer ─────────────────────────────────────────── */
 
-export const priceTotalBoxStyle: BoxProps & FlexProps = {
+export const priceTotalBoxStyle = {
   ...priceBoxStyle,
   bg: "red.50",
   borderColor: "red.200",
@@ -392,13 +384,13 @@ export const priceTotalBoxStyle: BoxProps & FlexProps = {
   mt: 4,
 };
 
-export const priceTotalLabelStyle: TextProps = {
+export const priceTotalLabelStyle = {
   fontSize: "15px",
   fontWeight: "bold",
   color: "black",
 };
 
-export const priceTotalValueStyle: TextProps = {
+export const priceTotalValueStyle = {
   fontSize: "18px",
   fontWeight: "bold",
   color: "black",
