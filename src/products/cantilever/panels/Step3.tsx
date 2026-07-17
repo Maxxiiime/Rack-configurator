@@ -1,36 +1,51 @@
 import { VStack, Text, Table, Thead, Tbody, Tr, Th, Td, TableContainer, Flex } from "@chakra-ui/react";
 import { useBillOfMaterials } from "../hooks/useBillOfMaterials";
+import {
+  tableContainerStyle,
+  tableStyle,
+  tableSxBorderColor,
+  tableTheadStyle,
+  tableThStyle,
+  tableTdStyle,
+  tableCellPrimaryStyle,
+  tableCellSecondaryStyle,
+  tableCellPriceStyle,
+  tableCellPriceSubStyle,
+  priceTotalLabelStyle,
+  priceTotalValueStyle,
+  priceBoxStyle,
+} from "@/features/Sidepanel/styles";
 
 export function Step3() {
   const bom = useBillOfMaterials();
 
   return (
     <VStack align="stretch" spacing={4} flex={1}>
-      <TableContainer border="1px solid" borderColor="gray.100" borderRadius="md">
-        <Table variant="simple" size="sm">
-          <Thead bg="gray.50">
+      <TableContainer {...tableContainerStyle}>
+        <Table {...tableStyle} sx={tableSxBorderColor}>
+          <Thead {...tableTheadStyle}>
             <Tr>
-              <Th px={2} py={3} fontSize="12px">Component</Th>
-              <Th px={2} py={3} fontSize="12px" isNumeric>Qty</Th>
-              <Th px={2} py={3} fontSize="12px" isNumeric>Total</Th>
+              <Th {...tableThStyle}>Component</Th>
+              <Th {...tableThStyle} isNumeric>Qty</Th>
+              <Th {...tableThStyle} isNumeric>Total</Th>
             </Tr>
           </Thead>
           <Tbody>
             {bom.items.map((item) => (
               <Tr key={item.partId}>
-                <Td px={2} py={3} whiteSpace="normal">
-                  <Text fontWeight="500" fontSize="13px">{item.name}</Text>
+                <Td {...tableTdStyle} whiteSpace="normal">
+                  <Text {...tableCellPrimaryStyle}>{item.name}</Text>
                   {item.code && (
-                    <Text color="gray.500" fontSize="11px">{item.code}</Text>
+                    <Text {...tableCellSecondaryStyle}>{item.code}</Text>
                   )}
                 </Td>
-                <Td px={2} py={3} isNumeric fontSize="13px">{item.quantity}</Td>
-                <Td px={2} py={3} isNumeric>
-                  <Text fontWeight="600" fontSize="13px">
+                <Td {...tableTdStyle} isNumeric fontSize="13px" color="black">{item.quantity}</Td>
+                <Td {...tableTdStyle} isNumeric>
+                  <Text {...tableCellPriceStyle}>
                     {item.totalPrice > 0 ? `€${item.totalPrice.toFixed(2)}` : "-"}
                   </Text>
                   {item.quantity > 1 && item.unitPrice > 0 && (
-                    <Text color="gray.500" fontSize="11px" fontWeight="normal">({item.quantity} × €{item.unitPrice.toFixed(2)})</Text>
+                    <Text {...tableCellPriceSubStyle}>({item.quantity} × €{item.unitPrice.toFixed(2)})</Text>
                   )}
                 </Td>
               </Tr>
@@ -39,11 +54,12 @@ export function Step3() {
         </Table>
       </TableContainer>
 
-      <Flex justify="space-between" align="center" mt={4} p={4} bg="gray.50" borderRadius="md" border="1px solid" borderColor="gray.200">
-        <Text fontSize="15px" fontWeight="bold">Total</Text>
-        <Text fontSize="18px" fontWeight="bold" color="blue.600">€{bom.totalPrice.toFixed(2)}</Text>
+      <Flex justify="space-between" align="center" mt={4} {...priceBoxStyle} bg="red.50" borderColor="red.200">
+        <Text {...priceTotalLabelStyle}>Total</Text>
+        <Text {...priceTotalValueStyle}>€{bom.totalPrice.toFixed(2)}</Text>
       </Flex>
 
     </VStack>
   );
 }
+

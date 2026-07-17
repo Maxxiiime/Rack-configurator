@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Select } from "@chakra-ui/react";
-import { sectionBoxStyle, selectStyle } from "@/features/Sidepanel/styles";
+import { sectionBoxStyle, baseLabelStyle, flexSpaceBetweenStyle, resetButtonStyle, selectStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { useRackConfigStore } from "../stores/configStore";
 import { useRackSectionsStore } from "../stores/sectionsStore";
@@ -42,20 +42,16 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
         isOpen
         onToggle={() => { }}
         withTopBorder
-        accentColor="orange.400"
+        accentColor="red.600"
       >
         <Box {...sectionBoxStyle} mb={4}>
-          <Flex align="center" justify="space-between" mb={2}>
-            <Text fontSize="12px" fontWeight={500} color="gray.500">
+          <Flex {...flexSpaceBetweenStyle}>
+            <Text {...baseLabelStyle}>
               Width (mm)
             </Text>
             {isWidthOverridden && (
               <Text
-                fontSize="10px"
-                fontWeight={600}
-                color="red.500"
-                cursor="pointer"
-                _hover={{ color: "red.700" }}
+                {...resetButtonStyle}
                 onClick={() => removeSectionWidthOverride(rackId)}
               >
                 Reset
@@ -74,17 +70,13 @@ export const RackEditor = ({ rackId }: RackEditorProps) => {
         </Box>
 
         <Box {...sectionBoxStyle}>
-          <Flex align="center" justify="space-between" mb={2}>
-            <Text fontSize="12px" fontWeight={500} color="gray.500">
+          <Flex {...flexSpaceBetweenStyle}>
+            <Text {...baseLabelStyle}>
               Height (mm)
             </Text>
             {isHeightOverridden && (
               <Text
-                fontSize="10px"
-                fontWeight={600}
-                color="red.500"
-                cursor="pointer"
-                _hover={{ color: "red.700" }}
+                {...resetButtonStyle}
                 onClick={() => removeSectionHeightOverride(rackId)}
               >
                 Reset

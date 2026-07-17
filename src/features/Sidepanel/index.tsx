@@ -1,7 +1,16 @@
 import { Box, Flex, Text, Button, VStack } from "@chakra-ui/react";
 import { useAppStore } from "@/stores/appStore";
 import { useActiveProduct } from "@/products";
-import { StyledBox } from "./styles";
+import {
+  StyledBox,
+  priceBoxStyle,
+  panelHeaderTextStyle,
+  stepDotStyle,
+  stepDotTextStyle,
+  stepConnectorStyle,
+  nextButtonStyle,
+  backButtonStyle,
+} from "./styles";
 import ChevronLeft from "@/assets/svgs/ChevronLeft";
 
 /* ─── Step indicator ────────────────────────────────────────────── */
@@ -17,7 +26,7 @@ function StepDots({
 }) {
   const stepsArray = Array.from({ length: totalSteps }, (_, i) => i + 1);
   return (
-    <Flex align="center" justify="center" gap={2} mb={4}>
+    <Flex align="center" justify="center" gap={2} mb={8}>
       {stepsArray.map((s) => {
         const isActive = currentStep === s;
         const isPast = currentStep > s;
@@ -26,34 +35,17 @@ function StepDots({
             <Box
               as="button"
               onClick={() => onStepClick(s)}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              w="24px"
-              h="24px"
-              borderRadius="full"
-              border="1.5px solid"
-              borderColor={isActive ? "gray.800" : isPast ? "gray.400" : "gray.200"}
-              bg={isActive ? "gray.900" : isPast ? "gray.200" : "white"}
-              cursor={isPast ? "pointer" : "default"}
-              transition="all 0.15s ease"
+              {...stepDotStyle(isActive, isPast)}
               _hover={isPast ? { bg: "gray.300" } : {}}
             >
-              <Text
-                fontSize="10px"
-                fontWeight={700}
-                color={isActive ? "white" : isPast ? "gray.600" : "gray.300"}
-                lineHeight="1"
-              >
+              <Text {...stepDotTextStyle(isActive, isPast)}>
                 {s}
               </Text>
             </Box>
             {s < totalSteps && (
               <Box
-                h="1px"
-                w="20px"
+                {...stepConnectorStyle}
                 bg={currentStep >= s + 1 ? "gray.400" : "gray.200"}
-                transition="background 0.2s ease"
               />
             )}
           </Flex>
@@ -79,7 +71,7 @@ const Sidepanel = ({ width = 300 }) => {
   const { totalPrice } = usePricing();
 
   const totalSteps = activeProduct.steps.length;
-  
+
   // Safeguard: if step is out of bounds
   const validStep = Math.max(1, Math.min(currentStep, totalSteps));
   const activeStep = activeProduct.steps[validStep - 1];
@@ -102,14 +94,8 @@ const Sidepanel = ({ width = 300 }) => {
       <div className="panel-inner">
         {/* ── Header ─────────────────────────────────────────── */}
         <Box mb={4} pb={3} borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)">
-          <Text
-            fontSize="15px"
-            fontWeight={700}
-            letterSpacing="0.12em"
-            textTransform="uppercase"
-            color="gray.800"
-          >
-            {activeProduct.name}
+          <Text {...panelHeaderTextStyle}>
+            STEP {validStep} — {activeStep.label}
           </Text>
         </Box>
 
@@ -123,16 +109,7 @@ const Sidepanel = ({ width = 300 }) => {
           }}
         />
 
-        {/* ── Step title ─────────────────────────────────────── */}
-        <Flex align="center" gap={2} mb={8}>
-          <Text
-            fontSize="15px"
-            fontWeight={700}
-            color="gray.700"
-          >
-            Step {validStep} — {activeStep.label}
-          </Text>
-        </Flex>
+
 
         <StepComponent />
 
@@ -142,14 +119,7 @@ const Sidepanel = ({ width = 300 }) => {
             <VStack spacing={3} borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={5}>
               {showNext && (
                 <Button
-                  w="full"
-                  bg="gray.900"
-                  color="white"
-                  fontSize="12px"
-                  fontWeight={600}
-                  borderRadius="lg"
-                  _hover={{ bg: "gray.700" }}
-                  _active={{ bg: "gray.800" }}
+                  {...nextButtonStyle}
                   onClick={() => setCurrentStep(validStep + 1)}
                 >
                   Next
@@ -157,16 +127,7 @@ const Sidepanel = ({ width = 300 }) => {
               )}
               {showBack && (
                 <Button
-                  w="full"
-                  bg="white"
-                  border="1px solid"
-                  borderColor="gray.200"
-                  fontSize="12px"
-                  fontWeight={600}
-                  color="gray.700"
-                  borderRadius="lg"
-                  _hover={{ bg: "gray.50", borderColor: "gray.300" }}
-                  _active={{ bg: "gray.100" }}
+                  {...backButtonStyle}
                   onClick={() => {
                     if (validStep === 2) goToFirstStep();
                     else setCurrentStep(validStep - 1);
@@ -181,18 +142,14 @@ const Sidepanel = ({ width = 300 }) => {
           {/* ── Price footer ───────────────────────────────────── */}
           {validStep !== totalSteps && (
             <Box
-              p={4}
               mt={4}
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              bg="gray.50"
-              borderRadius="lg"
-              border="1px solid"
-              borderColor="gray.200"
+              {...priceBoxStyle}
             >
-              <Text fontSize="15px" fontWeight={600} color="gray.600">Total:</Text>
-              <Text fontSize="18px" fontWeight={800} color="gray.800">
+              <Text fontSize="15px" fontWeight={600} color="black">Total:</Text>
+              <Text fontSize="18px" fontWeight={800} color="black">
                 {totalPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
               </Text>
             </Box>
@@ -204,3 +161,4 @@ const Sidepanel = ({ width = 300 }) => {
 };
 
 export default Sidepanel;
+

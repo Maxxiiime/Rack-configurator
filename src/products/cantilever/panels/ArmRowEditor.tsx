@@ -2,7 +2,7 @@ import {
   Box, Flex, Text, Checkbox,
   Slider, SliderTrack, SliderFilledTrack, SliderThumb,
 } from "@chakra-ui/react";
-import { sliderTrackStyle, sliderThumbStyle } from "@/features/Sidepanel/styles";
+import { sliderTrackStyle, sliderThumbStyle, checkboxStyle, baseLabelStyle, flexSpaceBetweenStyle, resetButtonStyle } from "@/features/Sidepanel/styles";
 import { CollapsibleMenu } from "@/features/Sidepanel/components/CollapsibleMenu";
 import { Stepper } from "@/components/ui/Shared";
 import { useRackConfigStore } from "../stores/configStore";
@@ -90,34 +90,29 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
         isOpen
         onToggle={() => { }}
         withTopBorder
-        accentColor="orange.400"
+        accentColor="red.600"
       >
         {/* ── Edit Row toggle ──────────────────────────────── */}
         <Box mb={3}>
           <Checkbox
             isChecked={isEditingRow}
             onChange={handleToggleEditRow}
-            size="md"
-            colorScheme="gray"
+            {...checkboxStyle}
           >
-            <Text fontSize="12px" fontWeight={500} color="gray.600">
+            <Text {...baseLabelStyle}>
               Edit row
             </Text>
           </Checkbox>
         </Box>
 
         <Box>
-          <Flex align="center" justify="space-between" mb={2}>
-            <Text fontSize="12px" fontWeight={500} color="gray.500">
+          <Flex {...flexSpaceBetweenStyle}>
+            <Text {...baseLabelStyle}>
               Position Y (mm)
             </Text>
             {isOverridden && (
               <Text
-                fontSize="10px"
-                fontWeight={600}
-                color="red.500"
-                cursor="pointer"
-                _hover={{ color: "red.700" }}
+                {...resetButtonStyle}
                 onClick={() => removeArmYOverride(armIndex, columnIndex, activeSide)}
               >
                 Reset

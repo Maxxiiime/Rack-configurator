@@ -36,7 +36,7 @@ export function CollapsibleMenu({
         mb={isOpen ? 3 : 0}
         py={1}
         px={1}
-        borderRadius="md"
+        borderRadius="sm"
         _hover={{ bg: "gray.50" }}
         transition="background 0.15s ease"
         userSelect="none"

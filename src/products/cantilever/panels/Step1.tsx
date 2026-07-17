@@ -9,8 +9,10 @@ import { useRackConfigStore, RackType } from "../stores/configStore";
 import { useEditorStore } from "../stores/editorStore";
 import { columnOptions, widthOptions, getPartSize, findPartId } from "../utils/shelfParts";
 import {
-  sectionBoxStyle,
-  sectionLabelStyle,
+  hintBoxStyle,
+  baseLabelStyle,
+  hintTextStyle,
+  checkboxStyle,
   selectStyle,
 } from "@/features/Sidepanel/styles";
 import { PillGroup, Row } from "@/components/ui/Shared";
@@ -37,7 +39,7 @@ export function Step1() {
     <VStack align="stretch" spacing={0} flex={1}>
 
       {/* ── Type ──────────────────────────────────────────────── */}
-      <Box mb={6}>
+      <Box borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)" pb={6} mb={6}>
         <Row label="Type">
           <PillGroup<RackType>
             options={[
@@ -51,9 +53,8 @@ export function Step1() {
       </Box>
 
       {/* ── Dimensions ────────────────────────────────────────── */}
-      <Box {...sectionBoxStyle}>
-        <Text {...sectionLabelStyle}>Dimensions</Text>
-        <VStack align="stretch" spacing={4}>
+      <Box borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)" pb={6} mb={6}>
+        <VStack align="stretch" spacing={5}>
           <Row label="Height (mm)">
             <Select {...selectStyle} value={columnId} onChange={(e) => setColumnId(e.target.value)}>
               {columnOptions.map((o) => (
@@ -82,26 +83,23 @@ export function Step1() {
       </Box>
 
       {/* ── Remove Columns ────────────────────────────────────── */}
-      <Box borderTop="1px solid" borderColor="rgba(0,0,0,0.08)" pt={5} mt={2}>
-        <Text {...sectionLabelStyle}>Columns</Text>
+      <Box pb={6} mb={6}>
         <VStack align="flex-start" spacing={3}>
           <Checkbox
             isChecked={removeFirstColumn}
             onChange={toggleRemoveFirstColumn}
-            size="md"
-            colorScheme="gray"
+            {...checkboxStyle}
           >
-            <Text fontSize="12px" fontWeight={500} color="gray.600">
+            <Text {...baseLabelStyle}>
               Remove first column
             </Text>
           </Checkbox>
           <Checkbox
             isChecked={removeLastColumn}
             onChange={toggleRemoveLastColumn}
-            size="md"
-            colorScheme="gray"
+            {...checkboxStyle}
           >
-            <Text fontSize="12px" fontWeight={500} color="gray.600">
+            <Text {...baseLabelStyle}>
               Remove last column
             </Text>
           </Checkbox>
@@ -113,15 +111,8 @@ export function Step1() {
 
       {/* ── Rack editing hint ─────────────────────────────────── */}
       {!selectedRackId && (
-        <Box
-          mt={4}
-          p={3}
-          borderRadius="lg"
-          bg="orange.50"
-          border="1px solid"
-          borderColor="orange.200"
-        >
-          <Text fontSize="11px" color="orange.600" lineHeight="1.4">
+        <Box mt={4} {...hintBoxStyle}>
+          <Text {...hintTextStyle}>
             Click on a rack to edit its dimensions individually.
           </Text>
         </Box>

@@ -3,7 +3,7 @@ import {
   Box, Flex, Text, Select, Checkbox,
   Slider, SliderTrack, SliderFilledTrack, SliderThumb,
 } from "@chakra-ui/react";
-import { sectionBoxStyle, selectStyle, sliderTrackStyle, sliderThumbStyle } from "@/features/Sidepanel/styles";
+import { selectStyle, sliderTrackStyle, sliderThumbStyle, baseLabelStyle, checkboxStyle } from "@/features/Sidepanel/styles";
 import { Stepper, Row } from "@/components/ui/Shared";
 import { useRackConfigStore } from "../stores/configStore";
 import { armsOptions, getColumnHeight, offsets } from "../utils/shelfParts";
@@ -63,20 +63,22 @@ export const SpacingSettings = () => {
   const handleSpacingChange = (newSpacing: number) => setArmSpacing(newSpacing);
 
   return (
-    <Box {...sectionBoxStyle}>
+    <Box pt={3} mb={3}>
 
       {/* ── Arm Length ──────────────────────────────────────── */}
-      <Row label="Arms Length (mm)">
-        <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
-          {armsOptions.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </Select>
-      </Row>
+      <Box borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)" pb={6} mb={6}>
+        <Row label="Arms Length (mm)">
+          <Select {...selectStyle} value={armId} onChange={(e) => setArmId(e.target.value)}>
+            {armsOptions.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </Select>
+        </Row>
+      </Box>
 
       {/* ── Arm Count ──────────────────────────────────────── */}
       <Box mt={4}>
-        <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Count</Text>
+        <Text {...baseLabelStyle} mb={1}>Count</Text>
         <Flex align="center" gap={2}>
           <Stepper
             value={actualArmCount}
@@ -102,8 +104,8 @@ export const SpacingSettings = () => {
       </Box>
 
       {/* ── Arm Spacing ────────────────────────────────────── */}
-      <Box mt={4}>
-        <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>
+      <Box mt={6} borderBottom="1px solid" borderColor="rgba(0,0,0,0.08)" pb={6} mb={6}>
+        <Text {...baseLabelStyle} mb={1}>
           Arms spacing (mm)
         </Text>
         <Flex align="center" gap={2} minW={0} overflow="hidden">
@@ -137,25 +139,23 @@ export const SpacingSettings = () => {
         <Checkbox
           isChecked={showArmStops}
           onChange={toggleShowArmStops}
-          size="lg"
-          colorScheme="gray"
+          {...checkboxStyle}
         >
-          <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Stops</Text>
+          <Text {...baseLabelStyle}>Arm Stops</Text>
         </Checkbox>
 
         <Checkbox
           isChecked={showArmDividers}
           onChange={toggleShowArmDividers}
-          size="lg"
-          colorScheme="gray"
+          {...checkboxStyle}
         >
-          <Text fontSize="12px" fontWeight={500} color="gray.600">Arm Dividers</Text>
+          <Text {...baseLabelStyle}>Arm Dividers</Text>
         </Checkbox>
       </Flex>
 
       {showArmDividers && (
         <Box pl={7} mt={2}>
-          <Text fontSize="12px" fontWeight={500} color="gray.500" mb={1}>Dividers Count</Text>
+          <Text {...baseLabelStyle} mb={1}>Dividers Count</Text>
           <Flex align="center" gap={2}>
             <Stepper
               value={armDividerCount}
