@@ -3,6 +3,7 @@
  */
 import create from 'zustand';
 import partsData from '../data/parts.json';
+import offsetsData from '../data/offsets.json';
 import type { ShelvingPart } from '../types';
 import { useEditorStore } from './editorStore';
 
@@ -23,6 +24,14 @@ const findMatchingLegId = (armId: string, rackType: RackType): string => {
 const defaultColumn = typedParts.find(p => p.category === 'column')?.shelving_system_id || '';
 const defaultArm = typedParts.find(p => p.category === 'arm')?.shelving_system_id || '';
 const defaultBrace = typedParts.find(p => p.category === 'x_brace')?.shelving_system_id || '';
+
+const defaultColumnPart = typedParts.find((p) => p.shelving_system_id === defaultColumn);
+const defaultColumnHeightUnits = (defaultColumnPart?.size_mm ?? 2000) / 100;
+const startY = (offsetsData as any).arm.start_y;
+const defaultArmSpacing = 5;
+
+const topLimit = defaultColumnHeightUnits - defaultArmSpacing;
+const initialArmCount = topLimit < startY ? 0 : Math.floor((topLimit - startY) / defaultArmSpacing) + 1;
 
 export interface RackConfigState {
   rackType: RackType;
@@ -72,8 +81,8 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
   columnId: defaultColumn,
   armId: defaultArm,
   braceId: defaultBrace,
-  armSpacing: 3,
-  armCount: 99,
+  armSpacing: defaultArmSpacing,
+  armCount: initialArmCount,
   armYOverrides: {},
   sectionWidthOverrides: {},
   sectionHeightOverrides: {},
@@ -86,7 +95,20 @@ export const useRackConfigStore = create<RackConfigState>((set) => ({
 
   setRackType: (type) => set({ rackType: type }),
 
-  setColumnId: (id) => set({ columnId: id }),
+  setColumnId: (id) => {
+    const columnPart = typedParts.find((p) => p.shelving_system_id === id);
+    const columnHeightUnits = (columnPart?.size_mm ?? 2000) / 100;
+    const topLim = columnHeightUnits - defaultArmSpacing;
+    const newArmCount = topLim < startY ? 0 : Math.floor((topLim - startY) / defaultArmSpacing) + 1;
+
+    set({ 
+      columnId: id,
+      armSpacing: defaultArmSpacing,
+      armCount: newArmCount,
+      armYOverrides: {}
+    });
+    useEditorStore.getState().setSelectedArm(null);
+  },
 
   setArmId: (id) => set({ armId: id }),
 

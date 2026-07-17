@@ -43,7 +43,7 @@ export const SpacingSettings = () => {
   /* ── Auto-update arms when column or arm type changes ──────── */
   const prevRef = useRef({ columnId, armId });
   useEffect(() => {
-    if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId || armCount === 99) {
+    if (prevRef.current.columnId !== columnId || prevRef.current.armId !== armId) {
       prevRef.current = { columnId, armId };
       // Default to spacing of 5 (500mm)
       const defaultSpacing = 5;
