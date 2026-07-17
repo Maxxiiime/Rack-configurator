@@ -255,13 +255,13 @@ export const sliderFilledTrackStyle = {
 
 export const nextButtonStyle = {
   w: "full",
-  bg: "black",
+  bg: "red.600",
   color: "white",
   fontSize: "12px",
   fontWeight: 600,
   borderRadius: panelRadius,
-  _hover: { bg: "gray.800" },
-  _active: { bg: "gray.900" },
+  _hover: { bg: "red.700" },
+  _active: { bg: "red.800" },
 };
 
 export const backButtonStyle = {
