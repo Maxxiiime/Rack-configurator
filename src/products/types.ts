@@ -62,6 +62,7 @@ export interface BOMItem {
 export interface BOMResult {
   items: BOMItem[];
   totalPrice: number;
+  totalMaxWeight?: number;
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */

@@ -59,6 +59,9 @@ export function Step3() {
         <Text {...priceTotalValueStyle}>€{bom.totalPrice.toFixed(2)}</Text>
       </Flex>
 
+      <Text fontSize="12px" fontWeight={600} color="red.600" px={1} mt={1}>
+        Total Load Capacity: {bom.totalMaxWeight ? `${bom.totalMaxWeight.toLocaleString()} kg` : "-"}
+      </Text>
     </VStack>
   );
 }

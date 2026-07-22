@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useRackConfigStore, selectActiveLegId } from '../stores/configStore';
 import { useRackSectionsStore } from '../stores/sectionsStore';
-import { getPartSize, findPartId, getPartData, getColumnHeight, offsets } from '../utils/shelfParts';
+import { getPartSize, findPartId, getPartData, getColumnHeight, getColumnMaxWeightForArm, offsets } from '../utils/shelfParts';
 import { resolveEffectiveColumnId } from '../utils/resolveColumn';
 import { useArmPositions } from './useArmPositions';
 import { getMaxArmCount } from '../utils/armPositions';
@@ -46,6 +46,7 @@ export const useBillOfMaterials = () => {
     const columnCountTotal = sectionIds.length + 1;
     let actualColumnCount = 0;
     let totalArms = 0;
+    let totalMaxWeight = 0;
 
     for (let index = 0; index < columnCountTotal; index++) {
       if (removeLastColumn && index === 0) continue;
@@ -57,6 +58,11 @@ export const useBillOfMaterials = () => {
 
       addPart(currentColumnId, 1);
       addPart(activeLegId, 1);
+
+      const colMaxWeight = getColumnMaxWeightForArm(currentColumnId, armId);
+      if (colMaxWeight !== Infinity) {
+        totalMaxWeight += colMaxWeight;
+      }
 
       // Compute arms for this specific column
       const currentColumnHeightUnits = getColumnHeight(currentColumnId);
@@ -144,7 +150,8 @@ export const useBillOfMaterials = () => {
 
     return {
       items: items.sort((a, b) => a.name.localeCompare(b.name)),
-      totalPrice
+      totalPrice,
+      totalMaxWeight,
     };
   }, [
     rackType, columnId, armId, braceId, sectionWidthOverrides, sectionHeightOverrides,
