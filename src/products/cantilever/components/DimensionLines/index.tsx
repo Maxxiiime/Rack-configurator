@@ -125,14 +125,44 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     // --- Z Axis (Depth) Coordinate Setup ---
     // Elevate Z dimensions to the first arm level for better readability
     const zDimY = armPositions.length > 0 ? armPositions[0] + 1.3 : startY;
-    const zDimX = max.x + DIM_CONFIG.offset;
+    
+    // Arm depth calculation (subtracting 250mm column depth)
+    const armDepthMm = rackType === 'double' ? (parseInt(depthZ) - 250) / 2 : parseInt(depthZ) - 250;
+    const armZEnd = rackType === 'double' ? min.z + ((max.z - min.z) - 2.5) / 2 : max.z - 2.5;
+    
+    const zDimX_arm = max.x + DIM_CONFIG.offset;
+    const zDimX_global = max.x + DIM_CONFIG.offset + 1.5;
+
+    const armDepthData = {
+        mainLine: [[zDimX_arm, startY, min.z], [zDimX_arm, startY, armZEnd]] as [number, number, number][],
+        ext1: [[max.x, startY, min.z], [zDimX_arm, startY, min.z]] as [number, number, number][],
+        ext2: [[max.x, startY, armZEnd], [zDimX_arm, startY, armZEnd]] as [number, number, number][],
+        tick1: [[zDimX_arm - DIM_CONFIG.tickSize, startY, min.z - DIM_CONFIG.tickSize], [zDimX_arm + DIM_CONFIG.tickSize, startY, min.z + DIM_CONFIG.tickSize]] as [number, number, number][],
+        tick2: [[zDimX_arm - DIM_CONFIG.tickSize, startY, armZEnd - DIM_CONFIG.tickSize], [zDimX_arm + DIM_CONFIG.tickSize, startY, armZEnd + DIM_CONFIG.tickSize]] as [number, number, number][],
+        labelPos: [zDimX_arm + 0.3, startY, (min.z + armZEnd) / 2] as [number, number, number],
+        value: `${armDepthMm} mm`
+    };
+
+    const columnZStart = armZEnd;
+    const columnZEnd = armZEnd + 2.5;
+
+    const columnDepthData = {
+        mainLine: [[zDimX_arm, startY, columnZStart], [zDimX_arm, startY, columnZEnd]] as [number, number, number][],
+        ext1: [[max.x, startY, columnZStart], [zDimX_arm, startY, columnZStart]] as [number, number, number][],
+        ext2: [[max.x, startY, columnZEnd], [zDimX_arm, startY, columnZEnd]] as [number, number, number][],
+        tick1: [[zDimX_arm - DIM_CONFIG.tickSize, startY, columnZStart - DIM_CONFIG.tickSize], [zDimX_arm + DIM_CONFIG.tickSize, startY, columnZStart + DIM_CONFIG.tickSize]] as [number, number, number][],
+        tick2: [[zDimX_arm - DIM_CONFIG.tickSize, startY, columnZEnd - DIM_CONFIG.tickSize], [zDimX_arm + DIM_CONFIG.tickSize, startY, columnZEnd + DIM_CONFIG.tickSize]] as [number, number, number][],
+        labelPos: [zDimX_arm + 0.3, startY, (columnZStart + columnZEnd) / 2] as [number, number, number],
+        value: `250 mm`
+    };
+
     const zData = {
-        mainLine: [[zDimX, startY, min.z], [zDimX, startY, max.z]] as [number, number, number][],
-        ext1: [[max.x, startY, min.z], [zDimX, startY, min.z]] as [number, number, number][],
-        ext2: [[max.x, startY, max.z], [zDimX, startY, max.z]] as [number, number, number][],
-        tick1: [[zDimX - DIM_CONFIG.tickSize, startY, min.z - DIM_CONFIG.tickSize], [zDimX + DIM_CONFIG.tickSize, startY, min.z + DIM_CONFIG.tickSize]] as [number, number, number][],
-        tick2: [[zDimX - DIM_CONFIG.tickSize, startY, max.z - DIM_CONFIG.tickSize], [zDimX + DIM_CONFIG.tickSize, startY, max.z + DIM_CONFIG.tickSize]] as [number, number, number][],
-        labelPos: [zDimX + 0.3, startY, (min.z + max.z) / 2] as [number, number, number],
+        mainLine: [[zDimX_global, startY, min.z], [zDimX_global, startY, max.z]] as [number, number, number][],
+        ext1: [[max.x, startY, min.z], [zDimX_global, startY, min.z]] as [number, number, number][],
+        ext2: [[max.x, startY, max.z], [zDimX_global, startY, max.z]] as [number, number, number][],
+        tick1: [[zDimX_global - DIM_CONFIG.tickSize, startY, min.z - DIM_CONFIG.tickSize], [zDimX_global + DIM_CONFIG.tickSize, startY, min.z + DIM_CONFIG.tickSize]] as [number, number, number][],
+        tick2: [[zDimX_global - DIM_CONFIG.tickSize, startY, max.z - DIM_CONFIG.tickSize], [zDimX_global + DIM_CONFIG.tickSize, startY, max.z + DIM_CONFIG.tickSize]] as [number, number, number][],
+        labelPos: [zDimX_global + 0.3, startY, (min.z + max.z) / 2] as [number, number, number],
         value: `${depthZ} mm`
     };
 
@@ -217,6 +247,8 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
             <DimensionLine {...yDataMinZ} />
             {yDataMaxZ && <DimensionLine {...yDataMaxZ} />}
             <DimensionLine {...zData} />
+            <DimensionLine {...armDepthData} />
+            <DimensionLine {...columnDepthData} />
 
             {/* Detailed Inner Dimensions for Arm Intervals (Y axis) */}
             {zPositions.map(zPos => (
