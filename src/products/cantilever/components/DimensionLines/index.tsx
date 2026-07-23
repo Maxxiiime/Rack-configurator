@@ -7,6 +7,8 @@ import offsets from '../../data/offsets.json';
 import { useArmPositions } from "../../hooks/useArmPositions";
 import { useRackConfigStore } from '../../stores/configStore';
 import { getPartSize } from '../../utils/shelfParts';
+import { useRackPositions } from "../../hooks/useRackPositions";
+import { useEditorStore } from '../../stores/editorStore';
 import { DIM_CONFIG, labelStyle, detailLabelStyle } from './style';
 
 interface DimensionLineProps {
@@ -45,12 +47,16 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const invMatrix = useMemo(() => new THREE.Matrix4(), []);
 
     const { armPositions } = useArmPositions();
+    const { columnPositionsX } = useRackPositions();
+    const currentStep = useEditorStore((s) => s.currentStep);
+    const selectedArm = useEditorStore((s) => s.selectedArm);
 
     // Arm divider config for Z-axis detail
     const showArmDividers = useRackConfigStore((s) => s.showArmDividers);
     const armDividerCount = useRackConfigStore((s) => s.armDividerCount);
     const armId = useRackConfigStore((s) => s.armId);
     const rackType = useRackConfigStore((s) => s.rackType);
+    const armYOverrides = useRackConfigStore((s) => s.armYOverrides);
     const armSizeUnits = getPartSize(armId) / 100;
 
     // Continuously update the bounding box to react to user configuration changes or animations
@@ -93,6 +99,32 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     const lengthX = formatDim(max.x - min.x);
     const heightY = formatDim(max.y - min.y - offsets.bottom_bolt.y);
     const depthZ = formatDim(max.z - min.z);
+
+    // Determine if we need to shift the global Y dimensions
+    const isLeftmostModified = 
+        Object.keys(armYOverrides).some(k => k.startsWith(`0-`)) || 
+        (currentStep === 2 && selectedArm !== null && selectedArm.columnIndex === 0);
+
+    let rightmostUnmodifiedIndex = columnPositionsX.length - 1;
+    for (let i = columnPositionsX.length - 1; i >= 0; i--) {
+        const isModified = Object.keys(armYOverrides).some(k => k.startsWith(`${i}-`)) || 
+                           (currentStep === 2 && selectedArm !== null && selectedArm.columnIndex === i);
+        if (!isModified) {
+            rightmostUnmodifiedIndex = i;
+            break;
+        }
+    }
+
+    let globalYDetailX = min.x - DIM_CONFIG.offset;
+    let detailExtensionStartX = min.x;
+    let labelXOffset = -0.3;
+
+    if (isLeftmostModified && rightmostUnmodifiedIndex !== 0) {
+        const targetX = columnPositionsX[rightmostUnmodifiedIndex];
+        globalYDetailX = targetX + DIM_CONFIG.offset + 0.5;
+        detailExtensionStartX = targetX;
+        labelXOffset = 0.3;
+    }
 
     // --- X Axis (Length) Coordinate Setup ---
     const xDimZ = min.z - DIM_CONFIG.offset;
@@ -209,7 +241,7 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
     }
 
     // --- Vertical Detailing (Arm Spacing Breakdown) ---
-    const detailX = min.x - DIM_CONFIG.offset;
+    const detailX = globalYDetailX;
 
     // Create an array of all relevant heights: base start -> foot height -> arms (adjusted for elevation offset) -> column top
     const breakpoints = Array.from(new Set([
@@ -258,9 +290,9 @@ export const DimensionLines: React.FC<DimensionLinesProps> = ({ rackGroupRef }) 
                             <Line points={[[detailX, seg.from, zPos], [detailX, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
                             <Line points={[[detailX - DIM_CONFIG.tickSize, seg.from, zPos], [detailX + DIM_CONFIG.tickSize, seg.from, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
                             <Line points={[[detailX - DIM_CONFIG.tickSize, seg.to, zPos], [detailX + DIM_CONFIG.tickSize, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={2} />
-                            <Line points={[[min.x, seg.from, zPos], [detailX, seg.from, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
-                            <Line points={[[min.x, seg.to, zPos], [detailX, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
-                            <Html position={[detailX - 0.3, seg.midY, zPos]} center zIndexRange={[100, 0]}>
+                            <Line points={[[detailExtensionStartX, seg.from, zPos], [detailX, seg.from, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                            <Line points={[[detailExtensionStartX, seg.to, zPos], [detailX, seg.to, zPos]]} color={DIM_CONFIG.colors.main} lineWidth={1} dashed dashSize={0.15} gapSize={0.1} />
+                            <Html position={[detailX + labelXOffset, seg.midY, zPos]} center zIndexRange={[100, 0]}>
                                 <div style={detailLabelStyle}>{`${seg.gapMm} mm`}</div>
                             </Html>
                         </group>

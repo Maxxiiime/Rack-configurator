@@ -65,7 +65,16 @@ export const ArmRowEditor = ({ armIndex, columnIndex, side }: ArmRowEditorProps)
     const snapped = snapToGrid(unitValue);
     const { min, max } = getArmBounds(index);
     const clamped = Math.max(min, Math.min(max, snapped));
-    setArmYOverride(index, clamped, columnIndex, activeSide);
+    
+    const baselineValue = columnIndex !== undefined 
+      ? (armYOverrides[`row-${activeSide}-${index}`] ?? basePositions[index] ?? startY)
+      : (basePositions[index] ?? startY);
+
+    if (Math.abs(clamped - baselineValue) < 0.001) {
+      removeArmYOverride(index, columnIndex, activeSide);
+    } else {
+      setArmYOverride(index, clamped, columnIndex, activeSide);
+    }
   };
 
   // Guard: index out of range
