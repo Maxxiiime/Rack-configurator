@@ -24,7 +24,7 @@ export function Step2() {
       {selectedArm === null && (
         <Box mt={2} {...hintBoxStyle}>
           <Text {...hintTextStyle}>
-            Click on an arm to edit its position
+            Click on an arm to edit its position individually.
           </Text>
         </Box>
       )}
